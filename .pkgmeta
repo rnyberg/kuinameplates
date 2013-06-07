@@ -1,22 +1,22 @@
-externals
+externals:
     Kui_Nameplates/lib/LibStub:
         url: svn://svn.wowace.com/wow/libstub/mainline/trunk
     Kui_Nameplates/lib/Ace3/AceAddon-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceAddon-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
     Kui_Nameplates/lib/Ace3/AceConfig-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceConfig-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
     Kui_Nameplates/lib/Ace3/AceDB-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceDB-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
     Kui_Nameplates/lib/Ace3/AceDBOptions-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceDBOptions-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
     Kui_Nameplates/lib/Ace3/AceEvent-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceEvent-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
     Kui_Nameplates/lib/Ace3/AceGUI-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceGUI-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
     Kui_Nameplates/lib/Ace3/AceGUI-3.0-SharedMediaWidgets:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceGUI-3.0-SharedMediaWidgets
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0-SharedMediaWidgets
     Kui_Nameplates/lib/Ace3/AceTimer-3.0:
-        svn://svn.wowace.com/wow/libstub/mainline/trunk/AceTimer-3.0
+        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
     Kui_Nameplates/lib/Ace3/CallbackHandler-1.0:
         svn://svn.wowace.com/wow/callbackhandler/mainline/trunk/CallbackHandler-1.0
 
