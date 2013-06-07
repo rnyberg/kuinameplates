@@ -195,8 +195,8 @@ function mod:Create(msg, frame)
 	frame.auras.frame = frame
 	
 	frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
-		2, addon.sizes.frame.aurasOffset)
-	frame.auras:SetPoint('BOTTOMRIGHT', frame.health, 'TOPRIGHT', -2, 0)
+		3, addon.sizes.frame.aurasOffset)
+	frame.auras:SetPoint('BOTTOMRIGHT', frame.health, 'TOPRIGHT', -3, 0)
 	
 	frame.auras:SetHeight(50)
 	frame.auras:Hide()

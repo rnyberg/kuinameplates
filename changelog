@@ -1,4 +1,1 @@
-**all automatically packaged alpha versions**
-I'm just testing Curse's git repos. These versions are not intended to be
-public, but Curse provides no way to verify automatic packages before they're
-made public. Which is pretty annoying.
+* fix enemy priests use tapped unit colour when class colour is enabled

@@ -78,7 +78,7 @@ local function SetHealthColour(self)
 		elseif (r + g) > 1.8 and b == 0 then
 			-- neutral NPC
 			r, g, b = unpack(kn.r[2])
-		elseif (r+g) == (r+b) then
+		elseif r < .6 and (r+g) == (r+b) then
 			-- tapped NPC
 			r, g, b = unpack(kn.r[4])
 		else
@@ -239,6 +239,7 @@ local function OnFrameShow(self)
 	OnHealthValueChanged(f.oldHealth, f.oldHealth:GetValue())
 
 	if f.fixaa then
+		--@do-not-package@
 		-- TODO TEST only show players
 		--[[
 		if f.friend and f.player then
@@ -247,7 +248,7 @@ local function OnFrameShow(self)
 			f.DoShow = nil
 			f:Hide()
 		end]]
-
+		--@end-do-not-package@
 		f.DoShow = true
 	else
 		f:Show()
