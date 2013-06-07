@@ -1,6 +1,6 @@
 externals:
-    Kui_Nameplates/lib/LibStub:
-        url: svn://svn.wowace.com/wow/libstub/mainline/trunk
+    Kui_Nameplates/lib/LibStub/LibStub.lua:
+        url: svn://svn.wowace.com/wow/libstub/mainline/trunk/LibStub.lua
     Kui_Nameplates/lib/Ace3/AceAddon-3.0:
         svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
     Kui_Nameplates/lib/Ace3/AceConfig-3.0:
@@ -13,14 +13,14 @@ externals:
         svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
     Kui_Nameplates/lib/Ace3/AceGUI-3.0:
         svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
-    Kui_Nameplates/lib/Ace3/AceGUI-3.0-SharedMediaWidgets:
-        svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0-SharedMediaWidgets
+	Kui_Nameplates/lib/Ace3/AceGUI-3.0-SharedMediaWidgets:
+		svn://svn.wowace.com/wow/ace-gui-3-0-shared-media-widgets/mainline/trunk/AceGUI-3.0-SharedMediaWidgets
     Kui_Nameplates/lib/Ace3/AceTimer-3.0:
         svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
     Kui_Nameplates/lib/Ace3/CallbackHandler-1.0:
         svn://svn.wowace.com/wow/callbackhandler/mainline/trunk/CallbackHandler-1.0
     Kui_Nameplates/lib/LibSharedMedia-3.0:
-        svn://svn.wowace.com/wow/libsharedmedia-3-0/mainline/trunk
+        svn://svn.wowace.com/wow/libsharedmedia-3-0/mainline/trunk/LibSharedMedia-3.0
 
 manual-changelog:
     filename: changelog
