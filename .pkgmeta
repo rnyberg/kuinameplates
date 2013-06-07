@@ -28,6 +28,4 @@ enable-nolib-creation:
     no
 
 ignore:
-    - dev
-    - git
     - .gitignore

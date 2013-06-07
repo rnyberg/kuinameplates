@@ -2,3 +2,5 @@ Kui_Nameplates/custom.lua
 key.ppk
 pubkey
 *.orig
+*.swp
+*~
