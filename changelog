@@ -1,0 +1,36 @@
+**206** bd7b9
+* add option to change height of health bar
+* add option to change height of trivial unit health bar
+* add option to change height of cast bar
+* add option to change scale of combo point icons
+* add option to use alpha of 1 for all font strings, disabled by default
+* move auras slightly
+* fix changing tapped colour in addon.r has no effect
+* fix friendly player colour is not in addon.r
+* removed redundant sizing/positioning code for when a frame is switched between trivial and normal
+* fix health bar frame level is sometimes too high
+* fix health text is incorrect the first time it is shown
+* move targetglow creation to create.lua
+* move addon's configChangedFuncs to core.lua
+* fix frame glow is incorrect after displaying a trivial unit
+* fix external fonts aren't saved between sessions
+* bump auras toc to 50300 (whoopsie)
+* fix jittery fontstrings on the health bar when using fixaa
+* move name, level and health text slightly
+* progress on continuing rewrite - layout.lua partial cleanup
+* fix SetFontSize using profile instead of addon.db.profile
+* remove comments from create.lua CreateBackground
+* move texSizes, fontSizes into addon.sizes table
+* move frame sizes to addon.sizes.frame
+* move addon vars into core.lua, out of layout.lua
+* move GUID/name functions to core.lua
+* move scaling functions to core.lua
+* move addon.OnEnable to core.lua
+* move addon.GetNameplate to core.lua
+* only schedule the core timer once the addon has been initialised and enabled
+* remove revision 150 files check
+* make bg (glow) position use BOTTOMLEFT and TOPLEFT points
+* update kui_media t readme
+* fix name text is incorrectly positioned when level text is hidden
+* fix cast warnings positioned incorrectly when level is disabled
+* commented defaultSizes
