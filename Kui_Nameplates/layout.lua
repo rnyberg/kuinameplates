@@ -171,7 +171,8 @@ end
 ------------------------------------------------------- Frame script handlers --
 local function OnFrameShow(self)
 	local f = self.kui
-
+	local trivial = f.firstChild:GetScale() < 1
+	
 	-- reset name
 	f.name.text = f.oldName:GetText()
 	f.name:SetText(f.name.text)
@@ -182,7 +183,7 @@ local function OnFrameShow(self)
 	end
 	
 	-- classifications
-	if f.level.enabled then
+	if not trivial and f.level.enabled then
 		if f.boss:IsVisible() then
 			f.level:SetText('??b')
 			f.level:SetTextColor(1, 0, 0)
@@ -207,8 +208,6 @@ local function OnFrameShow(self)
 	addon:StoreName(f)
 	
 	---------------------------------------------- Trivial sizing/positioning --
-	local trivial = f.firstChild:GetScale() < 1
-	
 	if kn.uiscale then
 		-- change our parent frame size if we're using fixaa..
 		f:SetSize(self:GetWidth()/kn.uiscale, self:GetHeight()/kn.uiscale)
@@ -225,7 +224,7 @@ local function OnFrameShow(self)
 		addon:UpdateBackground(f, trivial)
 		addon:UpdateHealthBar(f, trivial)
 		addon:UpdateHealthText(f, trivial)
-		addon:UpdateAlthealthText(f, trivial)
+		addon:UpdateAltHealthText(f, trivial)
 		addon:UpdateLevel(f, trivial)
 		addon:UpdateName(f, trivial)
 		addon:UpdateTargetGlow(f, trivial)

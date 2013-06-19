@@ -92,13 +92,13 @@ function addon:CreateHealthText(frame, f)
 	f.health.p:SetJustifyH('RIGHT')
 	f.health.p:SetJustifyV('BOTTOM')
 	f.health.p:SetHeight(10)
-	f.health.p:SetPoint('BOTTOMRIGHT', f.health, 'TOPRIGHT',
-		-2.5, self.uiscale and -(2.5/self.uiscale) or -2.5)
 end
 function addon:UpdateHealthText(f, trivial)
 	if trivial then
 		f.health.p:Hide()
 	else
+		f.health.p:SetPoint( 'BOTTOMRIGHT', f.health, 'TOPRIGHT',
+		                     -2.5, -self.db.profile.text.healthoffset)
 		f.health.p:Show()
 	end
 end
@@ -109,14 +109,14 @@ function addon:CreateAltHealthText(frame, f)
 	f.health.mo:SetJustifyH('RIGHT')
 	f.health.mo:SetJustifyV('TOP')
 	f.health.mo:SetHeight(10)
-	f.health.mo:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
-		-2.5, self.uiscale and (3.5/self.uiscale) or 3.5)
 end
-function addon:UpdateAlthealthText(f, trivial)
+function addon:UpdateAltHealthText(f, trivial)
 	if not f.health.mo then return end
 	if trivial then
 		f.health.mo:Hide()
 	else
+		f.health.mo:SetPoint( 'TOPRIGHT', f.health, 'BOTTOMRIGHT',
+		                      -2.5, self.db.profile.text.healthoffset + 4)
 		f.health.mo:Show()
 	end
 end
@@ -132,8 +132,7 @@ function addon:CreateLevel(frame, f)
 	f.level:SetHeight(10)
 	
 	f.level:ClearAllPoints()
-	f.level:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
-		             2.5, self.uiscale and -(2.5/self.uiscale) or -2.5)
+
 	f.level.enabled = true
 end
 function addon:UpdateLevel(f, trivial)
@@ -145,6 +144,8 @@ function addon:UpdateLevel(f, trivial)
 	if trivial then
 		f.level:Hide()
 	else
+		f.level:SetPoint( 'BOTTOMLEFT', f.health, 'TOPLEFT',
+                          2.5, -self.db.profile.text.healthoffset)
 		f.level:Show()
 	end
 end
@@ -160,7 +161,7 @@ function addon:UpdateName(f, trivial)
 
 	if trivial then
 		f.name:SetJustifyH('CENTER')
-		f.name:SetPoint('BOTTOM', f.health, 'TOP', 0, -3)
+		f.name:SetPoint('BOTTOM', f.health, 'TOP', 0, -self.db.profile.text.healthoffset)
 	else
 		f.name:SetJustifyH('LEFT')
 		f.name:SetPoint('RIGHT', f.health.p, 'LEFT')
@@ -168,8 +169,8 @@ function addon:UpdateName(f, trivial)
 		if f.level.enabled then
 			f.name:SetPoint('LEFT', f.level, 'RIGHT', -2, 0)
 		else
-			f.name:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
-			                2, self.uiscale and -(2/self.uiscale) or -2)
+			f.name:SetPoint( 'BOTTOMLEFT', f.health, 'TOPLEFT',
+			                 2, -self.db.profile.text.healthoffset)
 		end
 	end
 end

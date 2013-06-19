@@ -84,7 +84,8 @@ local defaults = {
 		text = {
 			level        = true, -- display levels
 			friendlyname = { 1, 1, 1 }, -- friendly name text colour
-			enemyname    = { 1, 1, 1 }  -- enemy name text colour
+			enemyname    = { 1, 1, 1 },  -- enemy name text colour
+			healthoffset = 2.5
 		},
 		hp = {
 			friendly  = '=:m;<:d;', -- health display pattern for friendly units
@@ -149,6 +150,16 @@ addon.configChangedFuncs.fontscale = function(frame, val)
 	end
 end
 addon.configChangedFuncs.onesize = addon.configChangedFuncs.fontscale
+
+addon.configChangedFuncs.runOnce.healthoffset = function(val)
+	addon:RegisterSize('tex', 'healthOffset', val)
+end
+addon.configChangedFuncs.healthoffset = function(frame, val)
+	addon:UpdateHealthText(frame, frame.trivial)
+	addon:UpdateAltHealthText(frame, frame.trivial)
+	addon:UpdateLevel(frame, frame.trivial)
+	addon:UpdateName(frame, frame.trivial)
+end
 
 addon.configChangedFuncs.Health = function(frame)
 	if frame:IsShown() then
@@ -385,6 +396,7 @@ function addon:OnEnable()
 
 	self.defaultSizes.frame.height = self.db.profile.general.hheight
 	self.defaultSizes.frame.theight = self.db.profile.general.thheight
+	self.defaultSizes.tex.healthOffset = self.db.profile.text.healthoffset
 
 	self:ScaleAllSizes()
 
