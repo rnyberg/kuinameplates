@@ -170,6 +170,7 @@ end
 
 ------------------------------------------------------- Frame script handlers --
 local function OnFrameShow(self)
+	self = self.kuiParent
 	local f = self.kui
 	local trivial = f.firstChild:GetScale() < 1
 	
@@ -257,6 +258,7 @@ local function OnFrameShow(self)
 end
 
 local function OnFrameHide(self)
+	self = self.kuiParent
 	local f = self.kui
 	f:Hide()
 
@@ -537,7 +539,7 @@ function kn:InitFrame(frame)
 	-- fetch default ui's objects
 	local overlayChild, nameTextChild = frame:GetChildren()
 	local healthBar, castBar = overlayChild:GetChildren()
-	
+
 	local _, castbarOverlay, shieldedRegion, spellIconRegion,
 		  spellNameRegion, spellNameShadow
 		= castBar:GetRegions()
@@ -579,6 +581,9 @@ function kn:InitFrame(frame)
 	f.oldName:Hide()
 	
 	f.oldHighlight = highlightRegion
+
+	-- used by OnFrameShow and OnFrameHide
+	f.oldHealth.kuiParent = frame
 
     --------------------------------------------------------- Frame functions --
     f.CreateFontString    = addon.CreateFontString -- TODO remove
@@ -651,8 +656,11 @@ function kn:InitFrame(frame)
 	f.icon:ClearAllPoints()
 	f.icon:SetPoint('LEFT', f.health, 'RIGHT', 5, 1)
     ----------------------------------------------------------------- Scripts --
-	frame:HookScript('OnShow', OnFrameShow)
-	frame:HookScript('OnHide', OnFrameHide)
+	-- Don't hook these directly to the frame; workaround for issue caused by
+	-- current curse.com version of VialCooldowns.
+	f.oldHealth:HookScript('OnShow', OnFrameShow)	
+	f.oldHealth:HookScript('OnHide', OnFrameHide)	
+
 	frame:HookScript('OnUpdate', OnFrameUpdate)
 
 	f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
@@ -681,7 +689,7 @@ function kn:InitFrame(frame)
 	
 	if frame:IsShown() then
 		-- force OnShow
-		OnFrameShow(frame)
+		OnFrameShow(healthBar)
 	else
 		f:Hide()
 	end
