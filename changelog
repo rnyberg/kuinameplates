@@ -1,8 +1,2 @@
-* *In a future version, some previously built-in, lesser-sustainable features
-will be moved off into custom.lua code snippets which I'll link in the addon
-description.*
-* *added option to change the vertical offset of text anchored to the health
-bar, under "Text". Intended for minor tweaking based on your choice of font.*
-* health text offsets should scale better to different uiscales
-* adjusted position of contextual health text slightly
-* fix level text is sometimes displayed on trivial units
+* fix compatibility issues with VialCooldowns
+* make combo point icons scale without becoming pixelated
