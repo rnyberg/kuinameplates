@@ -154,6 +154,14 @@ do
 						softMin = 6,
 						softMax = 15
 					},
+					bartexture = {
+						name = 'Status bar texture',
+						desc = 'The texture used for both the health and cast bars.',
+						type = 'select',
+						dialogControl = 'LSM30_Statusbar',
+						values = AceGUIWidgetLSMlists.statusbar,
+						order = 5
+					},
 				}
 			},
 			fade = {
@@ -401,5 +409,8 @@ SLASH_KUINAMEPLATES1 = '/kuinameplates'
 SLASH_KUINAMEPLATES2 = '/knp'
 
 function SlashCmdList.KUINAMEPLATES()
+	InterfaceOptionsFrame_OpenToCategory('Kui Nameplates')
+
+	-- TODO twice to workaround an issue introduced with 5.3
 	InterfaceOptionsFrame_OpenToCategory('Kui Nameplates')
 end

@@ -53,7 +53,7 @@ end
 ------------------------------------------------------------------ Health bar --
 function addon:CreateHealthBar(frame, f)
 	f.health = CreateFrame('StatusBar', nil, f.parent)
-	f.health:SetStatusBarTexture(kui.m.t.bar)
+	f.health:SetStatusBarTexture(addon.bartexture)
 
 	if self.SetValueSmooth then
 		-- smooth bar
@@ -77,7 +77,7 @@ function addon:CreateHighlight(frame, f)
 	if not self.db.profile.general.highlight then return end
 
 	f.highlight = f.overlay:CreateTexture(nil, 'ARTWORK')
-	f.highlight:SetTexture(kui.m.t.bar)
+	f.highlight:SetTexture(addon.bartexture)
 	f.highlight:SetAllPoints(f.health)
 
 	f.highlight:SetVertexColor(1, 1, 1)

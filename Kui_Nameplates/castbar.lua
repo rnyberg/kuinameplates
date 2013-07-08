@@ -103,7 +103,7 @@ function mod:CreateCastbar(msg, frame)
 	
 	-- cast bar ------------------------------------------------------------
 	frame.castbar.bar = CreateFrame("StatusBar", nil, frame.castbar)
-	frame.castbar.bar:SetStatusBarTexture(kui.m.t.bar)
+	frame.castbar.bar:SetStatusBarTexture(addon.bartexture)
 
 	frame.castbar.bar:SetPoint('TOPLEFT', frame.castbar.bg, 'TOPLEFT', 1, -1)
 	frame.castbar.bar:SetPoint('BOTTOMLEFT', frame.castbar.bg, 'BOTTOMLEFT', 1, 1)

@@ -52,7 +52,9 @@ addon.r = {
 -- add yanone kaffesatz and accidental presidency to LSM (only supports latin)
 LSM:Register(LSM.MediaType.FONT, 'Yanone Kaffesatz', kui.m.f.yanone)
 LSM:Register(LSM.MediaType.FONT, 'Accidental Presidency', kui.m.f.accid)
--- TODO should probably move LSM stuff into Kui, and replace the table there
+
+-- add my status bar texture too..
+LSM:Register(LSM.MediaType.STATUSBAR, 'Kui status bar', kui.m.t.bar)
 
 local locale = GetLocale()
 local latin  = (locale ~= 'zhCN' and locale ~= 'zhTW' and locale ~= 'koKR' and locale ~= 'ruRU')
@@ -65,6 +67,7 @@ local defaults = {
 			highlight   = true, -- highlight plates on mouse-over
 			fixaa       = true, -- attempt to make plates appear sharper (with some drawbacks)
 			targetglow  = true,
+			bartexture  = 'Kui status bar',
 			targetglowcolour = { .3, .7, 1, 1 },
 			hheight     = 11,
 			thheight    = 7
@@ -112,78 +115,6 @@ local defaults = {
 		}
 	}
 }
----------------------------------------------------- Post db change functions --
--- n.b. this is absolutely terrible and horrible and i hate it
-addon.configChangedFuncs = { runOnce = {} }
-addon.configChangedFuncs.runOnce.fontscale = function(val)
-	addon:ScaleSizes('font')
-end
-addon.configChangedFuncs.fontscale = function(frame, val)
-	local _, fontObject
-	for _, fontObject in pairs(frame.fontObjects) do
-		if type(fontObject.size) == 'string' then
-			fontObject:SetFontSize(addon.sizes.font[fontObject.size])
-		end
-	end
-end
-
-addon.configChangedFuncs.outline = function(frame, val)
-	local _, fontObject
-	for _, fontObject in pairs(frame.fontObjects) do
-		kui.ModifyFontFlags(fontObject, val, 'OUTLINE')
-	end
-end
-
-addon.configChangedFuncs.monochrome = function(frame, val)
-	local _, fontObject
-	for _, fontObject in pairs(frame.fontObjects) do
-		kui.ModifyFontFlags(fontObject, val, 'MONOCHROME')
-	end
-end
-
-addon.configChangedFuncs.fontscale = function(frame, val)
-	local _, fontObject
-	for _, fontObject in pairs(frame.fontObjects) do
-		if type(fontObject.size) == 'string' then
-			fontObject:SetFontSize(addon.sizes.font[fontObject.size])
-		end
-	end
-end
-addon.configChangedFuncs.onesize = addon.configChangedFuncs.fontscale
-
-addon.configChangedFuncs.runOnce.healthoffset = function(val)
-	addon:RegisterSize('tex', 'healthOffset', val)
-end
-addon.configChangedFuncs.healthoffset = function(frame, val)
-	addon:UpdateHealthText(frame, frame.trivial)
-	addon:UpdateAltHealthText(frame, frame.trivial)
-	addon:UpdateLevel(frame, frame.trivial)
-	addon:UpdateName(frame, frame.trivial)
-end
-
-addon.configChangedFuncs.Health = function(frame)
-	if frame:IsShown() then
-		-- update health display
-		OnHealthValueChanged(frame.oldHealth, frame.oldHealth:GetValue())
-	end
-end
-addon.configChangedFuncs.friendly = addon.configChangedFuncs.Health
-addon.configChangedFuncs.hostile = addon.configChangedFuncs.Health
-
-addon.configChangedFuncs.runOnce.font = function(val)
-	addon.font = LSM:Fetch(LSM.MediaType.FONT, val)
-end
-addon.configChangedFuncs.font = function(frame, val)
-	local _, fontObject
-	for _, fontObject in pairs(frame.fontObjects) do
-		local _, size, flags = fontObject:GetFont()
-		fontObject:SetFont(addon.font, size, flags)
-	end
-end
-
-addon.configChangedFuncs.targetglowcolour = function(frame, val)
-	frame.targetGlow:SetVertexColor(unpack(val))
-end
 ------------------------------------------------- GUID/name storage functions --
 function addon:StoreGUID(f, guid)
 	if not guid then return end
@@ -242,14 +173,32 @@ function addon:GetNameplate(guid, name)
 	end
 end
 ------------------------------------------------------------ helper functions --
--- TEMPORARY bug fix ugliness
-function addon:UpdateAllFonts()
+-- cycle all frames' fontstrings and reset the font
+local function UpdateAllFonts()
 	local _,frame
-	for _,frame in pairs(self.frameList) do
+	for _,frame in pairs(addon.frameList) do
 		local _,fs
-		for _,fs in pairs(frame.fontObjects) do
+		for _,fs in pairs(frame.kui.fontObjects) do
 			local _, size, flags = fs:GetFont()
-			fs:SetFont(self.font, size, flags)
+			fs:SetFont(addon.font, size, flags)
+		end
+	end
+end
+
+-- cycle all frames and reset the health and castbar status bar textures
+local function UpdateAllBars()
+	local _,frame
+	for _,frame in pairs(addon.frameList) do
+		if frame.kui.health then
+			frame.kui.health:SetStatusBarTexture(addon.bartexture)
+		end
+
+		if frame.kui.highlight then
+			frame.kui.highlight:SetTexture(addon.bartexture)
+		end
+
+		if frame.kui.castbar then
+			frame.kui.castbar.bar:SetStatusBarTexture(addon.bartexture)
 		end
 	end
 end
@@ -355,13 +304,90 @@ function addon:RegisterSize(type, key, size)
 	addon.defaultSizes[type][key] = size
 	scaleFuncs[type](key)
 end
+---------------------------------------------------- Post db change functions --
+-- n.b. this is absolutely terrible and horrible and i hate it
+addon.configChangedFuncs = { runOnce = {} }
+addon.configChangedFuncs.runOnce.fontscale = function(val)
+	addon:ScaleSizes('font')
+end
+addon.configChangedFuncs.fontscale = function(frame, val)
+	local _, fontObject
+	for _, fontObject in pairs(frame.fontObjects) do
+		if type(fontObject.size) == 'string' then
+			fontObject:SetFontSize(addon.sizes.font[fontObject.size])
+		end
+	end
+end
+
+addon.configChangedFuncs.outline = function(frame, val)
+	local _, fontObject
+	for _, fontObject in pairs(frame.fontObjects) do
+		kui.ModifyFontFlags(fontObject, val, 'OUTLINE')
+	end
+end
+
+addon.configChangedFuncs.monochrome = function(frame, val)
+	local _, fontObject
+	for _, fontObject in pairs(frame.fontObjects) do
+		kui.ModifyFontFlags(fontObject, val, 'MONOCHROME')
+	end
+end
+
+addon.configChangedFuncs.fontscale = function(frame, val)
+	local _, fontObject
+	for _, fontObject in pairs(frame.fontObjects) do
+		if type(fontObject.size) == 'string' then
+			fontObject:SetFontSize(addon.sizes.font[fontObject.size])
+		end
+	end
+end
+addon.configChangedFuncs.onesize = addon.configChangedFuncs.fontscale
+
+addon.configChangedFuncs.runOnce.healthoffset = function(val)
+	addon:RegisterSize('tex', 'healthOffset', val)
+end
+addon.configChangedFuncs.healthoffset = function(frame, val)
+	addon:UpdateHealthText(frame, frame.trivial)
+	addon:UpdateAltHealthText(frame, frame.trivial)
+	addon:UpdateLevel(frame, frame.trivial)
+	addon:UpdateName(frame, frame.trivial)
+end
+
+addon.configChangedFuncs.Health = function(frame)
+	if frame:IsShown() then
+		-- update health display
+		OnHealthValueChanged(frame.oldHealth, frame.oldHealth:GetValue())
+	end
+end
+addon.configChangedFuncs.friendly = addon.configChangedFuncs.Health
+addon.configChangedFuncs.hostile = addon.configChangedFuncs.Health
+
+addon.configChangedFuncs.runOnce.bartexture = function(val)
+	addon.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, val)
+	UpdateAllBars()
+end
+
+addon.configChangedFuncs.runOnce.font = function(val)
+	addon.font = LSM:Fetch(LSM.MediaType.FONT, val)
+	UpdateAllFonts()
+end
+
+addon.configChangedFuncs.targetglowcolour = function(frame, val)
+	frame.targetGlow:SetVertexColor(unpack(val))
+end
 ------------------------------------------- Listen for LibSharedMedia changes --
--- TODO support for globals etc
-function addon:LSMFontRegistered(msg, mediatype, key)
-	if mediatype ~= LSM.MediaType.FONT then return end
-	if key == self.db.profile.fonts.options.font then
-		self.font = LSM:Fetch(mediatype, key)
-		self:UpdateAllFonts()
+function addon:LSMMediaRegistered(msg, mediatype, key)
+		print(key)
+	if mediatype == LSM.MediaType.FONT then
+		if key == self.db.profile.fonts.options.font then
+			self.font = LSM:Fetch(mediatype, key)
+			UpdateAllFonts()
+		end
+	elseif mediatype == LSM.MediaType.STATUSBAR then
+		if key == self.db.profile.general.bartexture then
+			self.bartexture = LSM:Fetch(mediatype, key)
+			UpdateAllFonts()
+		end
 	end
 end
 -------------------------------------------------- Listen for profile changes --
@@ -376,18 +402,22 @@ function addon:OnInitialize()
 	LibStub('AceConfigDialog-3.0'):AddToBlizOptions('kuinameplates-profiles', 'Profiles', 'Kui Nameplates')
 	
 	self.db.RegisterCallback(self, 'OnProfileChanged', 'ProfileChanged')
-	LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMFontRegistered')
+	LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMMediaRegistered')
 
 	addon:CreateConfigChangedListener(addon)
 end
 ---------------------------------------------------------------------- enable --
 function addon:OnEnable()
-	-- get font from LSM
+	-- get font and status bar texture from LSM
 	self.font = LSM:Fetch(LSM.MediaType.FONT, self.db.profile.fonts.options.font)
+	self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, self.db.profile.general.bartexture)
 	
+	-- handle deleted or invalid files
 	if not self.font then
-		-- or fallback to default
 		self.font = LSM:Fetch(LSM.MediaType.FONT, 'Yanone Kaffeesatz')
+	end
+	if not self.bartexture then
+		self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, 'Kui status bar')
 	end
 
 	if self.db.profile.general.fixaa then
