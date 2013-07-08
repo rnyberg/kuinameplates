@@ -1,3 +1,6 @@
-* fix bug with fonts on 5.4 PTR
+* **add option to change statusbar textures**
 * add seed of corruption as a tracked aura for warlocks
+* fix potential issue where changing the font would not cause an update on frames, or would cause a lua error
+* fix configuration interface does not open correctly the first time the slash command is used
+* fix bug with fonts on 5.4 PTR
 * bump kui minor
