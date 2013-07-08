@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'Kui-1.0', 5
+local MAJOR, MINOR = 'Kui-1.0', 6
 local kui = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not kui then
@@ -140,11 +140,12 @@ kui.CreateFontString = function(parent, args)
 	alpha	= args.alpha or 1
 	shadow	= args.shadow or false
 
-	ob:SetFont(font, size)
+	ob:SetFont(font, size, (outline and 'OUTLINE' or '')..(monochrome and ' MONOCHROME' or ''))
 	ob:SetAlpha(alpha)
 	
-	kui.ModifyFontFlags(ob, outline, 'OUTLINE')
-	kui.ModifyFontFlags(ob, mono, 'MONOCHROME')
+	-- as of 5.4 PTR, using :GetFont immediately after :SetFont causes issues
+--	kui.ModifyFontFlags(ob, outline, 'OUTLINE')
+--	kui.ModifyFontFlags(ob, mono, 'MONOCHROME')
 
 	if shadow then
 		ob:SetShadowColor(0, 0, 0, 1)

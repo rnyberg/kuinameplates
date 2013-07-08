@@ -616,6 +616,7 @@ function kn:InitFrame(frame)
 		f:SetAllPoints(frame)
 	end
 
+	-- TODO legacy compatibility; remove
 	parent = f
 	f.parent = parent
 	

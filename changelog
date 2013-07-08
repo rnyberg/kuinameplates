@@ -1,2 +1,3 @@
-* fix compatibility issues with VialCooldowns
-* make combo point icons scale without becoming pixelated
+* fix bug with fonts on 5.4 PTR
+* add seed of corruption as a tracked aura for warlocks
+* bump kui minor
