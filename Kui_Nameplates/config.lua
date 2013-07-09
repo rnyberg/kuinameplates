@@ -160,7 +160,7 @@ do
 						type = 'select',
 						dialogControl = 'LSM30_Statusbar',
 						values = AceGUIWidgetLSMlists.statusbar,
-						order = 5
+						order = 10,
 					},
 				}
 			},

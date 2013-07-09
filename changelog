@@ -1,5 +1,8 @@
 * **add option to change statusbar textures**
+* **add option to make auras pulsate when they have <= 5 seconds remaining**
+(enabled by default)
 * add seed of corruption as a tracked aura for warlocks
+* fix corruption was not a tracked aura for warlocks
 * fix potential issue where changing the font would not cause an update on frames, or would cause a lua error
 * fix configuration interface does not open correctly the first time the slash command is used
 * fix bug with fonts on 5.4 PTR

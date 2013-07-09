@@ -377,7 +377,6 @@ addon.configChangedFuncs.targetglowcolour = function(frame, val)
 end
 ------------------------------------------- Listen for LibSharedMedia changes --
 function addon:LSMMediaRegistered(msg, mediatype, key)
-		print(key)
 	if mediatype == LSM.MediaType.FONT then
 		if key == self.db.profile.fonts.options.font then
 			self.font = LSM:Fetch(mediatype, key)

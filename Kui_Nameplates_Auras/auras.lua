@@ -56,12 +56,66 @@ local function ArrangeButtons(self)
 	end
 end
 
+local function StopPulsatingAura(button)
+	kui.frameFadeRemoveFrame(button)
+	button.doPulsate = nil
+	button.fading = nil
+	button.faded = nil
+	button:SetAlpha(1)
+end
+
+local function DoPulsateAura(button)
+	if button.fading or not button.doPulsate then return end
+
+	if not button.faded then
+		-- fade the button out..
+		button.fading = true
+		
+		kui.frameFade(button, {
+			mode = 'OUT',
+			endAlpha = .5,
+			timeToFade = .5,
+			finishedFunc = function()
+				button.fading = nil
+				button.faded = true
+
+				DoPulsateAura(button)
+			end
+		})
+	else
+		-- and back in
+		button.fading = true
+
+		kui.frameFade(button, {
+			startAlpha = .5,
+			timeToFade = .5,
+			finishedFunc = function()
+				button.fading = nil
+				button.faded = nil
+
+				DoPulsateAura(button)
+			end
+		})
+	end
+end
+	
 local function OnAuraUpdate(self, elapsed)
 	self.elapsed = self.elapsed - elapsed
 
 	if self.elapsed <= 0 then
 		local timeLeft = floor(self.expirationTime - GetTime())
 		
+		if mod.db.profile.display.pulsate then
+			if self.doPulsate and timeLeft > 5 then
+				-- reset pulsating status if the time is extended
+				StopPulsatingAura(self)
+			elseif not self.doPulsate and timeLeft <= 5 then
+				-- make the aura pulsate
+				self.doPulsate = true
+				DoPulsateAura(self)
+			end
+		end
+
 		if mod.db.profile.display.timerThreshold > -1 and
 		   timeLeft > mod.db.profile.display.timerThreshold
 		then
@@ -108,6 +162,9 @@ local function OnAuraHide(self)
 
 	self.time:Hide()
 	self.spellId = nil
+
+	-- reset button pulsating
+	StopPulsatingAura(self)
 
 	parent:ArrangeButtons()
 end
@@ -252,6 +309,7 @@ function mod:UPDATE_MOUSEOVER_UNIT()
 	self:UNIT_AURA('UNIT_AURA', 'mouseover')
 end
 
+-- TODO this is leaky, particularly `foundIds`
 function mod:UNIT_AURA(event, unit)
 	-- select the unit's nameplate	
 	--unit = 'target' -- DEBUG
@@ -266,16 +324,11 @@ function mod:UNIT_AURA(event, unit)
 		filter = filter..'HARMFUL'
 	end
 
-	-- hide currently displayed auras
-	local _,button
-	for _,button in pairs(frame.auras.spellIds) do
-		button:Hide()
-	end
-
+	local foundIds = {}
 	for i = 0,40 do
 		local name, _, icon, count, _, duration, expirationTime, _, _, _, spellId = UnitAura(unit, i, filter)
 
-		if name and
+		if  name and
 		   (not self.db.profile.behav.useWhitelist or
 		    whitelist[spellId]) and
 		   (duration >= self.db.profile.display.lengthMin) and
@@ -283,9 +336,19 @@ function mod:UNIT_AURA(event, unit)
 		   	duration > 0 and
 		    duration <= self.db.profile.display.lengthMax))
 		then
+			foundIds[spellId] = true
+
 			local button = frame.auras:GetAuraButton(spellId, icon, count, duration, expirationTime)
 			frame.auras:Show()
 			button:Show()
+		end
+	end
+
+	-- remove buttons belonging to spell IDs that were not found
+	local spellId, button
+	for spellId, button in pairs(frame.auras.spellIds) do
+		if not foundIds[spellId] then
+			button:Hide()
 		end
 	end
 end
@@ -318,6 +381,12 @@ function mod:GetOptions()
 				return not self.db.profile.enabled
 			end,
 			args = {
+				pulsate = {
+					name = 'Pulsate auras',
+					desc = 'Pulsate aura icons when they have less than 5 seconds remaining.',
+					type = 'toggle',
+					order = 40,
+				},
 				timerThreshold = {
 					name = 'Timer threshold (s)',
 					desc = 'Timer text will be displayed on auras when their remaining length is less than or equal to this value. -1 to always display timer.',
@@ -358,7 +427,7 @@ function mod:GetOptions()
 			args = {
 				useWhitelist = {
 					name = 'Use whitelist',
-					desc = 'Only display spells which your class needs to keep track of for PVP or an effective DPS rotation. Most passive effects are excluded.',
+					desc = 'Only display spells which your class needs to keep track of for PVP or an effective DPS rotation. Most passive effects are excluded.\n|cffff0000This list is currently not customisable in-game, however I do plan to make it so.',
 					type = 'toggle',
 					order = 0,
 				},
@@ -372,7 +441,8 @@ function mod:OnInitialize()
 		profile = {
 			enabled = false,
 			display = {
-				timerThreshold = 20,
+				pulsate = true,
+				timerThreshold = 60,
 				lengthMin = 0,
 				lengthMax = -1,
 			},

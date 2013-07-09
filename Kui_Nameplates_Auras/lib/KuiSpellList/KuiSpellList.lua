@@ -202,6 +202,7 @@ local whitelist = {
 		[109773] = true, -- dark intent
 	
 		[172] = true,    -- corruption
+		[146739] = true, -- corruption - possibly afflic. version
 		[87389] = true,  -- Soulburn: Seed of Corruption
 		[348] = true,    -- immolate
 		[108686] = true, -- immolate (aoe)
