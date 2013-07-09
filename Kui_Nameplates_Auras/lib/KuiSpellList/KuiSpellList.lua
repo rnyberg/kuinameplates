@@ -256,6 +256,7 @@ local whitelist = {
 		[6346] = true,   -- fear ward
 		[33206] = true,  -- pain suppression
 		[41635] = true,  -- prayer of mending buff
+		[47753] = true,  -- divine aegis
 		[47788] = true,  -- guardian spirit
 		[114908] = true, -- spirit shell shield
 		
