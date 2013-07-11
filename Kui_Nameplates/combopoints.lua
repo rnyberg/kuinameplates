@@ -124,7 +124,6 @@ function mod:GetOptions()
 			name = 'Show combo points',
 			desc = 'Show combo points on the target',
 			type = 'toggle',
-			width = 'double',
 			order = 0
 		},
 		scale = {

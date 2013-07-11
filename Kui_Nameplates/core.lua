@@ -79,11 +79,6 @@ local defaults = {
 			fadeall     = false, -- fade all plates by default
 			fadedalpha  = .5, -- the alpha value to fade plates out to
 		},
-		tank = {
-			enabled    = false, -- recolour a plate's bar and glow colour when you have threat
-			barcolour  = { .2, .9, .1, 1 }, -- the bar colour to use when you have threat
-			glowcolour = { 1, 0, 0, 1 } -- the glow colour to use when you have threat
-		},
 		text = {
 			level        = true, -- display levels
 			friendlyname = { 1, 1, 1 }, -- friendly name text colour

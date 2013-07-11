@@ -11,6 +11,7 @@ config.lua
 create.lua
 layout.lua
 
+tankmode.lua
 castbar.lua
 castwarnings.lua
 combopoints.lua

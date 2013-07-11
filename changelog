@@ -1,6 +1,9 @@
 * **add option to change statusbar textures**
 * **add option to make auras pulsate when they have <= 5 seconds remaining**
 (enabled by default)
+* **add smart tankmode option**, automatically enables or disables tankmode
+based on your current specialisation's role
+* new file: tankmode.lua
 * add seed of corruption as a tracked aura for warlocks
 * add divine aegis as a tracked aura for priests
 * fix corruption was not a tracked aura for warlocks

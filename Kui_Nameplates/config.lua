@@ -116,7 +116,7 @@ do
 						name = 'Fix aliasing',
 						desc = 'Attempt to make plates appear sharper. Has a positive effect on FPS, but will make plates appear a bit "loose", especially at low frame rates. Works best when uiscale is disabled and at larger resolutions (lower resolutions automatically downscale the interface regardless of uiscale setting).\n\n|cffff0000UI reload required to take effect.',
 						type = 'toggle',
-						width = 'double',
+						width = 'full',
 						order = 3
 					},
 					targetglow = {
@@ -265,7 +265,7 @@ do
 						name = 'Smooth health bar',
 						desc = 'Smoothly animate health bar value updates',
 						type = 'toggle',
-						width = 'double',
+						width = 'full',
 						order = 3
 					},
 					friendly = {
@@ -282,32 +282,6 @@ do
 						pattern = '([<=]:[dmcpb];)',
 						order = 6
 					}
-				}
-			},
-			tank = {
-				name = 'Tank mode',
-				type = 'group',
-				order = 5,
-				args = {
-					enabled = {
-						name = 'Enable tank mode',
-						desc = 'Change the colour of a plate\'s health bar and border when you have threat on its unit',
-						type = 'toggle',
-						order = 0
-					},
-					barcolour = {
-						name = 'Bar colour',
-						desc = 'The bar colour to use when you have threat',
-						type = 'color',
-						order = 1
-					},
-					glowcolour = {
-						name = 'Glow colour',
-						desc = 'The glow (border) colour to use when you have threat',
-						type = 'color',
-						hasAlpha = true,
-						order = 2
-					},
 				}
 			},
 			fonts = {

@@ -49,7 +49,7 @@ end
 local function SetHealthColour(self)
 	if self.hasThreat then
 		self.health.reset = true
-		self.health:SetStatusBarColor(unpack(addon.db.profile.tank.barcolour))
+		self.health:SetStatusBarColor(unpack(addon.TankModule.db.profile.barcolour))
 		return
 	end
 
@@ -415,13 +415,13 @@ local function UpdateFrameCritical(self)
 		self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
 		self:SetGlowColour(self.glow.r, self.glow.g, self.glow.b)
 
-		if not self.friend and addon.db.profile.tank.enabled then
+		if not self.friend and addon.TankModule and addon.TankMode then
 			-- in tank mode; is the default glow red (are we tanking)?
 			self.hasThreat = (self.glow.g + self.glow.b) < .1
 
 			if self.hasThreat then
 				-- tanking; recolour bar & glow
-				local r, g, b, a = unpack(addon.db.profile.tank.glowcolour)
+				local r, g, b, a = unpack(addon.TankModule.db.profile.glowcolour)
 				self:SetGlowColour(r, g, b, a)
 				self:SetHealthColour()
 			end
