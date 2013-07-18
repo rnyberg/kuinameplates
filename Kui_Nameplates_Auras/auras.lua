@@ -9,6 +9,7 @@ local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local whitelist = LibStub('KuiSpellList-1.0').GetImportantSpells(select(2, UnitClass("player")))
 local kui = LibStub('Kui-1.0')
 local mod = addon:NewModule('Auras', 'AceEvent-3.0')
+local _
 
 local GetTime, floor, ceil = GetTime, floor, ceil
 
@@ -309,7 +310,6 @@ function mod:UPDATE_MOUSEOVER_UNIT()
 	self:UNIT_AURA('UNIT_AURA', 'mouseover')
 end
 
--- TODO this is leaky, particularly `foundIds`
 function mod:UNIT_AURA(event, unit)
 	-- select the unit's nameplate	
 	--unit = 'target' -- DEBUG
@@ -324,7 +324,6 @@ function mod:UNIT_AURA(event, unit)
 		filter = filter..'HARMFUL'
 	end
 
-	local foundIds = {}
 	for i = 0,40 do
 		local name, _, icon, count, _, duration, expirationTime, _, _, _, spellId = UnitAura(unit, i, filter)
 
@@ -336,20 +335,20 @@ function mod:UNIT_AURA(event, unit)
 		   	duration > 0 and
 		    duration <= self.db.profile.display.lengthMax))
 		then
-			foundIds[spellId] = true
-
 			local button = frame.auras:GetAuraButton(spellId, icon, count, duration, expirationTime)
 			frame.auras:Show()
 			button:Show()
+			button.used = true
 		end
 	end
 
-	-- remove buttons belonging to spell IDs that were not found
-	local spellId, button
-	for spellId, button in pairs(frame.auras.spellIds) do
-		if not foundIds[spellId] then
+	for _,button in pairs(frame.auras.buttons) do
+		-- hide buttons that weren't used this update
+		if not button.used then
 			button:Hide()
 		end
+
+		button.used = nil
 	end
 end
 
@@ -383,7 +382,7 @@ function mod:GetOptions()
 			args = {
 				pulsate = {
 					name = 'Pulsate auras',
-					desc = 'Pulsate aura icons when they have less than 5 seconds remaining.',
+					desc = 'Pulsate aura icons when they have less than 5 seconds remaining.\nSlightly increases memory usage.',
 					type = 'toggle',
 					order = 40,
 				},
