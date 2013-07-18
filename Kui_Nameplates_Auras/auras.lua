@@ -13,6 +13,9 @@ local _
 
 local GetTime, floor, ceil = GetTime, floor, ceil
 
+-- auras pulsate when they have less than this many seconds remaining
+local FADE_THRESHOLD = 5
+
 -- combat log events to listen to for fading auras
 local auraEvents = {
 --	['SPELL_DISPEL'] = true,
@@ -56,7 +59,40 @@ local function ArrangeButtons(self)
 		self:Show()
 	end
 end
+-- aura pulsating functions ----------------------------------------------------
+local DoPulsateAura
+do
+	local function OnFadeOutFinished(button)
+		button.fading = nil
+		button.faded = true
+		DoPulsateAura(button)
+	end
+	local function OnFadeInFinished(button)
+		button.fading = nil
+		button.faded = nil
+		DoPulsateAura(button)
+	end
 
+	DoPulsateAura = function(button)
+		if button.fading or not button.doPulsate then return end
+		button.fading = true
+	
+		if button.faded then
+			kui.frameFade(button, {
+				startAlpha = .5,
+				timeToFade = .5,
+				finishedFunc = OnFadeInFinished
+			})
+		else
+			kui.frameFade(button, {
+				mode = 'OUT',
+				endAlpha = .5,
+				timeToFade = .5,
+				finishedFunc = OnFadeOutFinished
+			})
+		end
+	end
+end
 local function StopPulsatingAura(button)
 	kui.frameFadeRemoveFrame(button)
 	button.doPulsate = nil
@@ -64,42 +100,7 @@ local function StopPulsatingAura(button)
 	button.faded = nil
 	button:SetAlpha(1)
 end
-
-local function DoPulsateAura(button)
-	if button.fading or not button.doPulsate then return end
-
-	if not button.faded then
-		-- fade the button out..
-		button.fading = true
-		
-		kui.frameFade(button, {
-			mode = 'OUT',
-			endAlpha = .5,
-			timeToFade = .5,
-			finishedFunc = function()
-				button.fading = nil
-				button.faded = true
-
-				DoPulsateAura(button)
-			end
-		})
-	else
-		-- and back in
-		button.fading = true
-
-		kui.frameFade(button, {
-			startAlpha = .5,
-			timeToFade = .5,
-			finishedFunc = function()
-				button.fading = nil
-				button.faded = nil
-
-				DoPulsateAura(button)
-			end
-		})
-	end
-end
-	
+--------------------------------------------------------------------------------
 local function OnAuraUpdate(self, elapsed)
 	self.elapsed = self.elapsed - elapsed
 
@@ -107,10 +108,10 @@ local function OnAuraUpdate(self, elapsed)
 		local timeLeft = floor(self.expirationTime - GetTime())
 		
 		if mod.db.profile.display.pulsate then
-			if self.doPulsate and timeLeft > 5 then
+			if self.doPulsate and timeLeft > FADE_THRESHOLD then
 				-- reset pulsating status if the time is extended
 				StopPulsatingAura(self)
-			elseif not self.doPulsate and timeLeft <= 5 then
+			elseif not self.doPulsate and timeLeft <= FADE_THRESHOLD then
 				-- make the aura pulsate
 				self.doPulsate = true
 				DoPulsateAura(self)

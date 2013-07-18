@@ -285,7 +285,7 @@ kui.frameFadeOnUpdate = function(self, elapsed)
 					kui.frameFadeRemoveFrame(frame)
 					
 					if info.finishedFunc then
-						info.finishedFunc()
+						info.finishedFunc(frame)
 						info.finishedFunc = nil
 					end
 				end
@@ -308,9 +308,13 @@ end
 		fadeHoldTime 	= seconds to wait after ending animation before calling finishedFunc,
 		finishedFunc	= function to call after animation has ended,
 	}
+
+	If you plan to reuse `info`, it should be passed as a single table,
+	NOT a reference, as the table will be directly edited.
 ]]
 kui.frameFade = function(frame, info)
     if not frame then return end
+    if kui.frameIsFading(frame) then return end
 
     info		= info or {}
     info.mode	= info.mode or 'IN'
@@ -325,9 +329,7 @@ kui.frameFade = function(frame, info)
 	
 	frame:SetAlpha(info.startAlpha)
 	frame.fadeInfo = info
-	
-	if not kui.frameIsFading(frame) then
-		tinsert(kui.FADEFRAMES, frame)
-		kui.frameFadeFrame:SetScript('OnUpdate', kui.frameFadeOnUpdate)
-	end
+
+	tinsert(kui.FADEFRAMES, frame)
+	kui.frameFadeFrame:SetScript('OnUpdate', kui.frameFadeOnUpdate)
 end
