@@ -63,9 +63,16 @@ spellListBg:SetPoint('BOTTOMRIGHT', spellListScroll, 30, -10)
 ----------------------------------------------------- element script handlers --
 local function SpellFrameOnEnter(self)
 	self.highlight:Show()
+
+	if self.link then
+		GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
+		GameTooltip:SetHyperlink(self.link)
+		GameTooltip:Show()
+	end
 end
 local function SpellFrameOnLeave(self)
 	self.highlight:Hide()
+	GameTooltip:Hide()
 end
 
 ------------------------------------------------------------------- functions --
@@ -114,6 +121,8 @@ local function CreateSpellFrame(spellid)
 		f:SetScript('OnEnter', SpellFrameOnEnter)
 		f:SetScript('OnLeave', SpellFrameOnLeave)
 	end
+
+	f.link = GetSpellLink(spellid)
 
 	f.icon:SetTexture(icon)
 	f.name:SetText(name)
