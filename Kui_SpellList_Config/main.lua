@@ -18,15 +18,48 @@
 local addon,ns = ...
 local category = 'Kui Spell List'
 local spelllist = LibStub('KuiSpellList-1.0')
+local f = CreateFrame('Frame')
 
 local _
 local whitelist
-local class
+local class -- the currently selected class
 local spellFrames = {}
 local classes = {
 	'DRUID', 'HUNTER', 'MAGE', 'DEATHKNIGHT', 'WARRIOR', 'PALADIN',
 	'WARLOCK', 'SHAMAN', 'PRIEST', 'ROGUE', 'MONK'
 }
+
+------------------------------------------------- whitelist control functions --
+local function RemoveAddedSpell(spellid)
+	KuiSpellListCustom.Classes[class] = KuiSpellListCustom.Classes[class] or {}
+	KuiSpellListCustom.Classes[class][spellid] = nil
+
+	print('removed added spell `'..spellid..'`')
+	print(GetSpellInfo(spellid))
+end
+
+local function AddSpellByName(spellname)
+	KuiSpellListCustom.Classes[class] = KuiSpellListCustom.Classes[class] or {}
+	KuiSpellListCustom.Classes[class][spellname] = true
+
+	print('add spell by name `'..spellname..'`')
+end
+
+local function AddSpellByID(spellid)
+	KuiSpellListCustom.Classes[class] = KuiSpellListCustom.Classes[class] or {}
+	KuiSpellListCustom.Classes[class][spellid] = true
+
+	print('add spell by ID `'..spellid..'`')
+	print(GetSpellInfo(spellid))
+end
+
+local function IgnoreSpellID(spellid)
+	KuiSpellListCustom.Ignore[class] = KuiSpellListCustom.Ignore[class] or {}
+	KuiSpellListCustom.Ignore[class][spellid] = true
+
+	print('ignore default spell `'..spellid..'`')
+	print(GetSpellInfo(spellid))
+end
 
 ------------------------------------------------------------- create category --
 local opt = CreateFrame('Frame', 'KuiSpellListConfig', InterfaceOptionsFramePanelContainer)
@@ -59,6 +92,17 @@ spellListBg:SetPoint('TOPLEFT', spellListScroll, -10, 10)
 spellListBg:SetPoint('BOTTOMRIGHT', spellListScroll, 30, -10)
 
 -- (text entry box to add spell by ID or name)
+local spellEntryBox = CreateFrame('EditBox', 'KuiSpellListConfigSpellEntryBox', opt, 'InputBoxTemplate')
+spellEntryBox:SetAutoFocus(false)
+spellEntryBox:EnableMouse(true)
+spellEntryBox:SetMaxLetters(100)
+spellEntryBox:SetPoint('TOPLEFT', spellListScroll, 'BOTTOMLEFT', -4, -10)
+spellEntryBox:SetSize(284, 25)
+
+local spellAddButton = CreateFrame('Button', 'KuiSpellListConfigSpellAddButton', opt, 'UIPanelButtonTemplate')
+spellAddButton:SetText('Add')
+spellAddButton:SetPoint('LEFT', spellEntryBox, 'RIGHT')
+spellAddButton:SetSize(50, 20)
 
 ----------------------------------------------------- element script handlers --
 local function SpellFrameOnEnter(self)
@@ -73,6 +117,67 @@ end
 local function SpellFrameOnLeave(self)
 	self.highlight:Hide()
 	GameTooltip:Hide()
+end
+local function SpellFrameOnMouseUp(self, button)
+	if button == 'RightButton' then
+		IgnoreSpellID(self.id)
+	end
+end
+
+local function SpellAddButtonOnClick(self)
+	if spellEntryBox.spellID then
+		AddSpellByID(spellEntryBox.spellID)
+	elseif spellEntryBox:GetText() ~= '' then
+		-- TODO only do this if verify is unchecked
+		AddSpellByName(spellEntryBox:GetText())
+	end
+
+	spellEntryBox:SetText('')
+	spellEntryBox:SetTextColor(1,1,1)
+	spellEntryBox:SetFocus()
+end
+
+local function SpellEntryBoxOnEnterPressed(self)
+	spellAddButton:Click()
+end
+
+local function SpellEntryBoxOnEscapePressed(self)
+	self:ClearFocus()
+end
+
+local function SpellEntryBoxOnTextChanged(self, user)
+	self.spellID = nil
+	if not user then return end
+	
+	local text = self:GetText()
+
+	if text == '' then
+		spellEntryBox:SetTextColor(1,1,1)
+		return
+	end
+
+	local usedID, name
+
+	if strmatch(text, '^%d+$') then
+		-- using a spell ID
+		text = tonumber(text)
+		usedID = true
+	end
+
+	name = GetSpellInfo(text)
+
+	if name then
+		self:SetTextColor(0, 1, 0)
+
+		if not usedID then
+			-- get the spell ID from the link
+			self.spellID = strmatch(GetSpellLink(name), ':(%d+).h')
+		else
+			self.spellID = text
+		end
+	else
+		self:SetTextColor(1, 0, 0)
+	end
 end
 
 ------------------------------------------------------------------- functions --
@@ -120,8 +225,10 @@ local function CreateSpellFrame(spellid)
 
 		f:SetScript('OnEnter', SpellFrameOnEnter)
 		f:SetScript('OnLeave', SpellFrameOnLeave)
+		f:SetScript('OnMouseUp', SpellFrameOnMouseUp)
 	end
 
+	f.id = spellid
 	f.link = GetSpellLink(spellid)
 
 	f.icon:SetTexture(icon)
@@ -160,22 +267,48 @@ local function ClassUpdate()
 		pv = f
 	end
 end
-
 ------------------------------------------------------------- script handlers --
 local function OnOptionsShow(self)
 	class = select(2, UnitClass('player'))
 	ClassUpdate()
+
+	spellEntryBox:SetFocus()
 end
 local function OnOptionsHide(self)
 	HideAllSpellFrames()
 end
 
+local function OnEvent(self, event, ...)
+	self[event](self, ...)
+end
+-------------------------------------------------------------- event handlers --
+function f:ADDON_LOADED(loaded)
+	if loaded ~= addon then return end
+	self:UnregisterEvent('ADDON_LOADED')
+
+	-- create/verify saved table
+	KuiSpellListCustom = KuiSpellListCustom or {}
+
+	-- spell IDs from the default whitelist to ignore
+	KuiSpellListCustom.Ignore = KuiSpellListCustom.Ignore or {}
+
+	-- individual classes' custom whitelists
+	KuiSpellListCustom.Classes = KuiSpellListCustom.Classes or {}
+end
 -------------------------------------------------------------------- finalise --
 opt:SetScript('OnShow', OnOptionsShow)
 opt:SetScript('OnHide', OnOptionsHide)
 
+spellEntryBox:SetScript('OnEnterPressed', SpellEntryBoxOnEnterPressed)
+spellEntryBox:SetScript('OnEscapePressed', SpellEntryBoxOnEscapePressed)
+spellEntryBox:SetScript('OnTextChanged', SpellEntryBoxOnTextChanged)
+
+spellAddButton:SetScript('OnClick', SpellAddButtonOnClick)
+
 InterfaceOptions_AddCategory(opt)
 
+f:SetScript('OnEvent', OnEvent)
+f:RegisterEvent('ADDON_LOADED')
 --------------------------------------------------------------- slash command --
 SLASH_KUISPELLLIST1 = '/kuislc'
 SLASH_KUISPELLLIST2 = '/kslc'
