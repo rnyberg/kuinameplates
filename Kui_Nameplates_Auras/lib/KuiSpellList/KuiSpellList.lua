@@ -1,11 +1,13 @@
-local MAJOR, MINOR = 'KuiSpellList-1.0', 3
+local MAJOR, MINOR = 'KuiSpellList-1.0', 4
 local KuiSpellList = LibStub:NewLibrary(MAJOR, MINOR)
+local _
 
 if not KuiSpellList then
 	-- already registered
 	return
 end
 
+local listeners = {}
 local whitelist = {
 --[[ Important spells ----------------------------------------------------------
 	Target auras which the player needs to keep track of.
@@ -352,6 +354,55 @@ local whitelist = {
 ]]
 }
 
+KuiSpellList.RegisterChanged = function(table, method)
+	-- register listener for whitelist updates
+	tinsert(listeners, { table, method })
+end
+
+KuiSpellList.WhitelistChanged = function()
+	-- inform listeners of whitelist update
+	for _,listener in ipairs(listeners) do
+		if (listener[1])[listener[2]] then
+			(listener[1])[listener[2]]()
+		end
+	end
+end
+
+KuiSpellList.GetDefaultSpells = function(class)
+	-- get spell list, ignoring KuiSpellListCustom
+	local list = {}
+
+	-- return a copy of the list rather than a reference
+	for spellid,_ in pairs(whitelist[class]) do
+		list[spellid] = true
+	end
+
+	return list
+end
+
 KuiSpellList.GetImportantSpells = function(class)
-	return whitelist[class]
+	-- get spell list and merge with KuiSpellListCustom if it is set
+	local list = KuiSpellList.GetDefaultSpells(class)
+
+	if KuiSpellListCustom then
+		if KuiSpellListCustom.Ignore and
+		   KuiSpellListCustom.Ignore[class]
+		then
+			-- remove ignored spells
+			for spellid,_ in pairs(KuiSpellListCustom.Ignore[class]) do
+				list[spellid] = nil
+			end
+		end
+
+		if KuiSpellListCustom.Classes and
+		   KuiSpellListCustom.Classes[class]
+		then
+			-- merge custom added spells
+			for spellid,_ in pairs(KuiSpellListCustom.Classes[class]) do
+				list[spellid] = true
+			end
+		end
+	end
+
+	return list
 end

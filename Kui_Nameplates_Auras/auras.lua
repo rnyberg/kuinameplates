@@ -6,10 +6,10 @@
    Auras module for Kui_Nameplates core layout.
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local whitelist = LibStub('KuiSpellList-1.0').GetImportantSpells(select(2, UnitClass("player")))
+local spelllist = LibStub('KuiSpellList-1.0')
 local kui = LibStub('Kui-1.0')
 local mod = addon:NewModule('Auras', 'AceEvent-3.0')
-local _
+local whitelist, _
 
 local GetTime, floor, ceil = GetTime, floor, ceil
 
@@ -327,10 +327,11 @@ function mod:UNIT_AURA(event, unit)
 
 	for i = 0,40 do
 		local name, _, icon, count, _, duration, expirationTime, _, _, _, spellId = UnitAura(unit, i, filter)
+		name = name and strlower(name) or nil
 
 		if  name and
 		   (not self.db.profile.behav.useWhitelist or
-		    whitelist[spellId]) and
+		    (whitelist[spellId] or whitelist[name])) and
 		   (duration >= self.db.profile.display.lengthMin) and
 		   (self.db.profile.display.lengthMax == -1 or (
 		   	duration > 0 and
@@ -353,6 +354,10 @@ function mod:UNIT_AURA(event, unit)
 	end
 end
 
+function mod:WhitelistChanged()
+	-- update spell whitelist
+	whitelist = spelllist.GetImportantSpells(select(2, UnitClass("player")))
+end
 ---------------------------------------------------- Post db change functions --
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(val)
@@ -458,6 +463,9 @@ function mod:OnInitialize()
 
 	addon:InitModuleOptions(self)
 	mod:SetEnabledState(self.db.profile.enabled)
+
+	self:WhitelistChanged()
+	spelllist.RegisterChanged(self, 'WhitelistChanged')
 end
 
 function mod:OnEnable()
