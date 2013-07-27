@@ -432,7 +432,7 @@ function mod:GetOptions()
 			args = {
 				useWhitelist = {
 					name = 'Use whitelist',
-					desc = 'Only display spells which your class needs to keep track of for PVP or an effective DPS rotation. Most passive effects are excluded.\n|cffff0000This list is currently not customisable in-game, however I do plan to make it so.',
+					desc = 'Only display spells which your class needs to keep track of for PVP or an effective DPS rotation. Most passive effects are excluded.\n\n|cff00ff00You can use KuiSpellListConfig from Curse.com to customise this list.',
 					type = 'toggle',
 					order = 0,
 				},

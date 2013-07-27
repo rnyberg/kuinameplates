@@ -1,2 +1,4 @@
-* plug memory leak in Auras module (such that the option has no effect on memory usage unless it is enabled, then only when auras are actively pulsating)
-* add support for Kui_SpellList_Config to Kui_Nameplates_Auras (unreleased)
+* change tooltip text for "use whitelist" option, to point out that the list
+can be customised using KuiSpellListConfig
+* add KuiSpellListCustom as SavedVarible so that KuiSpellListConfig does not
+need to be loaded for the customisations to take effect
