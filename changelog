@@ -2,3 +2,4 @@
 can be customised using KuiSpellListConfig
 * add KuiSpellListCustom as SavedVarible so that KuiSpellListConfig does not
 need to be loaded for the customisations to take effect
+* fix monochrome font setting isn't correctly reapplied
