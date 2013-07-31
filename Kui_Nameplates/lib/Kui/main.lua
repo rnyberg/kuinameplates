@@ -140,7 +140,7 @@ kui.CreateFontString = function(parent, args)
 	alpha	= args.alpha or 1
 	shadow	= args.shadow or false
 
-	ob:SetFont(font, size, (outline and 'OUTLINE' or '')..(monochrome and ' MONOCHROME' or ''))
+	ob:SetFont(font, size, (outline and 'OUTLINE' or '')..(mono and ' MONOCHROME' or ''))
 	ob:SetAlpha(alpha)
 	
 	-- as of 5.4 PTR, using :GetFont immediately after :SetFont causes issues
