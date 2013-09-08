@@ -7,7 +7,6 @@
    ===
    * customisation for sizes/positions of auras & width of container frame, etc
    * customisation for raid target icons
-   * probably don't need to adjust for uiscale since the frame is parented to WorldFrame now, test
    * feature: whitelist to hide/colour nameplates based on name
    * feature: un-fade units which are casting
    * fix spell icon is 1 pixel too large/small depending on uiscale
@@ -339,16 +338,16 @@ local function OnFrameUpdate(self, e)
 	f.defaultAlpha = self:GetAlpha()
 
 	------------------------------------------------------------------- Alpha --
-	if (f.defaultAlpha == 1 and
-	    targetExists)          or
-	   (addon.db.profile.fade.fademouse and
-	    f.highlighted)
-	then
+	if (f.defaultAlpha == 1 and targetExists) or
+	   (addon.db.profile.fade.fademouse and f.highlighted) then
 		f.currentAlpha = 1
-	elseif	targetExists or addon.db.profile.fade.fadeall then
+
+	elseif targetExists or addon.db.profile.fade.fadeall then
 		f.currentAlpha = addon.db.profile.fade.fadedalpha or .3
+
 	else
 		f.currentAlpha = 1
+		
 	end
 	------------------------------------------------------------------ Fading --
 	if addon.db.profile.fade.smooth then

@@ -144,7 +144,9 @@ function mod:CreateCastbar(msg, frame)
 			size = 'small', alpha = .5 })
 		frame.castbar.max:SetPoint('TOPRIGHT', frame.castbar.curr, 'TOPLEFT', -1, 0)
 
-		frame.castbar.name:SetPoint('TOPRIGHT', frame.castbar.max, 'TOPLEFT', -1, 0)
+		if frame.castbar.name then
+			frame.castbar.name:SetPoint('TOPRIGHT', frame.castbar.max, 'TOPLEFT', -1, 0)
+		end
 	end
 
 	if self.db.profile.display.spellicon then
