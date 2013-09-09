@@ -1,5 +1,2 @@
-* change tooltip text for "use whitelist" option, to point out that the list
-can be customised using KuiSpellListConfig
-* add KuiSpellListCustom as SavedVarible so that KuiSpellListConfig does not
-need to be loaded for the customisations to take effect
-* fix monochrome font setting isn't correctly reapplied
+* bump TOC to 50400
+* fix lua error when spell name display is disabled
