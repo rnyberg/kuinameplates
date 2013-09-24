@@ -1,2 +1,4 @@
-* bump TOC to 50400
-* fix lua error when spell name display is disabled
+* add option to display decimal places on auras during the last second (enabled by default)
+* auras are now enabled by default
+* add cat thrash (106830) as a default tracked aura for guardian druids
+* fixed soulburn: seed of corruption was not tracking correctly for warlocks

@@ -105,7 +105,7 @@ local function OnAuraUpdate(self, elapsed)
 	self.elapsed = self.elapsed - elapsed
 
 	if self.elapsed <= 0 then
-		local timeLeft = floor(self.expirationTime - GetTime())
+		local timeLeft = self.expirationTime - GetTime()
 		
 		if mod.db.profile.display.pulsate then
 			if self.doPulsate and timeLeft > FADE_THRESHOLD then
@@ -123,9 +123,19 @@ local function OnAuraUpdate(self, elapsed)
 		then
 			self.time:Hide()
 		else
-			local timeLeftS = (timeLeft > 60 and
-			                   ceil(timeLeft/60)..'m' or
-			                   timeLeft)
+			local timeLeftS
+
+			if mod.db.profile.display.decimal and
+			   timeLeft <= 1 and timeLeft > 0
+			then
+				-- decimal places for the last second
+				timeLeftS = string.format("%.1f", timeLeft)
+			else
+				timeLeftS = (timeLeft > 60 and
+				             ceil(timeLeft/60)..'m' or
+				             floor(timeLeft)
+				            )
+			end
 
 			if timeLeft <= 5 then
 				-- red text
@@ -143,10 +153,19 @@ local function OnAuraUpdate(self, elapsed)
 		end
 		
 		if timeLeft < 0 then
+			-- used when a non-targeted mob's auras timer gets below 0
+			-- but the combat log hasn't reported that it has faded yet.
 			self.time:SetText('0')
 		end
 		
-		self.elapsed = .5
+		if mod.db.profile.display.decimal and
+		   timeLeft <= 2 and timeLeft > 0
+		then
+			-- faster updates in the last two seconds
+			self.elapsed = .05
+		else
+			self.elapsed = .5
+		end
 	end
 end
 
@@ -390,7 +409,13 @@ function mod:GetOptions()
 					name = 'Pulsate auras',
 					desc = 'Pulsate aura icons when they have less than 5 seconds remaining.\nSlightly increases memory usage.',
 					type = 'toggle',
-					order = 40,
+					order = 5,
+				},
+				decimal = {
+					name = 'Show decimal places',
+					desc = 'Show decimal places (.9 to .0) when an aura has less than one second remaining, rather than just showing 0.',
+					type = 'toggle',
+					order = 8,
 				},
 				timerThreshold = {
 					name = 'Timer threshold (s)',
@@ -444,9 +469,10 @@ end
 function mod:OnInitialize()
 	self.db = addon.db:RegisterNamespace(self.moduleName, {
 		profile = {
-			enabled = false,
+			enabled = true,
 			display = {
 				pulsate = true,
+				decimal = true,
 				timerThreshold = 60,
 				lengthMin = 0,
 				lengthMax = -1,
