@@ -123,7 +123,7 @@ kui.ModifyFontFlags = function(fs, io, flag)
 end
 
 kui.CreateFontString = function(parent, args)
-	local ob, font, size, outline, alpha, shadow
+	local ob, font, size, outline, alpha, shadow, mono
 	args = args or {}
 
 	if args.reset then
@@ -143,10 +143,6 @@ kui.CreateFontString = function(parent, args)
 	ob:SetFont(font, size, (outline and 'OUTLINE' or '')..(mono and ' MONOCHROME' or ''))
 	ob:SetAlpha(alpha)
 	
-	-- as of 5.4 PTR, using :GetFont immediately after :SetFont causes issues
---	kui.ModifyFontFlags(ob, outline, 'OUTLINE')
---	kui.ModifyFontFlags(ob, mono, 'MONOCHROME')
-
 	if shadow then
 		ob:SetShadowColor(0, 0, 0, 1)
 		ob:SetShadowOffset(type(shadow) == 'table' and unpack(shadow) or 1, -1)

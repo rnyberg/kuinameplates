@@ -9,7 +9,10 @@
    * customisation for raid target icons
    * feature: whitelist to hide/colour nameplates based on name
    * feature: un-fade units which are casting
+   * feature: un-fade units which are below a certain health value
+   * don't truncate long names (put health on the bottom of the health bar?)
    * fix spell icon is 1 pixel too large/small depending on uiscale
+   * ability to make certain auras bigger
 ]]
 
 local kui = LibStub('Kui-1.0')
@@ -111,6 +114,12 @@ local function SetGlowColour(self, r, g, b, a)
 end
 ---------------------------------------------------- Update health bar & text --
 local function OnHealthValueChanged(oldBar, curr)
+    if oldBar.oldHealth then
+        -- allow calling this as a function of the frame
+        oldBar = oldBar.oldHealth
+        curr = oldBar:GetValue()
+    end
+
 	local frame	= oldBar:GetParent():GetParent().kui
 	local min, max	= oldBar:GetMinMaxValues()
 	local deficit,    big, sml, condition, display, pattern, rules
@@ -235,7 +244,7 @@ local function OnFrameShow(self)
 	-- force health update
 	f:SetHealthColour()
 	f:SetGlowColour()
-	OnHealthValueChanged(f.oldHealth, f.oldHealth:GetValue())
+    f:OnHealthValueChanged()
 
 	if f.fixaa then
 		--@do-not-package@
@@ -592,6 +601,7 @@ function kn:InitFrame(frame)
     f.SetNameColour       = SetNameColour
     f.SetGlowColour       = SetGlowColour
 	f.SetCentre           = SetFrameCentre
+    f.OnHealthValueChanged = OnHealthValueChanged
 
     ------------------------------------------------------------------ Layout --
 	local parent

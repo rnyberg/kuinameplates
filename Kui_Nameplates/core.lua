@@ -351,7 +351,7 @@ end
 addon.configChangedFuncs.Health = function(frame)
 	if frame:IsShown() then
 		-- update health display
-		OnHealthValueChanged(frame.oldHealth, frame.oldHealth:GetValue())
+		frame:OnHealthValueChanged()
 	end
 end
 addon.configChangedFuncs.friendly = addon.configChangedFuncs.Health
