@@ -1,4 +1,2 @@
-* add option to display decimal places on auras during the last second (enabled by default)
-* auras are now enabled by default
-* add cat thrash (106830) as a default tracked aura for guardian druids
-* fixed soulburn: seed of corruption was not tracking correctly for warlocks
+* fix lua error when changing health display patterns
+* fix taint on variable `mono`
