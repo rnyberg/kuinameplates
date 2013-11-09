@@ -1,2 +1,2 @@
-* fix lua error when changing health display patterns
-* fix taint on variable `mono`
+* add option to avoid fading casting units
+* add option to avoid fading units below a specified health value

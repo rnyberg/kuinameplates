@@ -206,7 +206,28 @@ do
 						disabled = function(info)
 							return not addon.db.profile.fade.smooth
 						end
-					}
+					},
+					avoidhp = {
+						name = 'Don\'t fade units at low health',
+						desc = 'Avoid fading units which are at or below a health value, determined by avoidhpval.',
+						type = 'toggle'
+					},
+					avoidhpval = {
+						name = 'Low health value',
+						desc = 'The health percentage at which to keep nameplates faded in.',
+						type = 'range',
+						min = 1,
+						max = 100,
+						step = 1,
+						disabled = function(info)
+							return not addon.db.profile.fade.avoidhp
+						end
+					},
+					avoidcast = {
+						name = 'Don\'t fade casting units',
+						desc = 'Avoid fading units which are casting.',
+						type = 'toggle'
+					},
 				}
 			},
 			text = {

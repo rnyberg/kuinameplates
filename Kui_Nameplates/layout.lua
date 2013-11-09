@@ -127,6 +127,9 @@ local function OnHealthValueChanged(oldBar, curr)
 
 	frame.health:SetMinMaxValues(min, max)
 	frame.health:SetValue(curr)
+
+	-- always calculate and store percentage for external access
+	frame.health.percent = curr / max * 100
 	
 	-- select correct health display pattern
 	if frame.friend then
@@ -161,7 +164,7 @@ local function OnHealthValueChanged(oldBar, curr)
 				big = kui.num(curr)
 				sml = curr ~= max and kui.num(max)
 			elseif display == 'p' then
-				big = floor(curr / max * 100)
+				big = floor(frame.health.percent)
 				sml = kui.num(curr)
 			end
 
@@ -347,16 +350,25 @@ local function OnFrameUpdate(self, e)
 	f.defaultAlpha = self:GetAlpha()
 
 	------------------------------------------------------------------- Alpha --
-	if (f.defaultAlpha == 1 and targetExists) or
-	   (addon.db.profile.fade.fademouse and f.highlighted) then
+	-- determine alpha value!
+	if (f.defaultAlpha == 1 and targetExists)
+	   or
+	   -- avoid fading low hp units
+	   (addon.db.profile.fade.avoidhp and f.health.percent <= addon.db.profile.fade.avoidhpval)
+	   or
+       -- avoid fading casting units
+       (f.castbar and addon.db.profile.fade.avoidcast and f.castbar:IsShown())
+       or
+       -- avoid fading mouse-over'd units
+	   (addon.db.profile.fade.fademouse and f.highlighted)
+	then
 		f.currentAlpha = 1
-
 	elseif targetExists or addon.db.profile.fade.fadeall then
+		-- if a target exists or fadeall is enabled...
 		f.currentAlpha = addon.db.profile.fade.fadedalpha or .3
-
 	else
+		-- nothing is targeted!
 		f.currentAlpha = 1
-		
 	end
 	------------------------------------------------------------------ Fading --
 	if addon.db.profile.fade.smooth then

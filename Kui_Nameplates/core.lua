@@ -78,6 +78,9 @@ local defaults = {
 			fademouse   = false, -- fade in plates on mouse-over
 			fadeall     = false, -- fade all plates by default
 			fadedalpha  = .5, -- the alpha value to fade plates out to
+			avoidhp     = false,
+			avoidhpval  = 20,
+			avoidcast   = false,
 		},
 		text = {
 			level        = true, -- display levels
