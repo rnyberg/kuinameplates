@@ -8,8 +8,6 @@
    * customisation for sizes/positions of auras & width of container frame, etc
    * customisation for raid target icons
    * feature: whitelist to hide/colour nameplates based on name
-   * feature: un-fade units which are casting
-   * feature: un-fade units which are below a certain health value
    * don't truncate long names (put health on the bottom of the health bar?)
    * fix spell icon is 1 pixel too large/small depending on uiscale
    * ability to make certain auras bigger
@@ -354,10 +352,10 @@ local function OnFrameUpdate(self, e)
 	if (f.defaultAlpha == 1 and targetExists)
 	   or
 	   -- avoid fading low hp units
-	   (addon.db.profile.fade.avoidhp and f.health.percent <= addon.db.profile.fade.avoidhpval)
+	   (addon.db.profile.fade.rules.avoidhp and f.health.percent <= addon.db.profile.fade.rules.avoidhpval)
 	   or
        -- avoid fading casting units
-       (f.castbar and addon.db.profile.fade.avoidcast and f.castbar:IsShown())
+       (f.castbar and addon.db.profile.fade.rules.avoidcast and f.castbar:IsShown())
        or
        -- avoid fading mouse-over'd units
 	   (addon.db.profile.fade.fademouse and f.highlighted)
