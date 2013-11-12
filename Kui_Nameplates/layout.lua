@@ -7,8 +7,8 @@
    ===
    * customisation for sizes/positions of auras & width of container frame, etc
    * customisation for raid target icons
+   * option to hide frame shadow, only use as threat glow
    * feature: whitelist to hide/colour nameplates based on name
-   * don't truncate long names (put health on the bottom of the health bar?)
    * fix spell icon is 1 pixel too large/small depending on uiscale
    * ability to make certain auras bigger
 ]]

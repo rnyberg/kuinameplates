@@ -17,6 +17,11 @@ local function OnDefaultCastbarShow(self)
 
 	local f = self:GetParent():GetParent().kui
 
+	if kui.frameIsFading(f.castbar) then
+		kui.frameFadeRemoveFrame(f.castbar)
+		f.castbar:SetAlpha(1)
+	end
+
 	if f.castbar.name then
 		f.castbar.name:SetText(f.spellName:GetText())
 	end
@@ -67,8 +72,17 @@ end
 
 local function OnDefaultCastbarHide(self)
 	local f = self:GetParent():GetParent().kui
-	f.castbar.shield:Hide()
-	f.castbar:Hide()
+
+	kui.frameFade(f.castbar, {
+		mode		= 'OUT',
+		timeToFade	= .5,
+		startAlpha	= 1,
+		endAlpha	= 0,
+		finishedFunc = function()
+			f.castbar.shield:Hide()
+			f.castbar:Hide()
+		end,
+	})
 end
 
 local function OnDefaultCastbarUpdate(self, elapsed)
@@ -111,6 +125,14 @@ function mod:CreateCastbar(msg, frame)
 
 	frame.castbar.bar:SetFrameLevel(frame.castbar:GetFrameLevel() + 1)
 	frame.castbar.bar:SetMinMaxValues(0, 1)
+
+	-- spark
+	frame.castbar.spark = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
+	frame.castbar.spark:SetDrawLayer('ARTWORK', 7)
+	frame.castbar.spark:SetVertexColor(1,1,.8)
+	frame.castbar.spark:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\spark')
+	frame.castbar.spark:SetPoint('CENTER', frame.castbar.bar:GetRegions(), 'RIGHT', 1, 0)
+	frame.castbar.spark:SetSize(6, addon.sizes.frame.cbheight + 6)
 
 	-- uninterruptible cast shield -----------------------------------------
 	frame.castbar.shield = frame.overlay:CreateTexture(nil, 'ARTWORK')
