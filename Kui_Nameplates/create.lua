@@ -88,7 +88,10 @@ end
 ----------------------------------------------------------------- Health text --
 function addon:CreateHealthText(frame, f)
 	f.health.p = f:CreateFontString(f.overlay, {
-		font = self.font, size = 'large', outline = "OUTLINE" })
+		font = self.font,
+		size = self.db.profile.text.altlayout and 'small' or 'large',
+		alpha = 1,
+		outline = "OUTLINE" })
 	f.health.p:SetJustifyH('RIGHT')
 	f.health.p:SetJustifyV('BOTTOM')
 	f.health.p:SetHeight(10)
@@ -97,8 +100,14 @@ function addon:UpdateHealthText(f, trivial)
 	if trivial then
 		f.health.p:Hide()
 	else
-		f.health.p:SetPoint( 'BOTTOMRIGHT', f.health, 'TOPRIGHT',
-		                     -2.5, -self.db.profile.text.healthoffset)
+		f.health.p:ClearAllPoints()
+		if self.db.profile.text.altlayout then
+			f.health.p:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
+				                -2.5, self.db.profile.text.healthoffset + 4)
+		else
+			f.health.p:SetPoint('BOTTOMRIGHT', f.health, 'TOPRIGHT',
+			                    -2.5, -self.db.profile.text.healthoffset)
+		end
 		f.health.p:Show()
 	end
 end
@@ -115,8 +124,13 @@ function addon:UpdateAltHealthText(f, trivial)
 	if trivial then
 		f.health.mo:Hide()
 	else
-		f.health.mo:SetPoint( 'TOPRIGHT', f.health, 'BOTTOMRIGHT',
-		                      -2.5, self.db.profile.text.healthoffset + 4)
+		if self.db.profile.text.altlayout then
+			-- hook to left of large health
+			f.health.mo:SetPoint('TOPRIGHT', f.health.p, 'TOPLEFT', 4, 2)
+		else
+			f.health.mo:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
+			                     -2.5, self.db.profile.text.healthoffset + 4)
+		end
 		f.health.mo:Show()
 	end
 end
@@ -125,7 +139,11 @@ function addon:CreateLevel(frame, f)
 	if not f.level then return end
 
 	f.level = f:CreateFontString(f.level, { reset = true,
-		font = self.font, size = 'name', outline = 'OUTLINE' })
+		font = self.font,
+		size = self.db.profile.text.altlayout and 'small' or 'name',
+		alpha = 1,
+		outline = 'OUTLINE'
+	})
 	f.level:SetParent(f.overlay)
 	f.level:SetJustifyH('LEFT')
 	f.level:SetJustifyV('BOTTOM')
@@ -144,8 +162,15 @@ function addon:UpdateLevel(f, trivial)
 	if trivial then
 		f.level:Hide()
 	else
-		f.level:SetPoint( 'BOTTOMLEFT', f.health, 'TOPLEFT',
-                          2.5, -self.db.profile.text.healthoffset)
+		f.level:ClearAllPoints()
+		if self.db.profile.text.altlayout then
+			--  move to bottom left
+			f.level:SetPoint('TOPLEFT', f.health, 'BOTTOMLEFT',
+				             2.5, self.db.profile.text.healthoffset + 4)
+		else
+			f.level:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
+	                         2.5, -self.db.profile.text.healthoffset)
+		end
 		f.level:Show()
 	end
 end
@@ -161,16 +186,23 @@ function addon:UpdateName(f, trivial)
 
 	if trivial then
 		f.name:SetJustifyH('CENTER')
-		f.name:SetPoint('BOTTOM', f.health, 'TOP', 0, -self.db.profile.text.healthoffset)
+		f.name:SetPoint('BOTTOM', f.health, 'TOP', .5, -self.db.profile.text.healthoffset)
 	else
-		f.name:SetJustifyH('LEFT')
-		f.name:SetPoint('RIGHT', f.health.p, 'LEFT')
-
-		if f.level.enabled then
-			f.name:SetPoint('LEFT', f.level, 'RIGHT', -2, 0)
+		if self.db.profile.text.altlayout then
+			-- move to top center
+			f.name:SetJustifyH('CENTER')
+			f.name:SetPoint('BOTTOM', f.health, 'TOP',
+				            0, -self.db.profile.text.healthoffset)
 		else
-			f.name:SetPoint( 'BOTTOMLEFT', f.health, 'TOPLEFT',
-			                 2, -self.db.profile.text.healthoffset)
+			f.name:SetJustifyH('LEFT')
+			f.name:SetPoint('RIGHT', f.health.p, 'LEFT')
+
+			if f.level.enabled then
+				f.name:SetPoint('LEFT', f.level, 'RIGHT', -2, 0)
+			else
+				f.name:SetPoint( 'BOTTOMLEFT', f.health, 'TOPLEFT',
+				                 2, -self.db.profile.text.healthoffset)
+			end
 		end
 	end
 end

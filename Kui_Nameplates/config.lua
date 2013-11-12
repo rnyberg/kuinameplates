@@ -262,16 +262,11 @@ do
 						type = 'toggle',
 						order = 2
 					},
-					friendlyname = {
-						name = 'Friendly name text colour',
-						desc = 'The colour of names of friendly units',
-						type = 'color',
-						order = 4,
-					},
-					enemyname = {
-						name = 'Enemy name text colour',
-						desc = 'The colour of names of enemy units',
-						type = 'color',
+					altlayout = {
+						name = 'Alternate layout',
+						desc = 'Use the alternate health text layout which doesn\'t truncate long unit names (and which I\'ll be actively improving to probably, eventually make the default).\n\n'..
+							'|cffff0000UI reload required to take effect.',
+						type = 'toggle',
 						order = 5,
 					},
 				}

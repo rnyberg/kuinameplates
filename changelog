@@ -1,2 +1,3 @@
-* add option to avoid fading casting units
-* add option to avoid fading units below a specified health value
+* add option to use alternate health text layout under /knp -> text. Disabled by default. This is an early version of a layout which does not truncate long names. It may have some issues.
+* remove option to colour unit names. This can be achieved with a small custom.lua modification.
+* change level text for bosses to "B"

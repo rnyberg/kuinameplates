@@ -90,14 +90,6 @@ local function SetHealthColour(self)
 	end
 end
 
-local function SetNameColour(self)
-	if self.friend then
-		self.name:SetTextColor(unpack(addon.db.profile.text.friendlyname))
-	else
-		self.name:SetTextColor(unpack(addon.db.profile.text.enemyname))
-	end
-end
-
 local function SetGlowColour(self, r, g, b, a)
 	if not r then
 		-- set default colour
@@ -195,8 +187,8 @@ local function OnFrameShow(self)
 	-- classifications
 	if not trivial and f.level.enabled then
 		if f.boss:IsVisible() then
-			f.level:SetText('??b')
-			f.level:SetTextColor(1, 0, 0)
+			f.level:SetText('B')
+			f.level:SetTextColor(1,.2,.2)
 			f.level:Show()
 		elseif f.state:IsVisible() then
 			if f.state:GetTexture() == "Interface\\Tooltips\\EliteNameplateIcon"
@@ -418,9 +410,6 @@ local function UpdateFrame(self)
 
 	-- Health bar colour
 	self:SetHealthColour()
-	
-	-- Name text colour
-	self:SetNameColour()
 end
 
 -- stuff that needs to be updated often

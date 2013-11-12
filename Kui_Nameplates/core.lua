@@ -65,7 +65,7 @@ local defaults = {
 		general = {
 			combat      = false, -- automatically show hostile plates upon entering combat
 			highlight   = true, -- highlight plates on mouse-over
-			fixaa       = true, -- attempt to make plates appear sharper (with some drawbacks)
+			fixaa       = true, -- attempt to make plates appear sharper
 			targetglow  = true,
 			bartexture  = 'Kui status bar',
 			targetglowcolour = { .3, .7, 1, 1 },
@@ -73,7 +73,7 @@ local defaults = {
 			thheight    = 7
 		},
 		fade = {
-			smooth      = true, -- smoothy fade plates (fading is instant if disabled)
+			smooth      = true, -- smoothy fade plates
 			fadespeed   = .5, -- fade animation speed modifier
 			fademouse   = false, -- fade in plates on mouse-over
 			fadeall     = false, -- fade all plates by default
@@ -86,15 +86,14 @@ local defaults = {
 		},
 		text = {
 			level        = true, -- display levels
-			friendlyname = { 1, 1, 1 }, -- friendly name text colour
-			enemyname    = { 1, 1, 1 },  -- enemy name text colour
-			healthoffset = 2.5
+			healthoffset = 2.5,
+			altlayout    = false,
 		},
 		hp = {
 			friendly  = '=:m;<:d;', -- health display pattern for friendly units
-			hostile   = '<:p;', -- health display pattern for hostile/neutral units
-			showalt   = false, -- show alternate (contextual) health values as well as main values
-			mouseover = false, -- hide health values until you mouse over or target the plate
+			hostile   = '<:p;', -- health display pattern for enemy units
+			showalt   = false, -- show alternate health values
+			mouseover = false, -- hide health values until mouseover/target
 			smooth    = true -- smoothly animate health bar changes
 		},
 		fonts = {
