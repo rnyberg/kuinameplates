@@ -1,3 +1,6 @@
+* add absorb watcher module - overlays the total absorbs remaining on a unit on its healthbar. Like auras this is a seperate addon, so if you want it make sure it's enabled in the addon list.
 * add option to use alternate health text layout under /knp -> text. Disabled by default. This is an early version of a layout which does not truncate long names. It may have some issues.
+* add spark to castbars.
+* make castbars fade out rather than instantly disappearing.
+* change level text for bosses to "B"/"boss" depending on what text layout is being used.
 * remove option to colour unit names. This can be achieved with a small custom.lua modification.
-* change level text for bosses to "B"

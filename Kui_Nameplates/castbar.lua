@@ -19,8 +19,9 @@ local function OnDefaultCastbarShow(self)
 
 	if kui.frameIsFading(f.castbar) then
 		kui.frameFadeRemoveFrame(f.castbar)
-		f.castbar:SetAlpha(1)
 	end
+
+    f.castbar:SetAlpha(1)
 
 	if f.castbar.name then
 		f.castbar.name:SetText(f.spellName:GetText())
