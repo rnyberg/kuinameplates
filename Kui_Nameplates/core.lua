@@ -27,10 +27,10 @@ addon.defaultSizes = {
 		bgOffset = 4   -- inset of the frame glow
 	},
 	font = {
-		large     = 10,
-		spellname = 9,
-		name      = 9,
-		small     = 8
+		large     = 9,
+		spellname = 8,
+		name      = 8,
+		small     = 7
 	},
 	tex = {
 		raidicon = 20,
@@ -49,9 +49,9 @@ addon.r = {
 	{  0, .3, .6 }, -- friendly player
 }
 
--- add yanone kaffesatz and accidental presidency to LSM (only supports latin)
-LSM:Register(LSM.MediaType.FONT, 'Yanone Kaffesatz', kui.m.f.yanone)
-LSM:Register(LSM.MediaType.FONT, 'Accidental Presidency', kui.m.f.accid)
+-- add latin-only fonts to LSM
+LSM:Register(LSM.MediaType.FONT, 'Yanone Kaffesatz Bold', kui.m.f.yanone)
+LSM:Register(LSM.MediaType.FONT, 'Expressway Sb', "Interface\\AddOns\\Kui_Media\\f\\express.ttf")
 
 -- add my status bar texture too..
 LSM:Register(LSM.MediaType.STATUSBAR, 'Kui status bar', kui.m.t.bar)
@@ -87,7 +87,6 @@ local defaults = {
 		text = {
 			level        = true, -- display levels
 			healthoffset = 2.5,
-			altlayout    = false,
 		},
 		hp = {
 			friendly  = '=:m;<:d;', -- health display pattern for friendly units
@@ -98,7 +97,7 @@ local defaults = {
 		},
 		fonts = {
 			options = {
-				font       = (latin and 'Yanone Kaffesatz' or LSM:GetDefault(LSM.MediaType.FONT)),
+				font       = (latin and 'Expressway Sb' or LSM:GetDefault(LSM.MediaType.FONT)),
 				fontscale  = 1.0,
 				outline    = true,
 				monochrome = false,
@@ -412,7 +411,7 @@ function addon:OnEnable()
 	
 	-- handle deleted or invalid files
 	if not self.font then
-		self.font = LSM:Fetch(LSM.MediaType.FONT, 'Yanone Kaffeesatz')
+		self.font = LSM:Fetch(LSM.MediaType.FONT, 'Expressway Sb')
 	end
 	if not self.bartexture then
 		self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, 'Kui status bar')

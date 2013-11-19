@@ -262,13 +262,6 @@ do
 						type = 'toggle',
 						order = 2
 					},
-					altlayout = {
-						name = 'Alternate layout',
-						desc = 'Use the alternate health text layout which doesn\'t truncate long unit names (and which I\'ll be actively improving to probably, eventually make the default).\n\n'..
-							'|cffff0000UI reload required to take effect.',
-						type = 'toggle',
-						order = 5,
-					},
 				}
 			},
 			hp = {

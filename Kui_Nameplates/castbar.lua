@@ -49,7 +49,6 @@ local function OnDefaultCastbarShow(self)
 
 		if f.castbar.curr then
 			f.castbar.curr:Hide()
-			f.castbar.max:Hide()
 		end
 	else
 		if f.castbar.icon then
@@ -64,7 +63,6 @@ local function OnDefaultCastbarShow(self)
 
 		if f.castbar.curr then
 			f.castbar.curr:Show()
-			f.castbar.max:Show()
 		end
 	end
 
@@ -92,8 +90,7 @@ local function OnDefaultCastbarUpdate(self, elapsed)
 	local f = self:GetParent():GetParent().kui
 	local min,max = self:GetMinMaxValues()
 
-	if f.castbar.max then
-		f.castbar.max:SetText(format("%.1f", max))
+	if f.castbar.curr then
 		f.castbar.curr:SetText(format("%.1f", self:GetValue()))
 	end
 
@@ -151,25 +148,15 @@ function mod:CreateCastbar(msg, frame)
 	
 	-- cast bar text -------------------------------------------------------
 	if self.db.profile.display.spellname then
-		frame.castbar.name = frame:CreateFontString(frame.castbar, {
-			size = 'name' })
-		frame.castbar.name:SetPoint('TOPLEFT', frame.castbar.bg, 'BOTTOMLEFT', 2, -2)
-		frame.castbar.name:SetPoint('TOPRIGHT', frame.castbar.bg, 'BOTTOMRIGHT', -2, 0)
-		frame.castbar.name:SetJustifyH('LEFT')
+		frame.castbar.name = frame:CreateFontString(frame.castbar.bar, {
+			size = 'small' })
+		frame.castbar.name:SetPoint('TOP', frame.castbar.bar, 'BOTTOM', 0, -3)
 	end
 
 	if self.db.profile.display.casttime then
-		frame.castbar.curr = frame:CreateFontString(frame.castbar, {
-			size = 'name' })
-		frame.castbar.curr:SetPoint('TOPRIGHT', frame.castbar.bg, 'BOTTOMRIGHT', -2, -2)
-
-		frame.castbar.max = frame:CreateFontString(frame.castbar, {
-			size = 'small', alpha = .5 })
-		frame.castbar.max:SetPoint('TOPRIGHT', frame.castbar.curr, 'TOPLEFT', -1, 0)
-
-		if frame.castbar.name then
-			frame.castbar.name:SetPoint('TOPRIGHT', frame.castbar.max, 'TOPLEFT', -1, 0)
-		end
+		frame.castbar.curr = frame:CreateFontString(frame.castbar.bar, {
+			size = 'small' })
+		frame.castbar.curr:SetPoint('LEFT', frame.castbar.bg, 'RIGHT', 2, 0)
 	end
 
 	if self.db.profile.display.spellicon then
@@ -286,7 +273,7 @@ function mod:OnInitialize()
 		profile = {
 			enabled   = true,
 			display = {
-				casttime        = true,
+				casttime        = false,
 				spellname       = true,
 				spellicon       = true,
 				cbheight        = 4,

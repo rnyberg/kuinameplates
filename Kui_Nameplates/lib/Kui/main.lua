@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'Kui-1.0', 7
+local MAJOR, MINOR = 'Kui-1.0', 8
 local kui = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not kui then
@@ -25,8 +25,8 @@ kui.m = {
 		empty = media..'t\\empty',
 	},
 	f = {
-		accid	= media .. 'f\\accid.ttf',
-		yanone	= media .. 'f\\yanone.ttf',
+		yanone	   = media..'f\\yanone.ttf',
+        expressway = media..'f\\express.ttf',
 	},
 }
 ------------------------------------------------------------------ var tables --
