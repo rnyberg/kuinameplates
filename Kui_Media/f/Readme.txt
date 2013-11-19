@@ -4,5 +4,5 @@
  yanone.ttf, or Yanone Kaffeesatz Bold
  By Yanone, http://www.yanone.de/
 
- express.ttf, or Expressway Sb
+ express.ttf, or Expressway Rg Bold
  By Typodermic Fonts, http://typodermicfonts.com/
