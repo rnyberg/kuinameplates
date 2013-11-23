@@ -11,6 +11,10 @@
    * feature: whitelist to hide/colour nameplates based on name
    * fix spell icon is 1 pixel too large/small depending on uiscale
    * ability to make certain auras bigger
+
+   for stanzilla
+   ===
+   * auras on small nameplates, make them smaller, fit them into stacking
 ]]
 
 local kui = LibStub('Kui-1.0')

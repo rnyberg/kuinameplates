@@ -106,10 +106,8 @@ end
 function mod:CreateCastWarnings(msg, frame)
     -- casting spell name
     frame.castWarning = frame:CreateFontString(frame.overlay, {
-        size = 'spellname', outline = 'OUTLINE' })
-    frame.castWarning:SetPoint('BOTTOMLEFT',
-		(frame.level.enabled and frame.level or frame.name),
-		'TOPLEFT', 0, 1)
+        size = 'name', outline = 'OUTLINE' })
+    frame.castWarning:SetPoint('BOTTOM', frame.name, 'TOP', 0, 1)
     frame.castWarning:Hide()
 
     frame.castWarning.ag 	= frame.castWarning:CreateAnimationGroup()
@@ -129,7 +127,7 @@ function mod:CreateCastWarnings(msg, frame)
     -- incoming healing
     frame.incWarning = frame:CreateFontString(frame.overlay, {
         size = 'small', outline = 'OUTLINE' })
-    frame.incWarning:SetPoint('BOTTOMRIGHT', frame.health.p, 'TOPRIGHT', 1)
+    frame.incWarning:SetPoint('TOP', frame.name, 'BOTTOM', 0, -3)
     frame.incWarning:Hide()
 
     frame.incWarning.ag 	 = frame.incWarning:CreateAnimationGroup()
