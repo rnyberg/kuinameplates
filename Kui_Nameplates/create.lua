@@ -8,186 +8,207 @@ local kui = LibStub('Kui-1.0')
 
 ------------------------------------------------------------------ Background --
 function addon:CreateBackground(frame, f)
-	-- frame glow
-	--f.bg:SetParent(f.parent)
-	f.bg = f:CreateTexture(nil, 'ARTWORK')
-	f.bg:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\FrameGlow')
-	f.bg:SetTexCoord(0, .469, 0, .625)
-	f.bg:SetVertexColor(0, 0, 0, .9)
+    -- frame glow
+    --f.bg:SetParent(f.parent)
+    f.bg = f:CreateTexture(nil, 'ARTWORK')
+    f.bg:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\FrameGlow')
+    f.bg:SetTexCoord(0, .469, 0, .625)
+    f.bg:SetVertexColor(0, 0, 0, .9)
 
-	-- solid background
-	f.bg.fill = f.parent:CreateTexture(nil, 'BACKGROUND')
-	f.bg.fill:SetTexture(kui.m.t.solid)
-	f.bg.fill:SetVertexColor(0, 0, 0, .8)
-	f.bg.fill:SetDrawLayer('ARTWORK', 1) -- 1 sub-layer above .bg
+    -- solid background
+    f.bg.fill = f.parent:CreateTexture(nil, 'BACKGROUND')
+    f.bg.fill:SetTexture(kui.m.t.solid)
+    f.bg.fill:SetVertexColor(0, 0, 0, .8)
+    f.bg.fill:SetDrawLayer('ARTWORK', 1) -- 1 sub-layer above .bg
 end
 function addon:UpdateBackground(f, trivial)
-	f.bg:ClearAllPoints()
-	f.bg.fill:ClearAllPoints()
+    f.bg:ClearAllPoints()
+    f.bg.fill:ClearAllPoints()
 
-	if trivial then
-		-- switch to trivial sizes
-		f.bg.fill:SetSize(self.sizes.frame.twidth, self.sizes.frame.theight)
-		f.bg.fill:SetPoint('BOTTOMLEFT', f.x, f.y)
-		
-		f.bg:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMLEFT',
-			-self.sizes.frame.bgOffset/2,
-			-self.sizes.frame.bgOffset/2)
-		f.bg:SetPoint('TOPRIGHT', f.bg.fill, 'TOPRIGHT',
-			self.sizes.frame.bgOffset/2,
-			self.sizes.frame.bgOffset/2)
-	elseif not trivial then
-		-- switch back to normal sizes
-		f.bg.fill:SetSize(self.sizes.frame.width, self.sizes.frame.height)		
-		
-		f.bg.fill:SetPoint('BOTTOMLEFT', f.x, f.y)
+    if trivial then
+        -- switch to trivial sizes
+        f.bg.fill:SetSize(self.sizes.frame.twidth, self.sizes.frame.theight)
+        f.bg.fill:SetPoint('BOTTOMLEFT', f.x, f.y)
+        
+        f.bg:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMLEFT',
+            -self.sizes.frame.bgOffset/2,
+            -self.sizes.frame.bgOffset/2)
+        f.bg:SetPoint('TOPRIGHT', f.bg.fill, 'TOPRIGHT',
+            self.sizes.frame.bgOffset/2,
+            self.sizes.frame.bgOffset/2)
+    elseif not trivial then
+        -- switch back to normal sizes
+        f.bg.fill:SetSize(self.sizes.frame.width, self.sizes.frame.height)      
+        
+        f.bg.fill:SetPoint('BOTTOMLEFT', f.x, f.y)
 
-		f.bg:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMLEFT',
-			-self.sizes.frame.bgOffset,
-			-self.sizes.frame.bgOffset)
-		f.bg:SetPoint('TOPRIGHT', f.bg.fill, 'TOPRIGHT',
-			self.sizes.frame.bgOffset,
-			self.sizes.frame.bgOffset)
-	end
+        f.bg:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMLEFT',
+            -self.sizes.frame.bgOffset,
+            -self.sizes.frame.bgOffset)
+        f.bg:SetPoint('TOPRIGHT', f.bg.fill, 'TOPRIGHT',
+            self.sizes.frame.bgOffset,
+            self.sizes.frame.bgOffset)
+    end
 end
 ------------------------------------------------------------------ Health bar --
 function addon:CreateHealthBar(frame, f)
-	f.health = CreateFrame('StatusBar', nil, f.parent)
-	f.health:SetStatusBarTexture(addon.bartexture)
+    f.health = CreateFrame('StatusBar', nil, f.parent)
+    f.health:SetStatusBarTexture(addon.bartexture)
 
-	if self.SetValueSmooth then
-		-- smooth bar
-		f.health.OrigSetValue = f.health.SetValue
-		f.health.SetValue = self.SetValueSmooth
-	end
+    if self.SetValueSmooth then
+        -- smooth bar
+        f.health.OrigSetValue = f.health.SetValue
+        f.health.SetValue = self.SetValueSmooth
+    end
 end
 function addon:UpdateHealthBar(f, trivial)
-	f.health:ClearAllPoints()
+    f.health:ClearAllPoints()
 
-	if trivial then
-		f.health:SetSize(self.sizes.frame.twidth-2, self.sizes.frame.theight-2)
-		f.health:SetPoint('BOTTOMLEFT', f.x+1, f.y+1)
-	elseif not trivial then
-		f.health:SetSize(self.sizes.frame.width - 2, self.sizes.frame.height - 2)
-		f.health:SetPoint('BOTTOMLEFT', f.x+1, f.y+1)
-	end
+    if trivial then
+        f.health:SetSize(self.sizes.frame.twidth-2, self.sizes.frame.theight-2)
+        f.health:SetPoint('BOTTOMLEFT', f.x+1, f.y+1)
+    elseif not trivial then
+        f.health:SetSize(self.sizes.frame.width - 2, self.sizes.frame.height - 2)
+        f.health:SetPoint('BOTTOMLEFT', f.x+1, f.y+1)
+    end
 end
 ------------------------------------------------------------------- Highlight --
 function addon:CreateHighlight(frame, f)
-	if not self.db.profile.general.highlight then return end
+    if not self.db.profile.general.highlight then return end
 
-	f.highlight = f.overlay:CreateTexture(nil, 'ARTWORK')
-	f.highlight:SetTexture(addon.bartexture)
-	f.highlight:SetAllPoints(f.health)
+    f.highlight = f.overlay:CreateTexture(nil, 'ARTWORK')
+    f.highlight:SetTexture(addon.bartexture)
+    f.highlight:SetAllPoints(f.health)
 
-	f.highlight:SetVertexColor(1, 1, 1)
-	f.highlight:SetBlendMode('ADD')
-	f.highlight:SetAlpha(.4)
-	f.highlight:Hide()
+    f.highlight:SetVertexColor(1, 1, 1)
+    f.highlight:SetBlendMode('ADD')
+    f.highlight:SetAlpha(.4)
+    f.highlight:Hide()
 end
 ----------------------------------------------------------------- Health text --
 function addon:CreateHealthText(frame, f)
-	f.health.p = f:CreateFontString(f.overlay, {
-		font = self.font,
-		size = 'name',
-		alpha = 1,
-		outline = "OUTLINE" })
-	f.health.p:SetJustifyH('RIGHT')
-	f.health.p:SetJustifyV('BOTTOM')
-	f.health.p:SetHeight(10)
-    f.health.p:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
-                        -2.5, self.db.profile.text.healthoffset + 4)
+    f.health.p = f:CreateFontString(f.overlay, {
+        font = self.font,
+        size = self.db.profile.general.leftie and 'large' or 'name',
+        alpha = 1,
+        outline = "OUTLINE" })
+
+    f.health.p:SetHeight(10)
+    f.health.p:SetJustifyH('RIGHT')
+    f.health.p:SetJustifyV('BOTTOM')
 end
 function addon:UpdateHealthText(f, trivial)
-	if trivial then
-		f.health.p:Hide()
-	else
-		f.health.p:Show()
-	end
+    if trivial then
+        f.health.p:Hide()
+    else
+        f.health.p:Show()
+
+        if self.db.profile.general.leftie then
+            f.health.p:SetPoint('BOTTOMRIGHT', f.health, 'TOPRIGHT',
+                                -2.5, -self.db.profile.text.healthoffset)
+        else
+            f.health.p:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
+                                -2.5, self.db.profile.text.healthoffset + 4)
+        end
+    end
 end
 ------------------------------------------------------------- Alt health text --
 function addon:CreateAltHealthText(frame, f)
-	f.health.mo = f:CreateFontString(f.overlay, {
-		font = self.font, size = 'small', alpha = .6, outline = "OUTLINE" })
-	f.health.mo:SetJustifyH('RIGHT')
-	f.health.mo:SetJustifyV('BOTTOM')
-	f.health.mo:SetHeight(10)
-    f.health.mo:SetPoint('BOTTOMRIGHT', f.health.p, 'BOTTOMLEFT', 0, 0)
+    f.health.mo = f:CreateFontString(f.overlay, {
+        font = self.font, size = 'small', alpha = .6, outline = "OUTLINE" })
+
+    f.health.mo:SetHeight(10)
+    f.health.mo:SetJustifyH('RIGHT')
+    f.health.mo:SetJustifyV('BOTTOM')
 end
 function addon:UpdateAltHealthText(f, trivial)
-	if not f.health.mo then return end
-	if trivial then
-		f.health.mo:Hide()
-	else
-		f.health.mo:Show()
-	end
+    if not f.health.mo then return end
+    if trivial then
+        f.health.mo:Hide()
+    else
+        f.health.mo:Show()
+
+        if self.db.profile.general.leftie then
+            f.health.mo:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
+                                 -2.5, self.db.profile.text.healthoffset + 3)
+        else
+            f.health.mo:SetPoint('BOTTOMRIGHT', f.health.p, 'BOTTOMLEFT',0, 0)
+        end
+    end
 end
 ------------------------------------------------------------------ Level text --
 function addon:CreateLevel(frame, f)
-	if not f.level then return end
+    if not f.level then return end
 
-	f.level = f:CreateFontString(f.level, { reset = true,
-		font = self.font,
-		size = 'name',
-		alpha = 1,
-		outline = 'OUTLINE'
-	})
-	f.level:SetParent(f.overlay)
-	f.level:SetJustifyH('LEFT')
-	f.level:SetJustifyV('BOTTOM')
-	f.level:SetHeight(10)
-	
-	f.level:ClearAllPoints()
-    f.level:SetPoint('TOPLEFT', f.health, 'BOTTOMLEFT',
-                     2.5, self.db.profile.text.healthoffset + 4)
+    f.level = f:CreateFontString(f.level, { reset = true,
+        font = self.font,
+        size = 'name',
+        alpha = 1,
+        outline = 'OUTLINE'
+    })
+    f.level:SetParent(f.overlay)
+    f.level:SetJustifyH('LEFT')
+    f.level:SetJustifyV('BOTTOM')
+    f.level:SetHeight(10)
+    f.level:ClearAllPoints()
 
-	f.level.enabled = true
+    f.level.enabled = true
 end
 function addon:UpdateLevel(f, trivial)
-	if not f.level.enabled then
-		f.level:Hide()
-		return
-	end
+    if not f.level.enabled then
+        f.level:Hide()
+        return
+    end
 
-	if trivial then
-		f.level:Hide()
-	else
-		f.level:Show()
-	end
+    if trivial then
+        f.level:Hide()
+    else
+        f.level:Show()
+        f.level:SetPoint('TOPLEFT', f.health, 'BOTTOMLEFT',
+                         2.5, self.db.profile.text.healthoffset + 4)
+    end
 end
 ------------------------------------------------------------------- Name text --
-function addon:CreateName(frame, f)	
-	f.name = f:CreateFontString(f.overlay, {
-		font = self.font, size = 'name', outline = 'OUTLINE' })
-	f.name:SetJustifyV('BOTTOM')
+function addon:CreateName(frame, f) 
+    f.name = f:CreateFontString(f.overlay, {
+        font = self.font, size = 'name', outline = 'OUTLINE' })
+    f.name:SetJustifyV('BOTTOM')
     f.name:SetJustifyH('CENTER')
-	f.name:SetHeight(10)
+    f.name:SetHeight(10)
 end
 function addon:UpdateName(f, trivial)
-	f.name:ClearAllPoints()
+    f.name:ClearAllPoints()
 
-	if trivial then
-		f.name:SetPoint('BOTTOM', f.health, 'TOP', .5, -self.db.profile.text.healthoffset)
-	else
-        -- move to top center
-        f.name:SetPoint('BOTTOM', f.health, 'TOP',
-                        0, -self.db.profile.text.healthoffset)
-	end
+    if trivial then
+        f.name:SetPoint('BOTTOM', f.health, 'TOP', .5, -self.db.profile.text.healthoffset)
+    else
+        if self.db.profile.general.leftie then
+            f.name:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
+                            2.5, -self.db.profile.text.healthoffset)
+
+            f.name:SetPoint('RIGHT', f.health.p, 'LEFT')
+            f.name:SetJustifyH('LEFT')
+        else
+            -- move to top center
+            f.name:SetPoint('BOTTOM', f.health, 'TOP',
+                            0, -self.db.profile.text.healthoffset)
+        end
+    end
 end
 ----------------------------------------------------------------- Target glow --
 function addon:CreateTargetGlow(f)
-	f.targetGlow = f.overlay:CreateTexture(nil, 'ARTWORK')
-	f.targetGlow:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-glow')
-	f.targetGlow:SetTexCoord(0, .593, 0, .875)
-	f.targetGlow:SetPoint('TOP', f.overlay, 'BOTTOM', 0, 1)
-	f.targetGlow:SetVertexColor(unpack(self.db.profile.general.targetglowcolour))
-	f.targetGlow:Hide()
+    f.targetGlow = f.overlay:CreateTexture(nil, 'ARTWORK')
+    f.targetGlow:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-glow')
+    f.targetGlow:SetTexCoord(0, .593, 0, .875)
+    f.targetGlow:SetPoint('TOP', f.overlay, 'BOTTOM', 0, 1)
+    f.targetGlow:SetVertexColor(unpack(self.db.profile.general.targetglowcolour))
+    f.targetGlow:Hide()
 end
 function addon:UpdateTargetGlow(f, trivial)
-	if not f.targetGlow then return end
-	if trivial then
-		f.targetGlow:SetSize(self.sizes.tex.ttargetGlowW, self.sizes.tex.targetGlowH)
-	else
-		f.targetGlow:SetSize(self.sizes.tex.targetGlowW, self.sizes.tex.targetGlowH)
-	end
+    if not f.targetGlow then return end
+    if trivial then
+        f.targetGlow:SetSize(self.sizes.tex.ttargetGlowW, self.sizes.tex.targetGlowH)
+    else
+        f.targetGlow:SetSize(self.sizes.tex.targetGlowW, self.sizes.tex.targetGlowH)
+    end
 end

@@ -150,13 +150,28 @@ function mod:CreateCastbar(msg, frame)
 	if self.db.profile.display.spellname then
 		frame.castbar.name = frame:CreateFontString(frame.castbar.bar, {
 			size = 'small' })
-		frame.castbar.name:SetPoint('TOP', frame.castbar.bar, 'BOTTOM', 0, -3)
+        
+        if addon.db.profile.general.leftie then
+            frame.castbar.name:SetPoint('TOPLEFT', frame.castbar.bar, 'BOTTOMLEFT', 2.5, -3)
+            frame.castbar.name:SetPoint('TOPRIGHT', frame.castbar.bar, 'BOTTOMRIGHT')
+            frame.castbar.name:SetJustifyH('LEFT')
+        else
+            frame.castbar.name:SetPoint('TOP', frame.castbar.bar, 'BOTTOM', 0, -3)
+        end
 	end
 
 	if self.db.profile.display.casttime then
 		frame.castbar.curr = frame:CreateFontString(frame.castbar.bar, {
 			size = 'small' })
-		frame.castbar.curr:SetPoint('LEFT', frame.castbar.bg, 'RIGHT', 2, 0)
+
+        if addon.db.profile.general.leftie then
+            frame.castbar.curr:SetPoint('TOPRIGHT', frame.castbar.bar, 'BOTTOMRIGHT', -2.5, -3)
+            frame.castbar.curr:SetJustifyH('RIGHT')
+
+            frame.castbar.name:SetPoint('RIGHT', frame.castbar.curr, 'LEFT')
+        else
+            frame.castbar.curr:SetPoint('LEFT', frame.castbar.bg, 'RIGHT', 2, 0)
+        end
 	end
 
 	if self.db.profile.display.spellicon then

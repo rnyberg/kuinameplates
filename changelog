@@ -1,10 +1,3 @@
-* add spark to castbars.
-* make castbars fade out rather than instantly disappearing.
-* cast time display is now disabled by default.
-* change layout of healtbar text; names are no longer truuncated.
-* change layout of castbar text; spell name is no longer truuncated.
-* change default font to Expressway Sb. Works better at smaller sizes in WoW.
-* change level text for bosses to "B"/"boss" depending on what text layout is being used.
-* remove option to colour unit names. This can be achieved with a small custom.lua modification.
-* remove maximum cast time from castbar text (only current time is shown now)
-* remove Accidental Presidency from Kui_Media.
+* reposition castwarnings to fit with new layout
+* add option to use left-aligned layout, similar to the pre-223 layout (in /knp > general)
+
