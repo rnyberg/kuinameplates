@@ -168,7 +168,9 @@ function mod:CreateCastbar(msg, frame)
             frame.castbar.curr:SetPoint('TOPRIGHT', frame.castbar.bar, 'BOTTOMRIGHT', -2.5, -3)
             frame.castbar.curr:SetJustifyH('RIGHT')
 
-            frame.castbar.name:SetPoint('RIGHT', frame.castbar.curr, 'LEFT')
+            if frame.castbar.name then
+                frame.castbar.name:SetPoint('RIGHT', frame.castbar.curr, 'LEFT')
+            end
         else
             frame.castbar.curr:SetPoint('LEFT', frame.castbar.bg, 'RIGHT', 2, 0)
         end

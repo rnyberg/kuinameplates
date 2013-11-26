@@ -1,3 +1,1 @@
-* reposition castwarnings to fit with new layout
-* add option to use left-aligned layout, similar to the pre-223 layout (in /knp > general)
-
+* fix lua error when cast time display is enabled but name is disabled
