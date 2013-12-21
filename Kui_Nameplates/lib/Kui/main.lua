@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'Kui-1.0', 8
+local MAJOR, MINOR = 'Kui-1.0', 9
 local kui = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not kui then
