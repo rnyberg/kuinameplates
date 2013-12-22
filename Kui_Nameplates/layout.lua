@@ -7,10 +7,10 @@
    ===
    * customisation for sizes/positions of auras & width of container frame, etc
    * customisation for raid target icons
-   * option to hide frame shadow, only use as threat glow
-   * feature: whitelist to hide/colour nameplates based on name
    * fix spell icon is 1 pixel too large/small depending on uiscale
    * ability to make certain auras bigger
+   * add upper limit to name width
+   * add upper limit to number of auras
 
    for stanzilla
    ===
@@ -98,6 +98,12 @@ local function SetGlowColour(self, r, g, b, a)
     if not r then
         -- set default colour
         r, g, b = 0, 0, 0
+
+        if addon.db.profile.general.glowshadow then
+            a = .85
+        else
+            a = 0
+        end
     end
 
     if not a then

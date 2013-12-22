@@ -124,6 +124,13 @@ do
                         type = 'toggle',
                         order = 4,
                     },
+                    glowshadow = {
+                        name = 'Use glow as shadow',
+                        desc = 'The frame glow is used to indicate threat. It becomes black when a unit has no threat status. Disabling this option will make it transparent instead.',
+                        type = 'toggle',
+                        order = 5,
+                        width = 'double'
+                    },
                     targetglow = {
                         name = 'Show target glow',
                         desc = 'Make your target\'s nameplate glow',

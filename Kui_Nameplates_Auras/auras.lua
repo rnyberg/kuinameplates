@@ -35,7 +35,7 @@ local function ArrangeButtons(self)
 			b:ClearAllPoints()
 			
 			if pv then
-				if (self.visible-1) % 5 == 0 then
+				if (self.visible-1) % (self.frame.trivial and 3 or 5) == 0 then
 					-- start of row
 					b:SetPoint('BOTTOMLEFT', pc, 'TOPLEFT', 0, 1)
 					pc = b
@@ -214,7 +214,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 		button.icon = button:CreateTexture(nil, 'ARTWORK') 
 		
 		button.time = self.frame:CreateFontString(button, {
-			size = 'large', outline = 'OUTLINE' })
+			size = 'large' })
 		button.time:SetJustifyH('LEFT')
 		button.time:SetPoint('TOPLEFT', -2, 4)
 		button.time:Hide()
@@ -225,8 +225,6 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 		button.count:SetPoint('BOTTOMRIGHT', 2, -2)
 		button.count:Hide()
 
-		button:SetHeight(addon.sizes.frame.auraHeight)
-		button:SetWidth(addon.sizes.frame.auraWidth)
 		button:SetBackdrop({ bgFile = kui.m.t.solid })
 		button:SetBackdropColor(0,0,0)
 
@@ -240,10 +238,24 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 		button:SetScript('OnHide', OnAuraHide)
 		button:SetScript('OnShow', OnAuraShow)
 	end
+
+	if self.frame.trivial then
+		-- shrink icons for trivial frames!
+		button:SetHeight(addon.sizes.frame.tauraHeight)
+		button:SetWidth(addon.sizes.frame.tauraWidth)
+		button.time = self.frame:CreateFontString(button.time, {
+			reset = true, size = 'small' })
+	else
+		-- normal size!
+		button:SetHeight(addon.sizes.frame.auraHeight)
+		button:SetWidth(addon.sizes.frame.auraWidth)
+		button.time = self.frame:CreateFontString(button.time, {
+			reset = true, size = 'normal' })
+	end
 	
 	button.icon:SetTexture(icon)
 
-	if count > 1 then
+	if count > 1 and not self.frame.trivial then
 		button.count:SetText(count)
 		button.count:Show()
 	else
@@ -272,10 +284,7 @@ function mod:Create(msg, frame)
 	frame.auras = CreateFrame('Frame', nil, frame.parent)
 	frame.auras.frame = frame
 	
-	frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
-		3, addon.sizes.frame.aurasOffset)
 	frame.auras:SetPoint('BOTTOMRIGHT', frame.health, 'TOPRIGHT', -3, 0)
-	
 	frame.auras:SetHeight(50)
 	frame.auras:Hide()
 
@@ -292,6 +301,17 @@ function mod:Create(msg, frame)
 
 		self.visible = 0
 	end)
+end
+
+function mod:Show(msg, frame)
+	-- set vertical position of the container frame
+	if frame.trivial then
+		frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
+			3, addon.sizes.frame.taurasOffset)
+	else
+		frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
+			3, addon.sizes.frame.aurasOffset)
+	end
 end
 
 function mod:Hide(msg, frame)
@@ -334,7 +354,8 @@ function mod:UNIT_AURA(event, unit)
 	-- select the unit's nameplate	
 	--unit = 'target' -- DEBUG
 	local frame = addon:GetNameplate(UnitGUID(unit), nil)
-	if not frame or not frame.auras or frame.trivial then return end
+	if not frame or not frame.auras then return end
+	if frame.trivial and not self.db.profile.showtrivial then return end
 	--unit = 'player' -- DEBUG
 
 	local filter = 'PLAYER '
@@ -397,6 +418,15 @@ function mod:GetOptions()
 			order = 1,
 			disabled = false
 		},
+		showtrivial = {
+			name = 'Show on trivial units',
+			desc = 'Show auras on trivial (half-size, lower maximum health) nameplates.',
+			type = 'toggle',
+			order = 3,
+			disabled = function()
+				return not self.db.profile.enabled
+			end,
+		},
 		display = {
 			name = 'Display',
 			type = 'group',
@@ -404,6 +434,7 @@ function mod:GetOptions()
 			disabled = function()
 				return not self.db.profile.enabled
 			end,
+			order = 10,
 			args = {
 				pulsate = {
 					name = 'Pulsate auras',
@@ -454,6 +485,7 @@ function mod:GetOptions()
 			disabled = function()
 				return not self.db.profile.enabled
 			end,
+			order = 5,
 			args = {
 				useWhitelist = {
 					name = 'Use whitelist',
@@ -483,9 +515,13 @@ function mod:OnInitialize()
 		}
 	})
 
-	addon:RegisterSize('frame', 'auraHeight', 14)
-	addon:RegisterSize('frame', 'auraWidth', 20)
+	addon:RegisterSize('frame', 'auraHeight',  14)
+	addon:RegisterSize('frame', 'auraWidth',   20)
+	addon:RegisterSize('frame', 'tauraHeight',  9)
+	addon:RegisterSize('frame', 'tauraWidth',  15)
+
 	addon:RegisterSize('frame', 'aurasOffset', 20)
+	addon:RegisterSize('frame', 'taurasOffset', 13)
 
 	addon:InitModuleOptions(self)
 	mod:SetEnabledState(self.db.profile.enabled)
@@ -496,6 +532,7 @@ end
 
 function mod:OnEnable()
 	self:RegisterMessage('KuiNameplates_PostCreate', 'Create')
+	self:RegisterMessage('KuiNameplates_PostShow', 'Show')
 	self:RegisterMessage('KuiNameplates_PostHide', 'Hide')
 
 	self:RegisterEvent('UNIT_AURA')

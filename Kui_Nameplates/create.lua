@@ -173,14 +173,14 @@ function addon:CreateName(frame, f)
     f.name = f:CreateFontString(f.overlay, {
         font = self.font, size = 'name', outline = 'OUTLINE' })
     f.name:SetJustifyV('BOTTOM')
-    f.name:SetJustifyH('CENTER')
+    f.name:SetJustifyH('LEFT')
     f.name:SetHeight(10)
 end
 function addon:UpdateName(f, trivial)
     f.name:ClearAllPoints()
 
     if trivial then
-        f.name:SetPoint('BOTTOM', f.health, 'TOP', .5, -self.db.profile.text.healthoffset)
+        f.name:SetPoint('BOTTOM', f.health, 'TOP', 0, -self.db.profile.text.healthoffset)
     else
         if self.db.profile.general.leftie then
             f.name:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',

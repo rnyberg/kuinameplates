@@ -71,7 +71,8 @@ local defaults = {
             targetglowcolour = { .3, .7, 1, 1 },
             hheight     = 11,
             thheight    = 7,
-            leftie      = false
+            leftie      = false,
+            glowshadow  = true,
         },
         fade = {
             smooth      = true, -- smoothy fade plates

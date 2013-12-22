@@ -1,1 +1,4 @@
 * fix lua error when cast time display is enabled but name is disabled
+* reduce name text jiterry-ness using centred layout
+* add option to only use frame glow as threat glow (hide it when there's no threat)
+* add option to show auras on trivial units
