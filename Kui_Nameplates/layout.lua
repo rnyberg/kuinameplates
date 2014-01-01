@@ -11,6 +11,7 @@
    * ability to make certain auras bigger
    * add upper limit to name width
    * add upper limit to number of auras
+   * fix "fade all" doesn't work consistently when faded alpha is set to 0%
 
    for stanzilla
    ===
