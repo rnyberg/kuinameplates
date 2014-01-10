@@ -9,13 +9,8 @@
    * customisation for raid target icons
    * fix spell icon is 1 pixel too large/small depending on uiscale
    * ability to make certain auras bigger
-   * add upper limit to name width
    * add upper limit to number of auras
    * add transition threat bar colour option
-
-   for stanzilla
-   ===
-   * auras on small nameplates, make them smaller, fit them into stacking
 ]]
 
 local kui = LibStub('Kui-1.0')

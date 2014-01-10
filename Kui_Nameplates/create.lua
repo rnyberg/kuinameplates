@@ -2,6 +2,10 @@
 -- Kui_Nameplates
 -- By Kesava at curse.com
 -- All rights reserved
+--
+-- This file essentially creates "my" core layout. The eventual idea is to split
+-- this into a seperate addon. That will come after a few necessary things are
+-- ported to support that capability, such as the ability to theme cast bars.
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local kui = LibStub('Kui-1.0')
@@ -173,7 +177,6 @@ function addon:CreateName(frame, f)
     f.name = f:CreateFontString(f.overlay, {
         font = self.font, size = 'name', outline = 'OUTLINE' })
     f.name:SetJustifyV('BOTTOM')
-    f.name:SetJustifyH('LEFT')
     f.name:SetHeight(10)
 end
 function addon:UpdateName(f, trivial)
@@ -181,6 +184,7 @@ function addon:UpdateName(f, trivial)
 
     if trivial then
         f.name:SetPoint('BOTTOM', f.health, 'TOP', 0, -self.db.profile.text.healthoffset)
+		f.name:SetWidth(addon.sizes.frame.twidth * 2)
     else
         if self.db.profile.general.leftie then
             f.name:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
@@ -192,6 +196,7 @@ function addon:UpdateName(f, trivial)
             -- move to top center
             f.name:SetPoint('BOTTOM', f.health, 'TOP',
                             0, -self.db.profile.text.healthoffset)
+			f.name:SetWidth(addon.sizes.frame.width * 2)
         end
     end
 end

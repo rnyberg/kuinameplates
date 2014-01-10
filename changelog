@@ -3,4 +3,5 @@
 * fix "fade all" doesn't work consistently when faded alpha is set to 0%
 * fix castbar sometimes fading out on newly shown frames where it was inappropriate
 * fix logic error in kui frame fading code which may have caused some problems with repeated frame fading
+* add upper limit to name width (using default layout) to prevent ridiculous overflows
 * bump kui minior
