@@ -40,15 +40,6 @@ addon.defaultSizes = {
     }
 }
 
--- Custom reaction colours
-addon.r = {
-    { .7, .2, .1 }, -- hated
-    {  1, .8,  0 }, -- neutral
-    { .2, .6, .1 }, -- friendly
-    { .5, .5, .5 }, -- tapped
-    {  0, .3, .6 }, -- friendly player
-}
-
 -- add latin-only fonts to LSM
 LSM:Register(LSM.MediaType.FONT, 'Yanone Kaffesatz Bold', kui.m.f.yanone)
 LSM:Register(LSM.MediaType.FONT, 'Expressway Rg Bold', "Interface\\AddOns\\Kui_Media\\f\\express.ttf")
@@ -73,6 +64,13 @@ local defaults = {
             thheight    = 7,
             leftie      = false,
             glowshadow  = true,
+			reactioncolours = {
+				hatedcol    = { .7, .2, .1 },
+				neutralcol  = {  1, .8,  0 },
+				friendlycol = { .2, .6, .1 },
+				tappedcol   = { .5, .5, .5 },
+				playercol   = {  0, .3, .6 }
+			},
         },
         fade = {
             smooth      = true, -- smoothy fade plates
@@ -81,7 +79,8 @@ local defaults = {
             fadeall     = false, -- fade all plates by default
             fadedalpha  = .5, -- the alpha value to fade plates out to
             rules = {
-                avoidhp     = false,
+                avoidhostilehp = false,
+                avoidfriendhp  = false,
                 avoidhpval  = 20,
                 avoidcast   = false,
             },

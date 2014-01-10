@@ -11,7 +11,7 @@
    * ability to make certain auras bigger
    * add upper limit to name width
    * add upper limit to number of auras
-   * fix "fade all" doesn't work consistently when faded alpha is set to 0%
+   * add transition threat bar colour option
 
    for stanzilla
    ===
@@ -71,21 +71,21 @@ local function SetHealthColour(self)
         if g > .9 and r == 0 and b == 0 then
             -- friendly NPC
             self.friend = true
-            r, g, b = unpack(kn.r[3])
+            r, g, b = unpack(addon.db.profile.general.reactioncolours.friendlycol)
         elseif b > .9 and r == 0 and g == 0 then
             -- friendly player
             self.friend = true
             self.player = true
-            r, g, b = unpack(kn.r[5])
+            r, g, b = unpack(addon.db.profile.general.reactioncolours.playercol)
         elseif r > .9 and g == 0 and b == 0 then
             -- enemy NPC
-            r, g, b = unpack(kn.r[1])
+            r, g, b = unpack(addon.db.profile.general.reactioncolours.hatedcol)
         elseif (r + g) > 1.8 and b == 0 then
             -- neutral NPC
-            r, g, b = unpack(kn.r[2])
+            r, g, b = unpack(addon.db.profile.general.reactioncolours.neutralcol)
         elseif r < .6 and (r+g) == (r+b) then
             -- tapped NPC
-            r, g, b = unpack(kn.r[4])
+            r, g, b = unpack(addon.db.profile.general.reactioncolours.tappedcol)
         else
             -- enemy player, use default UI colour
             self.player = true
@@ -286,7 +286,7 @@ local function OnFrameHide(self)
     -- if there are name duplicates, this will be recreated in an onupdate
     addon:ClearName(f)
 
-    f.lastAlpha = 0
+    f.lastAlpha = nil
     f.fadingTo  = nil
     f.hasThreat = nil
     f.target    = nil
@@ -355,7 +355,10 @@ local function OnFrameUpdate(self, e)
     if (f.defaultAlpha == 1 and targetExists)
        or
        -- avoid fading low hp units
-       (addon.db.profile.fade.rules.avoidhp and f.health.percent <= addon.db.profile.fade.rules.avoidhpval)
+	   (((f.friend and addon.db.profile.fade.rules.avoidfriendhp) or
+	    (not f.friend and addon.db.profile.fade.rules.avoidhostilehp)) and
+		f.health.percent <= addon.db.profile.fade.rules.avoidhpval
+	   )
        or
        -- avoid fading casting units
        (f.castbar and addon.db.profile.fade.rules.avoidcast and f.castbar:IsShown())
@@ -374,7 +377,7 @@ local function OnFrameUpdate(self, e)
     ------------------------------------------------------------------ Fading --
     if addon.db.profile.fade.smooth then
         -- track changes in the alpha level and intercept them
-        if f.currentAlpha ~= f.lastAlpha then
+        if not f.lastAlpha or f.currentAlpha ~= f.lastAlpha then
             if not f.fadingTo or f.fadingTo ~= f.currentAlpha then
                 if kui.frameIsFading(f) then
                     kui.frameFadeRemoveFrame(f)

@@ -174,6 +174,39 @@ do
                         values = AceGUIWidgetLSMlists.statusbar,
                         order = 10,
                     },
+					reactioncolours = {
+						name = 'Reaction colours',
+						type = 'group',
+						inline = true,
+						order = 20,
+						args = {
+							hatedcol = {
+								name = 'Hostile',
+								type = 'color',
+								order = 1
+							},
+							neutralcol = {
+								name = 'Neutral',
+								type = 'color',
+								order = 2
+							},
+							friendlycol = {
+								name = 'Friendly',
+								type = 'color',
+								order = 3
+							},
+							tappedcol = {
+								name = 'Tapped',
+								type = 'color',
+								order = 4
+							},
+							playercol = {
+								name = 'Friendly player',
+								type = 'color',
+								order = 5
+							}
+						}
+					},
                 }
             },
             fade = {
@@ -225,11 +258,17 @@ do
                         inline = true,
                         order = 20,
                         args = {
-                            avoidhp = {
-                                name = 'Don\'t fade units at low health',
-                                desc = 'Avoid fading units which are at or below a health value, determined by avoidhpval.',
+                            avoidhostilehp = {
+                                name = 'Don\'t fade hostile units at low health',
+                                desc = 'Avoid fading hostile units which are at or below a health value, determined by low health value.',
                                 type = 'toggle',
                                 order = 1
+                            },
+                            avoidfriendhp = {
+                                name = 'Don\'t fade friendly units at low health',
+                                desc = 'Avoid fading friendly units which are at or below a health value, determined by low health value.',
+                                type = 'toggle',
+                                order = 2
                             },
                             avoidhpval = {
                                 name = 'Low health value',
@@ -241,7 +280,7 @@ do
                                 disabled = function(info)
                                     return not addon.db.profile.fade.rules.avoidhp
                                 end,
-                                order = 2
+                                order = 3
                             },
                             avoidcast = {
                                 name = 'Don\'t fade casting units',
@@ -361,7 +400,7 @@ do
                             },
                             noalpha = {
                                 name = 'All fonts opaque',
-                                desc = 'Use 100% alpha value on all fonts.\n|cffff0000Like a lot of options, this requires a UI reload.|r',
+                                desc = 'Use 100% alpha value on all fonts.\n|cffff0000Requires a UI reload.|r',
                                 type = 'toggle',
                                 order = 25
                             },
@@ -415,8 +454,7 @@ SLASH_KUINAMEPLATES1 = '/kuinameplates'
 SLASH_KUINAMEPLATES2 = '/knp'
 
 function SlashCmdList.KUINAMEPLATES()
+    -- twice to workaround an issue introduced with 5.3
     InterfaceOptionsFrame_OpenToCategory('Kui Nameplates')
-
-    -- TODO twice to workaround an issue introduced with 5.3
     InterfaceOptionsFrame_OpenToCategory('Kui Nameplates')
 end

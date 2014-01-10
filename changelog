@@ -1,4 +1,6 @@
-* fix lua error when cast time display is enabled but name is disabled
-* reduce name text jiterry-ness using centred layout
-* add option to only use frame glow as threat glow (hide it when there's no threat)
-* add option to show auras on trivial units
+* add options to change reaction colors
+* split "don't fade units at low health" into two seperate options for hostile units and friendly units
+* fix "fade all" doesn't work consistently when faded alpha is set to 0%
+* fix castbar sometimes fading out on newly shown frames where it was inappropriate
+* fix logic error in kui frame fading code which may have caused some problems with repeated frame fading
+* bump kui minior

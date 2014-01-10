@@ -204,6 +204,7 @@ end
 ------------------------------------------------------------------------ Hide --
 function mod:HideCastbar(msg, frame)
     if frame.castbar then
+		kui.frameFadeRemoveFrame(frame.castbar)
         frame.castbar.shield:Hide()
         frame.castbar:Hide()
     end

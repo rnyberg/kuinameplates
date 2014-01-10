@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'Kui-1.0', 9
+local MAJOR, MINOR = 'Kui-1.0', 10
 local kui = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not kui then
@@ -310,7 +310,12 @@ end
 ]]
 kui.frameFade = function(frame, info)
     if not frame then return end
-    if kui.frameIsFading(frame) then return end
+    if kui.frameIsFading(frame) then 
+    	-- cancel the current operation
+    	-- the code calling this should make sure not to interrupt a
+    	-- necessary finishedFunc. This will entirely skip it.
+		tDeleteItem(kui.FADEFRAMES, frame)
+    end
 
     info		= info or {}
     info.mode	= info.mode or 'IN'
