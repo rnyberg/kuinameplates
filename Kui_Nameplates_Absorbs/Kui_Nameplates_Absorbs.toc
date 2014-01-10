@@ -1,7 +1,0 @@
-## Interface: 50400
-## Author: Kesava
-## Title: |cff9900ffKui|r Nameplates Absorbs
-## Notes: Absorb watcher module for Kui Nameplates
-## Dependencies: Kui_Nameplates
-
-absorbs.lua

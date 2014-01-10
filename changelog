@@ -4,4 +4,5 @@
 * fix castbar sometimes fading out on newly shown frames where it was inappropriate
 * fix logic error in kui frame fading code which may have caused some problems with repeated frame fading
 * add upper limit to name width (using default layout) to prevent ridiculous overflows
+* remove kui_nameplates_absorbs because that was nowhere near ready and shouldn't have been pushed anyway, whoops
 * bump kui minior
