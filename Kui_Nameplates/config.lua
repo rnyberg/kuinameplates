@@ -278,7 +278,7 @@ do
                                 max = 100,
                                 step = 1,
                                 disabled = function(info)
-                                    return not addon.db.profile.fade.rules.avoidhp
+                                    return not addon.db.profile.fade.rules.avoidhostilehp and not addon.db.profile.fade.rules.avoidfriendhp
                                 end,
                                 order = 3
                             },
