@@ -6,7 +6,7 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('TankMode', 'AceEvent-3.0')
 
-mod.uiName = 'Tank mode'
+mod.uiName = 'Threat'
 
 function mod:OnEnable()
 	self:Toggle()

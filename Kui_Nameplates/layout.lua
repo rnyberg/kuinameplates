@@ -214,6 +214,8 @@ local function OnFrameShow(self)
     end
 
     addon:StoreName(f)
+    -- return guid to an assumed unique name
+    addon:GetGUID(f)
     
     ---------------------------------------------- Trivial sizing/positioning --
     if kn.uiscale then
@@ -294,7 +296,7 @@ local function OnFrameHide(self)
 end
 
 local function OnFrameEnter(self)
-    addon:StoreGUID(self, UnitGUID('mouseover'))
+    addon:StoreGUID(self, 'mouseover')
 
     if self.highlight then
         self.highlight:Show()
@@ -456,13 +458,12 @@ local function UpdateFrameCritical(self)
     end
     ------------------------------------------------------------ Target stuff --
     if targetExists and
-       self.defaultAlpha == 1 and
-       self.name.text == UnitName('target')
+       self.defaultAlpha == 1
     then
         if not self.target then
             -- this frame just became targeted
             self.target = true
-            addon:StoreGUID(self, UnitGUID('target'))
+            addon:StoreGUID(self, 'target')
 
             -- move this frame above others
             self:SetFrameLevel(10)

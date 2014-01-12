@@ -14,7 +14,6 @@ addon.defaultSizes = { frame = {}, font = {}, tex = {} }
 
 addon.frameList = {}
 addon.numFrames = 0
-local loadedGUIDs, loadedNames = {}, {}
 
 -- sizes of frame elements
 -- TODO these should be set in create.lua
@@ -114,61 +113,84 @@ local defaults = {
         }
     }
 }
-------------------------------------------------- GUID/name storage functions --
-function addon:StoreGUID(f, guid)
-    if not guid then return end
-    if f.guid and loadedGUIDs[f.guid] then
-        if f.guid ~= guid then
-            -- the currently stored guid is incorrect
-            loadedGUIDs[f.guid] = nil
-        else
-            return
+------------------------------------------ GUID/name storage functions --
+do
+    local loadedGUIDs, loadedNames = {}, {}
+    local knownGUIDs = {} -- GUIDs that we can relate to names (i.e. players)
+    local knownIndex = {}
+
+    function addon:GetGUID(f)
+        -- give this frame a guid if we think we already know it
+        if knownGUIDs[f.name.text] then
+            f.guid = knownGUIDs[f.name.text]
+            loadedGUIDs[f.guid] = f
         end
     end
+    function addon:StoreGUID(f, unit)
+        if not unit then return end
+        local guid = UnitGUID(unit)
+        if not guid then return end
 
-    f.guid = guid
-    loadedGUIDs[guid] = f
+        if f.guid and loadedGUIDs[f.guid] then
+            if f.guid ~= guid then
+                -- the currently stored guid is incorrect
+                loadedGUIDs[f.guid] = nil
+            else
+                return
+            end
+        end
 
-    if loadedNames[f.name.text] == f then
-        -- force the registered f for this name to change
-        loadedNames[f.name.text] = nil
+        f.guid = guid
+        loadedGUIDs[guid] = f
+
+        if UnitIsPlayer(unit) then
+            -- we can probably assume this unit has a unique name
+            -- nevertheless, overwrite this each time. just in case.
+            knownGUIDs[f.name.text] = guid
+            tinsert(knownIndex, f.name.text)
+
+            -- and start purging > 100 names
+            if #knownIndex > 100 then
+                knownGUIDs[tremove(knownIndex, 1)] = nil
+            end
+        elseif loadedNames[f.name.text] == f then
+            -- force the registered f for this name to change
+            loadedNames[f.name.text] = nil
+        end
     end
-end
-function addon:StoreName(f)
-    if not f.name.text or f.guid then return end
-    if not loadedNames[f.name.text] then
-        loadedNames[f.name.text] = f
+    function addon:StoreName(f)
+        if not f.name.text or f.guid then return end
+        if not loadedNames[f.name.text] then
+            loadedNames[f.name.text] = f
+        end
     end
-end
-
-function addon:FrameHasName(f)
-    return loadedNames[f.name.text] == f
-end
-function addon:FrameHasGUID(f)
-    return loadedGUIDs[f.guid] == f
-end
-
-function addon:ClearName(f)
-    if self:FrameHasName(f) then
-        loadedNames[f.name.text] = nil
+    function addon:FrameHasName(f)
+        return loadedNames[f.name.text] == f
     end
-end
-function addon:ClearGUID(f)
-    if self:FrameHasGUID(f) then
-        loadedGUIDs[f.guid] = nil
+    function addon:FrameHasGUID(f)
+        return loadedGUIDs[f.guid] == f
     end
-    f.guid = nil
-end
+    function addon:ClearName(f)
+        if self:FrameHasName(f) then
+            loadedNames[f.name.text] = nil
+        end
+    end
+    function addon:ClearGUID(f)
+        if self:FrameHasGUID(f) then
+            loadedGUIDs[f.guid] = nil
+        end
+        f.guid = nil
+    end
+    function addon:GetNameplate(guid, name)
+        local gf, nf = loadedGUIDs[guid], loadedNames[name]
 
-function addon:GetNameplate(guid, name)
-    local gf, nf = loadedGUIDs[guid], loadedNames[name]
-
-    if gf then
-        return gf
-    elseif nf then
-        return nf
-    else
-        return nil
+        if gf then
+            return gf
+        elseif nf then
+            return nf
+        else
+            return nil
+        end
     end
 end
 ------------------------------------------------------------ helper functions --

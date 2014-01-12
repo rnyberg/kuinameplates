@@ -1,8 +1,2 @@
-* add options to change reaction colors
-* split "don't fade units at low health" into two seperate options for hostile units and friendly units
-* fix "fade all" doesn't work consistently when faded alpha is set to 0%
-* fix castbar sometimes fading out on newly shown frames where it was inappropriate
-* fix logic error in kui frame fading code which may have caused some problems with repeated frame fading
-* add upper limit to name width (using default layout) to prevent ridiculous overflows
-* remove kui_nameplates_absorbs because that was nowhere near ready and shouldn't have been pushed anyway, whoops
-* bump kui minior
+* make auras significantly more reliable
+* change tankmode uiname to "Threat", in anticipation of additions to its config page

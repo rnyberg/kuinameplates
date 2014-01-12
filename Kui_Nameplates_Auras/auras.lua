@@ -534,6 +534,7 @@ function mod:OnEnable()
 	self:RegisterMessage('KuiNameplates_PostCreate', 'Create')
 	self:RegisterMessage('KuiNameplates_PostShow', 'Show')
 	self:RegisterMessage('KuiNameplates_PostHide', 'Hide')
+	self:RegisterMessage('KuiNameplates_PostTarget', 'PLAYER_TARGET_CHANGED')
 
 	self:RegisterEvent('UNIT_AURA')
 	self:RegisterEvent('PLAYER_TARGET_CHANGED')
