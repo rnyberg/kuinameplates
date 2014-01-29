@@ -730,7 +730,6 @@ end
 ------------------------------------------------------------- Script handlers --
 do
     local WorldFrame = WorldFrame
-
     function kn:OnUpdate()
         local frames = select('#', WorldFrame:GetChildren())
 
