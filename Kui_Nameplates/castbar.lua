@@ -10,18 +10,19 @@ local mod = addon:NewModule('CastBar', 'AceEvent-3.0')
 mod.uiName = 'Cast bars'
 
 local format = format
+local function ResetFade(f)
+	kui.frameFadeRemoveFrame(f.castbar)
+	f.castbar.shield:Hide()
+	f.castbar:Hide()
+	f.castbar:SetAlpha(1)
+end
 
 ------------------------------------------------------------- Script handlers --
 local function OnDefaultCastbarShow(self)
 	if not mod.enabledState then return end
 
 	local f = self:GetParent():GetParent().kui
-
-	if kui.frameIsFading(f.castbar) then
-		kui.frameFadeRemoveFrame(f.castbar)
-	end
-
-    f.castbar:SetAlpha(1)
+	ResetFade(f)
 
 	if f.castbar.name then
 		f.castbar.name:SetText(f.spellName:GetText())
@@ -78,8 +79,7 @@ local function OnDefaultCastbarHide(self)
 		startAlpha	= 1,
 		endAlpha	= 0,
 		finishedFunc = function()
-			f.castbar.shield:Hide()
-			f.castbar:Hide()
+			ResetFade(f)
 		end,
 	})
 end
