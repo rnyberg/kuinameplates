@@ -61,8 +61,11 @@ local defaults = {
             targetglowcolour = { .3, .7, 1, 1 },
             hheight     = 11,
             thheight    = 7,
+            width       = 110,
+            twidth      = 55, 
             leftie      = false,
             glowshadow  = true,
+            strata      = 'BACKGROUND',
 			reactioncolours = {
 				hatedcol    = { .7, .2, .1 },
 				neutralcol  = {  1, .8,  0 },
@@ -226,10 +229,12 @@ end
 
 local function SetFontSize(fs, size)
     if addon.db.profile.fonts.options.onesize then
-        size = addon.sizes.font['name']
+        size = 'name'
     end
 
     if type(size) == 'string' and fs.size and addon.sizes.font[size] then
+        -- if fontsize is a key of the font sizes table, store it so that
+        -- we can scale this font correctly
         fs.size = size
         size = addon.sizes.font[size]
     end
@@ -246,15 +251,11 @@ local function CreateFontString(self, parent, obj)
     obj = obj or {} 
     obj.mono = addon.db.profile.fonts.options.monochrome
     obj.outline = addon.db.profile.fonts.options.outline
-    obj.size = obj.size or 'name'
+    obj.size = (addon.db.profile.fonts.options.onesize and 'name') or obj.size or 'name'
 
     if type(obj.size) == 'string' then
         sizeKey = obj.size
         obj.size = addon.sizes.font[sizeKey]
-    end
-
-    if addon.db.profile.fonts.options.onesize then
-        obj.size = addon.sizes.font['name']
     end
 
     if not obj.font then
@@ -357,8 +358,8 @@ end
 addon.configChangedFuncs.fontscale = function(frame, val)
     local _, fontObject
     for _, fontObject in pairs(frame.fontObjects) do
-        if type(fontObject.size) == 'string' then
-            fontObject:SetFontSize(addon.sizes.font[fontObject.size])
+        if fontObject.size then
+            fontObject:SetFontSize(fontObject.size)
         end
     end
 end
@@ -395,6 +396,10 @@ end
 
 addon.configChangedFuncs.targetglowcolour = function(frame, val)
     frame.targetGlow:SetVertexColor(unpack(val))
+end
+
+addon.configChangedFuncs.strata = function(frame,val)
+    frame:SetFrameStrata(val)
 end
 ------------------------------------------- Listen for LibSharedMedia changes --
 function addon:LSMMediaRegistered(msg, mediatype, key)
@@ -446,7 +451,12 @@ function addon:OnEnable()
 
     self.defaultSizes.frame.height = self.db.profile.general.hheight
     self.defaultSizes.frame.theight = self.db.profile.general.thheight
+    self.defaultSizes.frame.width = self.db.profile.general.width
+    self.defaultSizes.frame.twidth = self.db.profile.general.twidth
+
     self.defaultSizes.tex.healthOffset = self.db.profile.text.healthoffset
+    self.defaultSizes.tex.targetGlowW = self.defaultSizes.frame.width - 5
+    self.defaultSizes.tex.ttargetGlowW = self.defaultSizes.frame.twidth - 5
 
     self:ScaleAllSizes()
 

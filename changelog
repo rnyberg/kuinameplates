@@ -1,3 +1,3 @@
-* definitely fix horizontal jitter of name text on trivial plates or when using centred layout
-* fix name text is misaligned on trivial plates when using leftie layout
-* fix castbar fades out on newly shown frames, again
+* add option to change nameplate frame strata
+* add options to change width of normal and trivial nameplates
+* fix auras time text used a non-existant size key and as such could not be scaled

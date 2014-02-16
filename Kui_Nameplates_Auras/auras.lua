@@ -213,14 +213,14 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 		
 		button.icon = button:CreateTexture(nil, 'ARTWORK') 
 		
-		button.time = self.frame:CreateFontString(button, {
+		button.time = self.frame:CreateFontString(button,{
 			size = 'large' })
 		button.time:SetJustifyH('LEFT')
 		button.time:SetPoint('TOPLEFT', -2, 4)
 		button.time:Hide()
 		
 		button.count = self.frame:CreateFontString(button, {
-			size = 'name', outline = 'OUTLINE'})
+			outline = 'OUTLINE'})
 		button.count:SetJustifyH('RIGHT')
 		button.count:SetPoint('BOTTOMRIGHT', 2, -2)
 		button.count:Hide()
@@ -250,7 +250,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 		button:SetHeight(addon.sizes.frame.auraHeight)
 		button:SetWidth(addon.sizes.frame.auraWidth)
 		button.time = self.frame:CreateFontString(button.time, {
-			reset = true, size = 'normal' })
+			reset = true, size = 'large' })
 	end
 	
 	button.icon:SetTexture(icon)

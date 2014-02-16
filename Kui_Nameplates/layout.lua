@@ -615,7 +615,6 @@ function kn:InitFrame(frame)
     ------------------------------------------------------------------ Layout --
     local parent
     if self.db.profile.general.fixaa and kn.uiscale then
-        f:SetFrameStrata('BACKGROUND')
         f:SetSize(frame:GetWidth()/kn.uiscale, frame:GetHeight()/kn.uiscale)
         f:SetScale(kn.uiscale)
         
@@ -633,6 +632,9 @@ function kn:InitFrame(frame)
     else
         f:SetAllPoints(frame)
     end
+
+    f:SetFrameStrata(self.db.profile.general.strata)
+    f:SetFrameLevel(0)
 
     -- TODO legacy compatibility; remove
     parent = f

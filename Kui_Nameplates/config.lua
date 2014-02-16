@@ -10,6 +10,15 @@ local AceConfigDialog = LibStub('AceConfigDialog-3.0')
 
 --------------------------------------------------------------- Options table --
 do
+    local StrataSelectList = {
+        ['BACKGROUND'] = '1. BACKGROUND',
+        ['LOW'] = '2. LOW',
+        ['MEDIUM'] = '3. MEDIUM',
+        ['HIGH'] = '4. HIGH',
+        ['DIALOG'] = '5. DIALOG',
+        ['TOOLTIP'] = '6. TOOLTIP',
+    }
+
     local handlers = {}
     local handlerProto = {}
     local handlerMeta = { __index = handlerProto }
@@ -166,13 +175,38 @@ do
                         softMin = 6,
                         softMax = 15
                     },
+                    width = {
+                        name = 'Frame width',
+                        order = 10,
+                        type = 'range',
+                        step = 1,
+                        min = 1,
+                        softMin = 55,
+                        softMax = 165
+                    },
+                    twidth = {
+                        name = 'Trivial frame width',
+                        order = 11,
+                        type = 'range',
+                        step = 1,
+                        min = 1,
+                        softMin = 25,
+                        softMax = 85
+                    },
                     bartexture = {
                         name = 'Status bar texture',
                         desc = 'The texture used for both the health and cast bars.',
                         type = 'select',
                         dialogControl = 'LSM30_Statusbar',
                         values = AceGUIWidgetLSMlists.statusbar,
-                        order = 10,
+                        order = 15,
+                    },
+                    strata = { 
+                        name = 'Frame strata',
+                        desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 10.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
+                        type = 'select',
+                        values = StrataSelectList,
+                        order = 17
                     },
 					reactioncolours = {
 						name = 'Reaction colours',
