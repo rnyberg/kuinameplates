@@ -6,8 +6,8 @@
    Things to do when I get the time
    ===
    * customisation for sizes/positions of auras & width of container frame, etc
+   * make auras respect nameplate frame width
    * customisation for raid target icons
-   * fix spell icon is 1 pixel too large/small depending on uiscale
    * ability to make certain auras bigger
    * add upper limit to number of auras
    * add transition threat bar colour option
