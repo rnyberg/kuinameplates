@@ -3,6 +3,7 @@
  By Kesava at wowinterface.com
 	
  bar.tga
+ bar-old.tga
  barSmall.tga
  empty.tga	
  solid.tga

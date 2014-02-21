@@ -17,6 +17,8 @@ pubkey
 *.orig
 *.swp
 *~
+*.psd
+kui_nameplates_showoff.png
 id_rsa
 id_rsa.pub
-bar.psd
+

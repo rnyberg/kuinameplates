@@ -1,3 +1,3 @@
-* add option to change nameplate frame strata
-* add options to change width of normal and trivial nameplates
-* fix auras time text used a non-existant size key and as such could not be scaled
+* add new default status bar texture, old default is now "Kui shaded bar"
+* change default health display pattern for friendly units to: <:d;
+* add blackout kick dot to kuispelllist

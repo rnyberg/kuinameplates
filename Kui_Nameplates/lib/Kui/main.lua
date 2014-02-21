@@ -20,6 +20,7 @@ kui.m = {
 		
 		-- progress bars
 		bar		= media .. 't\\bar',
+		oldbar  = media .. 't\\bar-old',
 		sbar	= media .. 't\\barSmall',
 
 		empty = media..'t\\empty',

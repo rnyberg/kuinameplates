@@ -43,8 +43,10 @@ addon.defaultSizes = {
 LSM:Register(LSM.MediaType.FONT, 'Yanone Kaffesatz Bold', kui.m.f.yanone)
 LSM:Register(LSM.MediaType.FONT, 'Expressway Rg Bold', "Interface\\AddOns\\Kui_Media\\f\\express.ttf")
 
--- add my status bar texture too..
+-- add my status bar textures too..
 LSM:Register(LSM.MediaType.STATUSBAR, 'Kui status bar', kui.m.t.bar)
+LSM:Register(LSM.MediaType.STATUSBAR, 'Kui shaded bar', kui.m.t.oldbar)
+local DEFAULT_BAR = 'Kui status bar'
 
 local locale = GetLocale()
 local latin  = (locale ~= 'zhCN' and locale ~= 'zhTW' and locale ~= 'koKR' and locale ~= 'ruRU')
@@ -57,7 +59,7 @@ local defaults = {
             highlight   = true, -- highlight plates on mouse-over
             fixaa       = true, -- attempt to make plates appear sharper
             targetglow  = true,
-            bartexture  = 'Kui status bar',
+            bartexture  = DEFAULT_BAR,
             targetglowcolour = { .3, .7, 1, 1 },
             hheight     = 11,
             thheight    = 7,
@@ -71,7 +73,7 @@ local defaults = {
 				neutralcol  = {  1, .8,  0 },
 				friendlycol = { .2, .6, .1 },
 				tappedcol   = { .5, .5, .5 },
-				playercol   = {  0, .3, .6 }
+				playercol   = { .2, .5, .9 }
 			},
         },
         fade = {
@@ -92,7 +94,7 @@ local defaults = {
             healthoffset = 2.5,
         },
         hp = {
-            friendly  = '=:m;<:d;', -- health display pattern for friendly units
+            friendly  = '<:d;', -- health display pattern for friendly units
             hostile   = '<:p;', -- health display pattern for enemy units
             showalt   = false, -- show alternate health values
             mouseover = false, -- hide health values until mouseover/target
@@ -442,7 +444,7 @@ function addon:OnEnable()
         self.font = LSM:Fetch(LSM.MediaType.FONT, 'Expressway Rg Bold')
     end
     if not self.bartexture then
-        self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, 'Kui status bar')
+        self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, DEFAULT_BAR)
     end
 
     if self.db.profile.general.fixaa then

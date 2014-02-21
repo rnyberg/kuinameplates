@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'KuiSpellList-1.0', 4
+local MAJOR, MINOR = 'KuiSpellList-1.0', 5
 local KuiSpellList = LibStub:NewLibrary(MAJOR, MINOR)
 local _
 
@@ -323,8 +323,9 @@ local whitelist = {
 		[123725] = true, -- breath of fire
 		[120086] = true, -- fists of fury stun
 		[122470] = true, -- touch of karma
+		[128531] = true, -- blackout kick debuff
 		[130320] = true, -- rising sun kick debuff
-		
+
 		[116781] = true, -- legacy of the white tiger
 		[116844] = true, -- ring of peace
 		[117666] = true, -- legacy of the emperor group
