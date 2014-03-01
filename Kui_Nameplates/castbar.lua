@@ -99,6 +99,7 @@ local function OnDefaultCastbarUpdate(self, elapsed)
 end
 ---------------------------------------------------------------------- create --
 function mod:CreateCastbar(msg, frame)
+	if frame.castbar then return end
 	-- container ---------------------------------------------------------------
 	frame.castbar = CreateFrame('Frame', nil, frame.parent)
 	frame.castbar:Hide()
@@ -204,9 +205,7 @@ end
 ------------------------------------------------------------------------ Hide --
 function mod:HideCastbar(msg, frame)
     if frame.castbar then
-		kui.frameFadeRemoveFrame(frame.castbar)
-        frame.castbar.shield:Hide()
-        frame.castbar:Hide()
+    	ResetFade(frame)
     end
 end
 

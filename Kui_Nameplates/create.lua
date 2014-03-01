@@ -100,12 +100,18 @@ function addon:CreateHealthText(frame, f)
     f.health.p:SetHeight(10)
     f.health.p:SetJustifyH('RIGHT')
     f.health.p:SetJustifyV('BOTTOM')
+
+    if self.db.profile.hp.mouseover then
+        f.health.p:Hide()
+    end
 end
 function addon:UpdateHealthText(f, trivial)
     if trivial then
         f.health.p:Hide()
     else
-        f.health.p:Show()
+        if not self.db.profile.hp.mouseover then
+            f.health.p:Show()
+        end
 
         if self.db.profile.general.leftie then
             f.health.p:SetPoint('BOTTOMRIGHT', f.health, 'TOPRIGHT',
@@ -124,13 +130,19 @@ function addon:CreateAltHealthText(frame, f)
     f.health.mo:SetHeight(10)
     f.health.mo:SetJustifyH('RIGHT')
     f.health.mo:SetJustifyV('BOTTOM')
+
+    if self.db.profile.hp.mouseover then
+        f.health.mo:Hide()
+    end
 end
 function addon:UpdateAltHealthText(f, trivial)
     if not f.health.mo then return end
     if trivial then
         f.health.mo:Hide()
     else
-        f.health.mo:Show()
+        if not self.db.profile.hp.mouseover then
+            f.health.mo:Show()
+        end
 
         if self.db.profile.general.leftie then
             f.health.mo:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',

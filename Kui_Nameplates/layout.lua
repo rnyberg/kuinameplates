@@ -176,20 +176,40 @@ local function OnHealthValueChanged(oldBar, curr)
 end
 
 ------------------------------------------------------- Frame script handlers --
+local function OnFrameEnter(self)
+    addon:StoreGUID(self, 'mouseover')
+    self.highlighted = true
+
+    if self.highlight then
+        self.highlight:Show()
+    end
+
+    if addon.db.profile.hp.mouseover then
+        self.health.p:Show()
+        if self.health.mo then self.health.mo:Show() end
+    end
+end
+local function OnFrameLeave(self)
+    self.highlighted = false
+
+    if self.highlight then
+        self.highlight:Hide()
+    end
+
+    if addon.db.profile.hp.mouseover and self.health and not self.target then
+        self.health.p:Hide()
+        if self.health.mo then self.health.mo:Hide() end
+    end
+end
 local function OnFrameShow(self)
     self = self.kuiParent
     local f = self.kui
     local trivial = f.firstChild:GetScale() < 1
-    
+
     -- reset name
     f.name.text = f.oldName:GetText()
     f.name:SetText(f.name.text)
 
-    if addon.db.profile.hp.mouseover then
-        -- force un-highlight
-        f.highlighted = true
-    end
-    
     -- classifications
     if not trivial and f.level.enabled then
         if f.boss:IsVisible() then
@@ -265,7 +285,6 @@ local function OnFrameShow(self)
 
     kn:SendMessage('KuiNameplates_PostShow', f)
 end
-
 local function OnFrameHide(self)
     self = self.kuiParent
     local f = self.kui
@@ -273,6 +292,9 @@ local function OnFrameHide(self)
 
     f:SetFrameLevel(0)
     
+    -- force un-highlight
+    OnFrameLeave(self)
+
     if f.targetGlow then
         f.targetGlow:Hide()
     end
@@ -294,31 +316,6 @@ local function OnFrameHide(self)
     
     kn:SendMessage('KuiNameplates_PostHide', f) 
 end
-
-local function OnFrameEnter(self)
-    addon:StoreGUID(self, 'mouseover')
-
-    if self.highlight then
-        self.highlight:Show()
-    end
-
-    if addon.db.profile.hp.mouseover then
-        self.health.p:Show()
-        if self.health.mo then self.health.mo:Show() end
-    end
-end
-
-local function OnFrameLeave(self)
-    if self.highlight then
-        self.highlight:Hide()
-    end
-
-    if not self.target and addon.db.profile.hp.mouseover then
-        self.health.p:Hide()
-        if self.health.mo then self.health.mo:Hide() end
-    end
-end
-
 -- stuff that needs to be updated every frame
 local function OnFrameUpdate(self, e)
     local f = self.kui
@@ -497,11 +494,9 @@ local function UpdateFrameCritical(self)
     --------------------------------------------------------------- Mouseover --
     if self.oldHighlight:IsShown() then
         if not self.highlighted then
-            self.highlighted = true
             OnFrameEnter(self)
         end
     elseif self.highlighted then
-        self.highlighted = false
         OnFrameLeave(self)
     end
     
@@ -548,7 +543,6 @@ end
 function kn:InitFrame(frame)
     -- container for kui objects!
     frame.kui = CreateFrame('Frame', nil, WorldFrame) 
-    frame.kui:SetFrameLevel(0)
     local f = frame.kui
 
     f.fontObjects = {}
@@ -673,18 +667,8 @@ function kn:InitFrame(frame)
     -- raid icon ---------------------------------------------------------------
     f.icon:SetParent(f.overlay)
     f.icon:SetSize(kn.sizes.tex.raidicon, kn.sizes.tex.raidicon)
-
     f.icon:ClearAllPoints()
     f.icon:SetPoint('LEFT', f.health, 'RIGHT', 5, 1)
-    ----------------------------------------------------------------- Scripts --
-    -- Don't hook these directly to the frame; workaround for issue caused by
-    -- current curse.com version of VialCooldowns.
-    f.oldHealth:HookScript('OnShow', OnFrameShow)   
-    f.oldHealth:HookScript('OnHide', OnFrameHide)   
-
-    frame:HookScript('OnUpdate', OnFrameUpdate)
-
-    f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
 
     --@debug@
     if _G['KuiNameplatesDebug'] then
@@ -702,10 +686,19 @@ function kn:InitFrame(frame)
     end
     --@end-debug@
 
-    ------------------------------------------------------------ Finishing up --
+    ----------------------------------------------------------------- Scripts --
+    -- Don't hook these directly to the frame; workaround for issue caused by
+    -- current curse.com version of VialCooldowns.
+    f.oldHealth:HookScript('OnShow', OnFrameShow)   
+    f.oldHealth:HookScript('OnHide', OnFrameHide)   
+
     f.elapsed  = slowUpdateTime
     f.critElap = critUpdateTime
+    frame:HookScript('OnUpdate', OnFrameUpdate)
 
+    f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
+
+    ------------------------------------------------------------ Finishing up --
     kn:SendMessage('KuiNameplates_PostCreate', f)
     
     if frame:IsShown() then
