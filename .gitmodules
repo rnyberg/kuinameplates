@@ -1,0 +1,6 @@
+[submodule "Kui_Nameplates/lib/Kui"]
+	path = Kui_Nameplates/lib/Kui
+	url = https://rbtwrrr@bitbucket.org/rbtwrrr/kuilib
+[submodule "Kui_Media"]
+	path = Kui_Media
+	url = https://rbtwrrr@bitbucket.org/rbtwrrr/kui-media
