@@ -41,7 +41,8 @@ addon.defaultSizes = {
 
 -- add latin-only fonts to LSM
 LSM:Register(LSM.MediaType.FONT, 'Yanone Kaffesatz Bold', kui.m.f.yanone)
-LSM:Register(LSM.MediaType.FONT, 'Expressway Rg Bold', "Interface\\AddOns\\Kui_Media\\f\\express.ttf")
+LSM:Register(LSM.MediaType.FONT, 'FrancoisOne', kui.m.f.francois)
+local DEFAULT_FONT = 'FrancoisOne'
 
 -- add my status bar textures too..
 LSM:Register(LSM.MediaType.STATUSBAR, 'Kui status bar', kui.m.t.bar)
@@ -102,7 +103,7 @@ local defaults = {
         },
         fonts = {
             options = {
-                font       = (latin and 'Expressway Rg Bold' or LSM:GetDefault(LSM.MediaType.FONT)),
+                font       = (latin and DEFAULT_FONT or LSM:GetDefault(LSM.MediaType.FONT)),
                 fontscale  = 1,
                 outline    = true,
                 monochrome = false,
@@ -441,7 +442,7 @@ function addon:OnEnable()
     
     -- handle deleted or invalid files
     if not self.font then
-        self.font = LSM:Fetch(LSM.MediaType.FONT, 'Expressway Rg Bold')
+        self.font = LSM:Fetch(LSM.MediaType.FONT, DEFAULT_FONT)
     end
     if not self.bartexture then
         self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, DEFAULT_BAR)

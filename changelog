@@ -1,3 +1,4 @@
 * add new default status bar texture, old default is now "Kui shaded bar"
 * change default health display pattern for friendly units to: <:d;
 * add blackout kick dot to kuispelllist
+* change default font to "FrancoisOne" - a completely free font that renders nicely at small sizes in WoW
