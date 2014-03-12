@@ -112,6 +112,7 @@ local whitelist = {
 		[61305] = true, -- polymorph: cat
 		[61721] = true, -- polymorph: rabbit
 		[61780] = true, -- polymorph: turkey
+		[44572] = true, -- deep freeze
 	
 		[1459] = true, -- arcane brilliance
 		
