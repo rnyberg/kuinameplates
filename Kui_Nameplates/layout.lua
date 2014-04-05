@@ -206,10 +206,6 @@ local function OnFrameShow(self)
     local f = self.kui
     local trivial = f.firstChild:GetScale() < 1
 
-    -- reset name
-    f.name.text = f.oldName:GetText()
-    f.name:SetText(f.name.text)
-
     -- classifications
     if not trivial and f.level.enabled then
         if f.boss:IsVisible() then
@@ -233,7 +229,6 @@ local function OnFrameShow(self)
         f.state:Hide()
     end
 
-    addon:StoreName(f)
     -- return guid to an assumed unique name
     addon:GetGUID(f)
     
@@ -262,22 +257,16 @@ local function OnFrameShow(self)
         f.doneFirstShow = true
     end
     
+    -- run slow update immediately after this frame is shown
+    f.elapsed = 0
+    f.critElap = critUpdateTime
+
     -- force health update
     f:SetHealthColour()
     f:SetGlowColour()
     f:OnHealthValueChanged()
 
     if f.fixaa then
-        --@do-not-package@
-        -- TODO TEST only show players
-        --[[
-        if f.friend and f.player then
-            f.DoShow = true
-        else
-            f.DoShow = nil
-            f:Hide()
-        end]]
-        --@end-do-not-package@
         f.DoShow = true
     else
         f:Show()
@@ -412,6 +401,10 @@ end
 
 -- stuff that can be updated less often
 local function UpdateFrame(self)
+    -- reset name
+    self.name.text = self.oldName:GetText()
+    self.name:SetText(self.name.text)
+
     -- ensure a frame is still stored for this name, as name conflicts cause
     -- it to be erased when another might still exist
     addon:StoreName(self)
@@ -690,10 +683,7 @@ function kn:InitFrame(frame)
     -- Don't hook these directly to the frame; workaround for issue caused by
     -- current curse.com version of VialCooldowns.
     f.oldHealth:HookScript('OnShow', OnFrameShow)   
-    f.oldHealth:HookScript('OnHide', OnFrameHide)   
-
-    f.elapsed  = slowUpdateTime
-    f.critElap = critUpdateTime
+    f.oldHealth:HookScript('OnHide', OnFrameHide)
     frame:HookScript('OnUpdate', OnFrameUpdate)
 
     f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
