@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'KuiSpellList-1.0', 5
+local MAJOR, MINOR = 'KuiSpellList-1.0', 6
 local KuiSpellList = LibStub:NewLibrary(MAJOR, MINOR)
 local _
 
@@ -11,12 +11,6 @@ local listeners = {}
 local whitelist = {
 --[[ Important spells ----------------------------------------------------------
 	Target auras which the player needs to keep track of.
-
-	TODO spells regardless of class
-	-- Silences/stuns --
-	[50613] = true, -- arcane torrent
-	[20549] = true, -- war stone
-	[107079] = true, -- quaking palm
 
 	-- LEGEND --
 	gp = guaranteed passive
@@ -346,6 +340,13 @@ local whitelist = {
 		[119392] = true, -- charging ox wave
 		[119381] = true, -- leg sweep
 	},
+
+	GlobalSelf = {
+		[50613] = true, -- arcane torrent
+		[20549] = true, -- war stone
+		[107079] = true, -- quaking palm
+	},
+
 -- Important auras regardless of caster (cc, flags...) -------------------------
 --[[
 	Global = {
@@ -371,13 +372,24 @@ KuiSpellList.WhitelistChanged = function()
 	end
 end
 
-KuiSpellList.GetDefaultSpells = function(class)
+KuiSpellList.AppendGlobalSpells = function(toList)
+	for spellid,_ in pairs(whitelist.GlobalSelf) do
+		toList[spellid] = true
+	end
+	return toList
+end
+
+KuiSpellList.GetDefaultSpells = function(class,onlyClass)
 	-- get spell list, ignoring KuiSpellListCustom
 	local list = {}
 
 	-- return a copy of the list rather than a reference
 	for spellid,_ in pairs(whitelist[class]) do
 		list[spellid] = true
+	end
+
+	if not onlyClass then
+		KuiSpellList.AppendGlobalSpells(list)
 	end
 
 	return list
@@ -388,21 +400,23 @@ KuiSpellList.GetImportantSpells = function(class)
 	local list = KuiSpellList.GetDefaultSpells(class)
 
 	if KuiSpellListCustom then
-		if KuiSpellListCustom.Ignore and
-		   KuiSpellListCustom.Ignore[class]
-		then
-			-- remove ignored spells
-			for spellid,_ in pairs(KuiSpellListCustom.Ignore[class]) do
-				list[spellid] = nil
+		for _,group in pairs({class,'GlobalSelf'}) do
+			if KuiSpellListCustom.Ignore and
+			   KuiSpellListCustom.Ignore[group]
+			then
+				-- remove ignored spells
+				for spellid,_ in pairs(KuiSpellListCustom.Ignore[group]) do
+					list[spellid] = nil
+				end
 			end
-		end
 
-		if KuiSpellListCustom.Classes and
-		   KuiSpellListCustom.Classes[class]
-		then
-			-- merge custom added spells
-			for spellid,_ in pairs(KuiSpellListCustom.Classes[class]) do
-				list[spellid] = true
+			if KuiSpellListCustom.Classes and
+			   KuiSpellListCustom.Classes[group]
+			then
+				-- merge custom added spells
+				for spellid,_ in pairs(KuiSpellListCustom.Classes[group]) do
+					list[spellid] = true
+				end
 			end
 		end
 	end

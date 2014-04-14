@@ -10,7 +10,6 @@
    * customisation for raid target icons
    * ability to make certain auras bigger
    * add upper limit to number of auras
-   * add transition threat bar colour option
 ]]
 
 local kui = LibStub('Kui-1.0')
@@ -46,12 +45,23 @@ local function SetFrameCentre(f)
     end
 end
 -- set colour of health bar according to reaction/threat
-local function SetHealthColour(self)
-    if self.hasThreat then
-        self.health.reset = true
-        self.health:SetStatusBarColor(unpack(addon.TankModule.db.profile.barcolour))
-        return
-    end
+local function SetHealthColour(self,sticky,r,g,b)
+	if sticky then
+		-- sticky colour; override other colours
+		self.health:SetStatusBarColor(r,g,b)
+		self.stickyHealthColour = true
+		self.health.reset = true
+		return
+	end
+
+	if self.stickyHealthColour then
+		if sticky == nil then
+			return
+		elseif sticky == false then
+			-- unstick
+			self.stickyHealthColour = false
+		end
+	end
 
     local r, g, b = self.oldHealth:GetStatusBarColor()
     if self.health.reset  or
@@ -298,6 +308,7 @@ local function OnFrameHide(self)
     f.fadingTo  = nil
     f.hasThreat = nil
     f.target    = nil
+	f.stickyHealthColour = nil
 
     -- unset stored health bar colours
     f.health.r, f.health.g, f.health.b, f.health.reset
@@ -425,14 +436,17 @@ local function UpdateFrameCritical(self)
 
         if not self.friend and addon.TankModule and addon.TankMode then
             -- in tank mode; is the default glow red (are we tanking)?
-            self.hasThreat = (self.glow.g + self.glow.b) < .1
+			self.hasThreat = true
+			self.holdingThreat = self.glow.r > .9 and (self.glow.g + self.glow.b) < .1
 
-            if self.hasThreat then
-                -- tanking; recolour bar & glow
-                local r, g, b, a = unpack(addon.TankModule.db.profile.glowcolour)
-                self:SetGlowColour(r, g, b, a)
-                self:SetHealthColour()
-            end
+			self:SetGlowColour(unpack(addon.TankModule.db.profile.glowcolour))
+
+			if self.holdingThreat then
+				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.barcolour))
+			else
+				-- losing/gaining threat
+				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.midcolour))
+			end
         end
     elseif self.glow.wasVisible then
         self.glow.wasVisible = nil
@@ -443,7 +457,7 @@ local function UpdateFrameCritical(self)
         if self.hasThreat then
             -- lost threat
             self.hasThreat = nil
-            self:SetHealthColour()
+            self:SetHealthColour(false)
         end
     end
     ------------------------------------------------------------ Target stuff --

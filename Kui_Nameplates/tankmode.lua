@@ -62,6 +62,12 @@ function mod:GetOptions()
 			type = 'color',
 			order = 1
 		},
+		midcolour = {
+			name = 'Transitional colour',
+			desc = 'The bar colour to use when you are losing or gaining threat.',
+			type = 'color',
+			order = 1
+		},
 		glowcolour = {
 			name = 'Glow colour',
 			desc = 'The glow (border) colour to use when you have threat',
@@ -76,7 +82,8 @@ function mod:OnInitialize()
 	self.db = addon.db:RegisterNamespace(self.moduleName, {
 		profile = {
 			enabled = 1,
-			barcolour = { .2, .9, .1, 1 },
+			barcolour = { .2, .9, .1 },
+			midcolour = { 1, .5, 0 },
 			glowcolour = { 1, 0, 0, 1 }
 		}
 	})
