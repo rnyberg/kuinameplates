@@ -342,8 +342,14 @@ local whitelist = {
 	},
 
 	GlobalSelf = {
-		[50613] = true, -- arcane torrent
-		[20549] = true, -- war stone
+		[28730] = true, -- arcane torrent
+		[25046] = true,
+		[50613] = true,
+		[69179] = true,
+		[80483] = true,
+		[129597] = true,
+		--[155145] = true, -- seems to not be implemented 
+		[20549] = true, -- war stomp
 		[107079] = true, -- quaking palm
 	},
 
