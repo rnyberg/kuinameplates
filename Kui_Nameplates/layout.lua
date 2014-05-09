@@ -267,13 +267,15 @@ local function OnFrameShow(self)
         f.doneFirstShow = true
     end
     
-    -- run slow update immediately after this frame is shown
-    f.elapsed = 0
+    f.elapsed = slowUpdateTime
     f.critElap = critUpdateTime
 
-    -- force health update
-    f:SetHealthColour()
+    -- run slow update immediately
+	f:UpdateFrame()
+
+	-- reset glow colour
     f:SetGlowColour()
+    -- force health update
     f:OnHealthValueChanged()
 
     if f.fixaa then

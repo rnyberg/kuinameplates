@@ -1,5 +1,1 @@
-* add transitional threat colour
-* fix "unknown" names sticking
-* add GlobalSelf whitelist to auras - list of spells to track regardless of
-class (i.e. racial stuns and silences). Can be customised using
-KuiSpellListConfig.
+* fix PostShow is fired before the name is updated, leading to problems with external modules or custom.lua modifications (again)
