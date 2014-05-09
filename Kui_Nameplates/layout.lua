@@ -136,7 +136,7 @@ local function OnHealthValueChanged(oldBar, curr)
 
     -- always calculate and store percentage for external access
     frame.health.percent = curr / max * 100
-    
+
     -- select correct health display pattern
     if frame.friend then
         pattern = addon.db.profile.hp.friendly
@@ -233,7 +233,7 @@ local function OnFrameShow(self)
     else
         f.level:Hide()
     end
-    
+
     if f.state:IsVisible() then
         -- hide the elite/rare dragon
         f.state:Hide()
@@ -241,7 +241,7 @@ local function OnFrameShow(self)
 
     -- return guid to an assumed unique name
     addon:GetGUID(f)
-    
+
     ---------------------------------------------- Trivial sizing/positioning --
     if kn.uiscale then
         -- change our parent frame size if we're using fixaa..
@@ -266,7 +266,7 @@ local function OnFrameShow(self)
 
         f.doneFirstShow = true
     end
-    
+
     f.elapsed = slowUpdateTime
     f.critElap = critUpdateTime
 
@@ -292,7 +292,7 @@ local function OnFrameHide(self)
     f:Hide()
 
     f:SetFrameLevel(0)
-    
+
     -- force un-highlight
     OnFrameLeave(self)
 
@@ -315,8 +315,8 @@ local function OnFrameHide(self)
     -- unset stored health bar colours
     f.health.r, f.health.g, f.health.b, f.health.reset
         = nil, nil, nil, nil
-    
-    kn:SendMessage('KuiNameplates_PostHide', f) 
+
+    kn:SendMessage('KuiNameplates_PostHide', f)
 end
 -- stuff that needs to be updated every frame
 local function OnFrameUpdate(self, e)
@@ -331,11 +331,11 @@ local function OnFrameUpdate(self, e)
         local x, y = select(4, f.firstChild:GetPoint())
         x = (x / kn.uiscale) * scale
         y = (y / kn.uiscale) * scale
-    
+
         f:SetPoint('BOTTOMLEFT', WorldFrame, 'BOTTOMLEFT',
             floor(x - (f:GetWidth() / 2)),
             floor(y))
-        
+
         -- show the frame after it's been moved so it doesn't flash
         -- .DoShow is set OnFrameShow
         if f.DoShow then
@@ -343,7 +343,7 @@ local function OnFrameUpdate(self, e)
             f.DoShow = nil
         end
     end
-    
+
     f.defaultAlpha = self:GetAlpha()
 
     ------------------------------------------------------------------- Alpha --
@@ -351,10 +351,10 @@ local function OnFrameUpdate(self, e)
     if (f.defaultAlpha == 1 and targetExists)
        or
        -- avoid fading low hp units
-	   (((f.friend and addon.db.profile.fade.rules.avoidfriendhp) or
-	    (not f.friend and addon.db.profile.fade.rules.avoidhostilehp)) and
-		f.health.percent <= addon.db.profile.fade.rules.avoidhpval
-	   )
+       (((f.friend and addon.db.profile.fade.rules.avoidfriendhp) or
+        (not f.friend and addon.db.profile.fade.rules.avoidhostilehp)) and
+         f.health.percent <= addon.db.profile.fade.rules.avoidhpval
+       )
        or
        -- avoid fading casting units
        (f.castbar and addon.db.profile.fade.rules.avoidcast and f.castbar:IsShown())
@@ -478,7 +478,7 @@ local function UpdateFrameCritical(self)
                 self.health.p:Show()
                 if self.health.mo then self.health.mo:Show() end
             end
-        
+
             if self.targetGlow then
                 self.targetGlow:Show()
             end
@@ -489,11 +489,11 @@ local function UpdateFrameCritical(self)
         self.target = nil
 
         self:SetFrameLevel(0)
-        
+
         if self.targetGlow then
             self.targetGlow:Hide()
         end
-        
+
         if not self.highlighted and addon.db.profile.hp.mouseover then
             self.health.p:Hide()
             if self.health.mo then self.health.mo:Hide() end
@@ -508,7 +508,7 @@ local function UpdateFrameCritical(self)
     elseif self.highlighted then
         OnFrameLeave(self)
     end
-    
+
     --@debug@
     if _G['KuiNameplatesDebug'] then
         if self.guid then
@@ -528,7 +528,7 @@ local function UpdateFrameCritical(self)
         else
             self.nametext:SetText(nil)
         end
-        
+
         if self.friend then
             self.isfriend:SetText('friendly')
         else
@@ -551,11 +551,11 @@ end
 
 function kn:InitFrame(frame)
     -- container for kui objects!
-    frame.kui = CreateFrame('Frame', nil, WorldFrame) 
+    frame.kui = CreateFrame('Frame', nil, WorldFrame)
     local f = frame.kui
 
     f.fontObjects = {}
-    
+
     -- fetch default ui's objects
     local overlayChild, nameTextChild = frame:GetChildren()
     local healthBar, castBar = overlayChild:GetChildren()
@@ -599,7 +599,7 @@ function kn:InitFrame(frame)
 
     f.oldName = nameTextRegion
     f.oldName:Hide()
-    
+
     f.oldHighlight = highlightRegion
 
     -- used by OnFrameShow and OnFrameHide
@@ -620,17 +620,17 @@ function kn:InitFrame(frame)
     if self.db.profile.general.fixaa and kn.uiscale then
         f:SetSize(frame:GetWidth()/kn.uiscale, frame:GetHeight()/kn.uiscale)
         f:SetScale(kn.uiscale)
-        
+
         f:SetPoint('BOTTOMLEFT', UIParent)
         f:Hide()
-        
+
         --@debug@
         if _G['KuiNameplatesDebug'] then
             f:SetBackdrop({ bgFile = kui.m.t.solid })
             f:SetBackdropColor(0,0,0,.5)
         end
         --@end-debug@
-        
+
         f.fixaa = true
     else
         f:SetAllPoints(frame)
@@ -642,7 +642,7 @@ function kn:InitFrame(frame)
     -- TODO legacy compatibility; remove
     parent = f
     f.parent = parent
-    
+
     f:SetCentre()
 
     self:CreateBackground(frame, f)
@@ -655,7 +655,7 @@ function kn:InitFrame(frame)
 
     self:CreateHighlight(frame, f)
     self:CreateHealthText(frame, f)
-    
+
     if self.db.profile.hp.showalt then
         self:CreateAltHealthText(frame, f)
     end
@@ -667,7 +667,7 @@ function kn:InitFrame(frame)
     end
 
     self:CreateName(frame, f)
-    
+
     -- target highlight --------------------------------------------------------
     if self.db.profile.general.targetglow then
         self:CreateTargetGlow(f)
@@ -686,7 +686,7 @@ function kn:InitFrame(frame)
 
         f.isfriend = f:CreateFontString(f.overlay)
         f.isfriend:SetPoint('BOTTOM', frame, 'TOP')
-        
+
         f.guidtext = f:CreateFontString(f.overlay)
         f.guidtext:SetPoint('TOP', frame, 'BOTTOM')
 
@@ -698,7 +698,7 @@ function kn:InitFrame(frame)
     ----------------------------------------------------------------- Scripts --
     -- Don't hook these directly to the frame; workaround for issue caused by
     -- current curse.com version of VialCooldowns.
-    f.oldHealth:HookScript('OnShow', OnFrameShow)   
+    f.oldHealth:HookScript('OnShow', OnFrameShow)
     f.oldHealth:HookScript('OnHide', OnFrameHide)
     frame:HookScript('OnUpdate', OnFrameUpdate)
 
@@ -706,7 +706,7 @@ function kn:InitFrame(frame)
 
     ------------------------------------------------------------ Finishing up --
     kn:SendMessage('KuiNameplates_PostCreate', f)
-    
+
     if frame:IsShown() then
         -- force OnShow
         OnFrameShow(healthBar)
