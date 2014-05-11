@@ -44,7 +44,8 @@ local function SetFrameCentre(f)
         f.y = floor((h / 2) - (addon.sizes.frame.height / 2))
     end
 end
--- set colour of health bar according to reaction/threat
+-- get default health bar colour, parse it into one of our custom colours
+-- and the reaction of the unit toward the player
 local function SetHealthColour(self,sticky,r,g,b)
 	if sticky then
 		-- sticky colour; override other colours
@@ -239,9 +240,6 @@ local function OnFrameShow(self)
         f.state:Hide()
     end
 
-    -- return guid to an assumed unique name
-    addon:GetGUID(f)
-
     ---------------------------------------------- Trivial sizing/positioning --
     if kn.uiscale then
         -- change our parent frame size if we're using fixaa..
@@ -267,16 +265,12 @@ local function OnFrameShow(self)
         f.doneFirstShow = true
     end
 
-    f.elapsed = slowUpdateTime
-    f.critElap = critUpdateTime
-
-    -- run slow update immediately
-	f:UpdateFrame()
+    -- run updates immediately after the frame is shown
+    f.elapsed = 0
+    f.critElap = 0
 
 	-- reset glow colour
     f:SetGlowColour()
-    -- force health update
-    f:OnHealthValueChanged()
 
     if f.fixaa then
         f.DoShow = true
@@ -284,7 +278,8 @@ local function OnFrameShow(self)
         f:Show()
     end
 
-    kn:SendMessage('KuiNameplates_PostShow', f)
+    -- dispatch the PostShow message after the first UpdateFrame
+    f.DispatchPostShow = true 
 end
 local function OnFrameHide(self)
     self = self.kuiParent
@@ -414,16 +409,26 @@ end
 
 -- stuff that can be updated less often
 local function UpdateFrame(self)
-    -- reset name
-    self.name.text = self.oldName:GetText()
-    self.name:SetText(self.name.text)
+    -- periodically update the name in order to purge Unknowns due to lag, etc
+    self:SetName()
 
     -- ensure a frame is still stored for this name, as name conflicts cause
     -- it to be erased when another might still exist
     addon:StoreName(self)
 
-    -- Health bar colour
+    -- reset/update health bar colour
     self:SetHealthColour()
+
+    -- force health update
+    self:OnHealthValueChanged()
+
+    if self.DispatchPostShow then
+        -- return guid to an assumed unique name
+        addon:GetGUID(self)
+
+        kn:SendMessage('KuiNameplates_PostShow', self)
+        self.DispatchPostShow = nil
+    end
 end
 
 -- stuff that needs to be updated often
@@ -538,6 +543,12 @@ local function UpdateFrameCritical(self)
     --@end-debug@
 end
 
+local function SetName(self)
+    -- get name from default frame and update our values
+    self.name.text = self.oldName:GetText()
+    self.name:SetText(self.name.text)
+end
+
 --------------------------------------------------------------- KNP functions --
 function kn:IsNameplate(frame)
     if frame:GetName() and strfind(frame:GetName(), '^NamePlate%d') then
@@ -606,9 +617,10 @@ function kn:InitFrame(frame)
     f.oldHealth.kuiParent = frame
 
     --------------------------------------------------------- Frame functions --
-    f.CreateFontString    = addon.CreateFontString -- TODO remove
+    f.CreateFontString    = addon.CreateFontString
     f.UpdateFrame         = UpdateFrame
     f.UpdateFrameCritical = UpdateFrameCritical
+    f.SetName             = SetName
     f.SetHealthColour     = SetHealthColour
     f.SetNameColour       = SetNameColour
     f.SetGlowColour       = SetGlowColour
@@ -638,10 +650,6 @@ function kn:InitFrame(frame)
 
     f:SetFrameStrata(self.db.profile.general.strata)
     f:SetFrameLevel(0)
-
-    -- TODO legacy compatibility; remove
-    parent = f
-    f.parent = parent
 
     f:SetCentre()
 

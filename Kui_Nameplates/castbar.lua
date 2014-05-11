@@ -101,7 +101,7 @@ end
 function mod:CreateCastbar(msg, frame)
 	if frame.castbar then return end
 	-- container ---------------------------------------------------------------
-	frame.castbar = CreateFrame('Frame', nil, frame.parent)
+	frame.castbar = CreateFrame('Frame', nil, frame)
 	frame.castbar:Hide()
 	
 	-- background --------------------------------------------------------------

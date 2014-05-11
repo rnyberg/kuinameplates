@@ -281,7 +281,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 end
 ----------------------------------------------------------------------- hooks --
 function mod:Create(msg, frame)
-	frame.auras = CreateFrame('Frame', nil, frame.parent)
+	frame.auras = CreateFrame('Frame', nil, frame)
 	frame.auras.frame = frame
 	
 	frame.auras:SetPoint('BOTTOMRIGHT', frame.health, 'TOPRIGHT', -3, 0)

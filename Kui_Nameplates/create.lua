@@ -13,14 +13,14 @@ local kui = LibStub('Kui-1.0')
 ------------------------------------------------------------------ Background --
 function addon:CreateBackground(frame, f)
     -- frame glow
-    --f.bg:SetParent(f.parent)
+    --f.bg:SetParent(f)
     f.bg = f:CreateTexture(nil, 'ARTWORK')
     f.bg:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\FrameGlow')
     f.bg:SetTexCoord(0, .469, 0, .625)
     f.bg:SetVertexColor(0, 0, 0, .9)
 
     -- solid background
-    f.bg.fill = f.parent:CreateTexture(nil, 'BACKGROUND')
+    f.bg.fill = f:CreateTexture(nil, 'BACKGROUND')
     f.bg.fill:SetTexture(kui.m.t.solid)
     f.bg.fill:SetVertexColor(0, 0, 0, .8)
     f.bg.fill:SetDrawLayer('ARTWORK', 1) -- 1 sub-layer above .bg
@@ -56,7 +56,7 @@ function addon:UpdateBackground(f, trivial)
 end
 ------------------------------------------------------------------ Health bar --
 function addon:CreateHealthBar(frame, f)
-    f.health = CreateFrame('StatusBar', nil, f.parent)
+    f.health = CreateFrame('StatusBar', nil, f)
     f.health:SetStatusBarTexture(addon.bartexture)
 
     if self.SetValueSmooth then

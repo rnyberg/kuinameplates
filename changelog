@@ -1,1 +1,2 @@
-* fix PostShow is fired before the name is updated, leading to problems with external modules or custom.lua modifications (again)
+* fix stored GUIDs are often restored to incorrect frames
+* fix health colour only updates when a frame is shown
