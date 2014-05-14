@@ -1,2 +1,2 @@
-* fix stored GUIDs are often restored to incorrect frames
-* fix health colour only updates when a frame is shown
+* fix lua errors when using fading rules
+* add border to castbar shield texture

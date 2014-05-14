@@ -272,6 +272,9 @@ local function OnFrameShow(self)
 	-- reset glow colour
     f:SetGlowColour()
 
+    -- force health update, to calculate percent
+    f:OnHealthValueChanged()
+
     if f.fixaa then
         f.DoShow = true
     else
