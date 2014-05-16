@@ -502,6 +502,7 @@ function mod:OnInitialize()
 	self.db = addon.db:RegisterNamespace(self.moduleName, {
 		profile = {
 			enabled = true,
+			showtrivial = false,
 			display = {
 				pulsate = true,
 				decimal = true,
