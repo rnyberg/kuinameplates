@@ -1,2 +1,1 @@
-* fix lua errors when using fading rules
-* add border to castbar shield texture
+* plug memory leak relating to health text

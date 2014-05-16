@@ -120,72 +120,75 @@ local function SetGlowColour(self, r, g, b, a)
     self.bg:SetVertexColor(r, g, b, a)
 end
 ---------------------------------------------------- Update health bar & text --
-local function OnHealthValueChanged(oldBar, curr)
-    if oldBar.oldHealth then
-        -- allow calling this as a function of the frame
-        oldBar = oldBar.oldHealth
-        curr = oldBar:GetValue()
-    end
+local OnHealthValueChanged
+do
+	local rules,rule,big,sml,condition,display,pattern
+	OnHealthValueChanged = function(oldBar, curr)
+		if oldBar.oldHealth then
+			-- allow calling this as a function of the frame
+			oldBar = oldBar.oldHealth
+			curr = oldBar:GetValue()
+		end
 
-    local frame = oldBar:GetParent():GetParent().kui
-    local min, max  = oldBar:GetMinMaxValues()
-    local deficit,    big, sml, condition, display, pattern, rules
-        = max - curr, '',  ''
+		local frame = oldBar:GetParent():GetParent().kui
+		big,sml = nil,nil
 
-    frame.health:SetMinMaxValues(min, max)
-    frame.health:SetValue(curr)
+		-- store values for external access
+		frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
+		frame.health.curr = curr
+		frame.health.percent = frame.health.curr / frame.health.max * 100
 
-    -- always calculate and store percentage for external access
-    frame.health.percent = curr / max * 100
+		frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
+		frame.health:SetValue(frame.health.curr)
 
-    -- select correct health display pattern
-    if frame.friend then
-        pattern = addon.db.profile.hp.friendly
-    else
-        pattern = addon.db.profile.hp.hostile
-    end
+		-- select correct health display pattern
+		if frame.friend then
+			pattern = addon.db.profile.hp.friendly
+		else
+			pattern = addon.db.profile.hp.hostile
+		end
 
-    -- parse pattern into big/sml
-    rules = { strsplit(';', pattern) }
+		-- parse pattern into big/sml
+		rules = { strsplit(';', pattern) }
 
-    for k, rule in ipairs(rules) do
-        condition, display = strsplit(':', rule)
+		for _, rule in ipairs(rules) do
+			condition, display = strsplit(':', rule)
 
-        if condition == '<' then
-            condition = curr < max
-        elseif condition == '=' then
-            condition = curr == max
-        elseif condition == '<=' or condition == '=<' then
-            condition = curr <= max
-        else
-            condition = nil
-        end
+			if condition == '<' then
+				condition = frame.health.curr < frame.health.max
+			elseif condition == '=' then
+				condition = frame.health.curr == frame.health.max
+			elseif condition == '<=' or condition == '=<' then
+				condition = frame.health.curr <= frame.health.max
+			else
+				condition = nil
+			end
 
-        if condition then
-            if display == 'd' then
-                big = '-'..kui.num(deficit)
-                sml = kui.num(curr)
-            elseif display == 'm' then
-                big = kui.num(max)
-            elseif display == 'c' then
-                big = kui.num(curr)
-                sml = curr ~= max and kui.num(max)
-            elseif display == 'p' then
-                big = floor(frame.health.percent)
-                sml = kui.num(curr)
-            end
+			if condition then
+				if display == 'd' then
+					big = '-'..kui.num(frame.health.max - frame.health.curr)
+					sml = kui.num(frame.health.curr)
+				elseif display == 'm' then
+					big = kui.num(frame.health.max)
+				elseif display == 'c' then
+					big = kui.num(frame.health.curr)
+					sml = frame.health.curr ~= frame.health.max and kui.num(frame.health.max)
+				elseif display == 'p' then
+					big = floor(frame.health.percent)
+					sml = kui.num(frame.health.curr)
+				end
 
-            break
-        end
-    end
+				break
+			end
+		end
 
-    frame.health.p:SetText(big)
+		frame.health.p:SetText(big or '')
 
-    if frame.health.mo then
-        frame.health.mo:SetText(sml)
-    end
+		if frame.health.mo then
+			frame.health.mo:SetText(sml or '')
+		end
+	end
 end
-
 ------------------------------------------------------- Frame script handlers --
 local function OnFrameEnter(self)
     addon:StoreGUID(self, 'mouseover')
@@ -272,15 +275,7 @@ local function OnFrameShow(self)
 	-- reset glow colour
     f:SetGlowColour()
 
-    -- force health update, to calculate percent
-    f:OnHealthValueChanged()
-
-    if f.fixaa then
-        f.DoShow = true
-    else
-        f:Show()
-    end
-
+    f.DoShow = true
     -- dispatch the PostShow message after the first UpdateFrame
     f.DispatchPostShow = true 
 end
@@ -333,13 +328,13 @@ local function OnFrameUpdate(self, e)
         f:SetPoint('BOTTOMLEFT', WorldFrame, 'BOTTOMLEFT',
             floor(x - (f:GetWidth() / 2)),
             floor(y))
+    end
 
-        -- show the frame after it's been moved so it doesn't flash
-        -- .DoShow is set OnFrameShow
-        if f.DoShow then
-            f:Show()
-            f.DoShow = nil
-        end
+    -- show the frame after it's been moved so it doesn't flash
+    -- .DoShow is set OnFrameShow
+    if f.DoShow then
+        f:Show()
+        f.DoShow = nil
     end
 
     f.defaultAlpha = self:GetAlpha()
@@ -422,10 +417,10 @@ local function UpdateFrame(self)
     -- reset/update health bar colour
     self:SetHealthColour()
 
-    -- force health update
-    self:OnHealthValueChanged()
-
     if self.DispatchPostShow then
+        -- force initial health update, which relies on health colour
+        self:OnHealthValueChanged()
+
         -- return guid to an assumed unique name
         addon:GetGUID(self)
 

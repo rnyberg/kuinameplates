@@ -58,6 +58,7 @@ end
 function addon:CreateHealthBar(frame, f)
     f.health = CreateFrame('StatusBar', nil, f)
     f.health:SetStatusBarTexture(addon.bartexture)
+	f.health.percent = 100
 
     if self.SetValueSmooth then
         -- smooth bar
