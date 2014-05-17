@@ -11,15 +11,8 @@ Kui_Nameplates/lib/Ace3/AceGUI-3.0
 Kui_Nameplates/lib/Ace3/AceTimer-3.0
 Kui_Nameplates/lib/Ace3/CallbackHandler-1.0
 dev/
-absorb-watcher-idea
 Kui_Nameplates_Absorbs
-key.ppk
-pubkey
-*.orig
 *.swp
 *~
-*.psd
 kui_nameplates_showoff.png
-id_rsa
-id_rsa.pub
 
