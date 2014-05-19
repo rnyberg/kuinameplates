@@ -10,6 +10,9 @@
    * customisation for raid target icons
    * ability to make certain auras bigger
    * add upper limit to number of auras
+
+   * fix horizontal text jitter
+   * fix castbar fades out on newly shown frames
 ]]
 
 local kui = LibStub('Kui-1.0')
