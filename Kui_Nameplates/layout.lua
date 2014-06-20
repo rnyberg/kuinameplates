@@ -316,6 +316,7 @@ local function OnFrameHide(self)
 end
 -- stuff that needs to be updated every frame
 local function OnFrameUpdate(self, e)
+    self = self.kuiParent
     local f = self.kui
 
     f.elapsed   = f.elapsed - e
@@ -614,9 +615,6 @@ function kn:InitFrame(frame)
 
     f.oldHighlight = highlightRegion
 
-    -- used by OnFrameShow and OnFrameHide
-    f.oldHealth.kuiParent = frame
-
     --------------------------------------------------------- Frame functions --
     f.CreateFontString    = addon.CreateFontString
     f.UpdateFrame         = UpdateFrame
@@ -705,11 +703,14 @@ function kn:InitFrame(frame)
     --@end-debug@
 
     ----------------------------------------------------------------- Scripts --
+    -- used by these scripts
+    f.oldHealth.kuiParent = frame
+
     -- Don't hook these directly to the frame; workaround for issue caused by
     -- current curse.com version of VialCooldowns.
     f.oldHealth:HookScript('OnShow', OnFrameShow)
     f.oldHealth:HookScript('OnHide', OnFrameHide)
-    frame:HookScript('OnUpdate', OnFrameUpdate)
+    f.oldHealth:HookScript('OnUpdate', OnFrameUpdate)
 
     f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
 
