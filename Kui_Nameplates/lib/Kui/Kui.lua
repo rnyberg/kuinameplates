@@ -247,6 +247,7 @@ end
 
 kui.frameFadeRemoveFrame = function(frame)
 	tDeleteItem(kui.FADEFRAMES, frame)
+	print('yes')
 end
 
 kui.frameFadeOnUpdate = function(self, elapsed)

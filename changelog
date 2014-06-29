@@ -1,2 +1,1 @@
-* reduce default width and height of normal frames slightly
-* add power word: solace to default whitelist
+* fix issue where target glow would appear on all nameplates
