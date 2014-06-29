@@ -129,14 +129,14 @@ function mod:CreateCastbar(msg, frame)
 
 	-- spark
 	frame.castbar.spark = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
-	frame.castbar.spark:SetDrawLayer('ARTWORK', 7)
+	frame.castbar.spark:SetDrawLayer('ARTWORK', 6)
 	frame.castbar.spark:SetVertexColor(1,1,.8)
 	frame.castbar.spark:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\spark')
 	frame.castbar.spark:SetPoint('CENTER', frame.castbar.bar:GetRegions(), 'RIGHT', 1, 0)
 	frame.castbar.spark:SetSize(6, addon.sizes.frame.cbheight + 6)
 
 	-- uninterruptible cast shield -----------------------------------------
-	frame.castbar.shield = frame.overlay:CreateTexture(nil, 'ARTWORK')
+	frame.castbar.shield = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
 	frame.castbar.shield:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\Shield')
 	frame.castbar.shield:SetTexCoord(0, .53125, 0, .625)
 
@@ -144,7 +144,7 @@ function mod:CreateCastbar(msg, frame)
 	frame.castbar.shield:SetPoint('LEFT', frame.castbar.bg, -7, 0)
 
 	frame.castbar.shield:SetBlendMode('BLEND')
-	frame.castbar.shield:SetDrawLayer('ARTWORK', 3)
+	frame.castbar.shield:SetDrawLayer('ARTWORK', 7)
 	frame.castbar.shield:SetVertexColor(unpack(mod.db.profile.display.shieldbarcolour))
 	
 	frame.castbar.shield:Hide()
