@@ -67,21 +67,22 @@ local function OnDefaultCastbarShow(self)
 		end
 	end
 
-	f.castbar:Show()
+	-- castbar is shown on first update
 end
 
 local function OnDefaultCastbarHide(self)
 	local f = self:GetParent():GetParent().kui
-
-	kui.frameFade(f.castbar, {
-		mode		= 'OUT',
-		timeToFade	= .5,
-		startAlpha	= 1,
-		endAlpha	= 0,
-		finishedFunc = function()
-			ResetFade(f)
-		end,
-	})
+	if f.castbar:IsShown() then
+		kui.frameFade(f.castbar, {
+			mode		= 'OUT',
+			timeToFade	= .5,
+			startAlpha	= 1,
+			endAlpha	= 0,
+			finishedFunc = function()
+				ResetFade(f)
+			end,
+		})
+	end
 end
 
 local function OnDefaultCastbarUpdate(self, elapsed)
@@ -96,6 +97,7 @@ local function OnDefaultCastbarUpdate(self, elapsed)
 
 	f.castbar.bar:SetMinMaxValues(min,max)
 	f.castbar.bar:SetValue(self:GetValue())
+	f.castbar:Show()
 end
 ---------------------------------------------------------------------- create --
 function mod:CreateCastbar(msg, frame)

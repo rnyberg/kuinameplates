@@ -1,1 +1,2 @@
 * fix issue where target glow would appear on all nameplates
+* fix issue where castbar would fade out on newly shown frames
