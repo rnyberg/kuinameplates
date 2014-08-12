@@ -61,7 +61,7 @@ end
 -------------------------------------------------------------- Event handlers --
 function mod:PLAYER_TALENT_UPDATE()
 	ANTICIPATION_IS_KNOWN = IsSpellKnown(ANTICIPATION_TALENT_ID)
-	
+
 	if ANTICIPATION_IS_KNOWN then
 		self:RegisterEvent('UNIT_AURA')
 	else
@@ -202,7 +202,7 @@ function mod:OnInitialize()
 	})
 
 	-- fetch the localised name of anticipation
-	ANTICIPATION_NAME = GetSpellInfo(ANTICIPATION_ID)
+	ANTICIPATION_NAME = GetSpellInfo(ANTICIPATION_ID) or 'Anticipation'
 
 	addon:RegisterSize('tex', 'combopoints', 4.5 * self.db.profile.scale)
 	addon:RegisterSize('tex', 'cpGlowWidth', 30 * self.db.profile.scale)
