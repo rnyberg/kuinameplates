@@ -1,1 +1,1 @@
-* fix an issue where auras and other such things would sometimes appear on the wrong frame
+* fix issue where auras were not updated on mouseover frames

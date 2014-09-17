@@ -1,7 +1,7 @@
 ## Interface: 50400
 ## Author: Kesava
 ## Title: Kui |cff9966ffNameplates|r
-## Notes: Prettier, lightweight, configurable nameplates.
+## Notes: Prettier nameplates.
 ## SavedVariables: KuiNameplatesGDB
 
 lib\embeds.xml
