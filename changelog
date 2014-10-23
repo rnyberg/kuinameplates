@@ -1,2 +1,2 @@
-* fix issue where auras were not updated on mouseover frames
-* bump TOC
+* added option to enable compatibility with NVIDIA 3D Vision
+* added option to also apply the mouseover highlight to the current target
