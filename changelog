@@ -1,2 +1,3 @@
 * added option to enable compatibility with NVIDIA 3D Vision
 * added option to also apply the mouseover highlight to the current target
+* possibly fixed issue where the default level text would reappear when it should be hidden

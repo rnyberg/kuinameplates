@@ -236,6 +236,7 @@ local function OnFrameShow(self)
         end
     else
         f.level:Hide()
+        f.level:SetWidth(.1)
     end
 
     if f.state:IsVisible() then
@@ -705,6 +706,7 @@ function addon:InitFrame(frame)
         self:CreateLevel(frame, f)
     else
         f.level:Hide()
+        f.level:SetWidth(.1)
     end
 
     self:CreateName(frame, f)
