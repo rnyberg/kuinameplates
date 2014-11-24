@@ -18,11 +18,15 @@ local UnitExists,UnitGUID=UnitExists,UnitGUID
 local FADE_THRESHOLD = 5
 
 -- combat log events to listen to for fading auras
-local auraEvents = {
+local REMOVAL_EVENTS = {
 --	['SPELL_DISPEL'] = true,
 	['SPELL_AURA_REMOVED'] = true,
 	['SPELL_AURA_BROKEN'] = true,
 	['SPELL_AURA_BROKEN_SPELL'] = true,
+}
+
+local ADDITION_EVENTS = {
+	['SPELL_AURA_APPLIED'] = true,
 }
 
 local function ArrangeButtons(self)
@@ -277,6 +281,23 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 
 	return button
 end
+function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
+	name = strlower(name) or nil
+	if  name and
+	   (not mod.db.profile.behav.useWhitelist or
+	    (whitelist[spellid] or whitelist[name])) and
+	   (duration >= mod.db.profile.display.lengthMin) and
+	   (mod.db.profile.display.lengthMax == -1 or (
+	   	duration > 0 and
+	    duration <= mod.db.profile.display.lengthMax))
+	then
+		local button = self:GetAuraButton(spellid, icon, count, duration, expirationTime)
+		self:Show()
+
+		button:Show()
+		button.used = true
+	end
+end
 ----------------------------------------------------------------------- hooks --
 function mod:Create(msg, frame)
 	frame.auras = CreateFrame('Frame', nil, frame)
@@ -290,8 +311,9 @@ function mod:Create(msg, frame)
 	frame.auras.visible = 0
 	frame.auras.buttons = {}
 	frame.auras.spellIds = {}
-	frame.auras.GetAuraButton = GetAuraButton
+	frame.auras.GetAuraButton  = GetAuraButton
 	frame.auras.ArrangeButtons = ArrangeButtons
+	frame.auras.DisplayAura    = DisplayAura
 
 	frame.auras:SetScript('OnHide', function(self)
 		for k,b in pairs(self.buttons) do
@@ -321,8 +343,9 @@ end
 -------------------------------------------------------------- event handlers --
 function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	-- used to hide expired auras on previously known frames
-	-- and to detect aura updates on the mouseover, if it exists
+	-- to detect aura updates on the mouseover, if it exists
 	-- (since UNIT_AURA doesn't fire for mouseover)
+	-- and place auras on frames for which GUIDs are know, if possible
 	local castTime, event, _, guid, name, _, _, targetGUID, targetName = ...
 	if not guid then return end
 	if guid ~= UnitGUID('player') then return end
@@ -332,22 +355,32 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		self:UNIT_AURA('UNIT_AURA','mouseover')
 	end
 
-	-- only listen for removals from now
-	if not auraEvents[event] then return end
+	-- only listen for removals/additions
+	if not REMOVAL_EVENTS[event] and not ADDITION_EVENTS[event] then
+		return
+	end
 
 	-- fetch the subject's nameplate
 	local f = addon:GetNameplate(targetGUID, targetName)
 	if not f or not f.auras then return end
 
+	local spId = select(12, ...)
+	if not spId then return end
+
+	if REMOVAL_EVENTS[event] then
+		if f.auras.spellIds[spId] then
+			f.auras.spellIds[spId]:Hide()
+		end
+	elseif ADDITION_EVENTS[event] then
+		if not f.auras.spellIds[spId] then
+			local spellName,_,icon = GetSpellInfo(spId)
+			f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
+		end
+	end
+
 	-- DEBUG
 	--print(event..' from '..name..' on '..targetName)
 	--print('(frame for guid: '..targetGUID..')')
-
-	local spId = select(12, ...)
-
-	if f.auras.spellIds[spId] then
-		f.auras.spellIds[spId]:Hide()
-	end
 end
 function mod:PLAYER_TARGET_CHANGED()
 	self:UNIT_AURA('UNIT_AURA', 'target')
@@ -371,21 +404,10 @@ function mod:UNIT_AURA(event, unit)
 	end
 
 	for i = 0,40 do
-		local name, _, icon, count, _, duration, expirationTime, _, _, _, spellId = UnitAura(unit, i, filter)
-		name = name and strlower(name) or nil
+		local name, _, icon, count, _, duration, expirationTime, _, _, _, spellid = UnitAura(unit, i, filter)
 
-		if  name and
-		   (not self.db.profile.behav.useWhitelist or
-		    (whitelist[spellId] or whitelist[name])) and
-		   (duration >= self.db.profile.display.lengthMin) and
-		   (self.db.profile.display.lengthMax == -1 or (
-		   	duration > 0 and
-		    duration <= self.db.profile.display.lengthMax))
-		then
-			local button = frame.auras:GetAuraButton(spellId, icon, count, duration, expirationTime)
-			frame.auras:Show()
-			button:Show()
-			button.used = true
+		if spellid then
+			frame.auras:DisplayAura(spellid,name,icon,count,duration,expirationTime)
 		end
 	end
 
