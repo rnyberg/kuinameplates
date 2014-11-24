@@ -1,9 +1,0 @@
-[submodule "Kui_Media"]
-	path = Kui_Media
-	url = github-kesava:kesava-wow/kuimedia.git
-[submodule "Kui_Nameplates/lib/Kui"]
-	path = Kui_Nameplates/lib/Kui
-	url = github-kesava:kesava-wow/kuilib.git
-[submodule "Kui_Nameplates_Auras/lib/KuiSpellList"]
-	path = Kui_Nameplates_Auras/lib/KuiSpellList
-	url = github-kesava:kesava-wow/kuispelllist.git
