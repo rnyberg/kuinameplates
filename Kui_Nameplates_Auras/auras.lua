@@ -365,16 +365,18 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		ADDITION_EVENTS[event] or
 		MOUSEOVER_EVENTS[event]
 	then
-		local castTime,_,_,_,name,_,_,targetGUID,targetName = ...
+		local targetGUID = select(8,...)
 
-		if MOUSEOVER_EVENTS[event] then
-			-- still want dose applications/removals for mouseover
-			if UnitGUID('mouseover') == targetGUID then
-				-- update the mouseover's auras
-				self:UNIT_AURA('UNIT_AURA','mouseover')
-			end
+		if UnitGUID('mouseover') == targetGUID then
+			-- event on the mouseover unit - update directly
+			self:UNIT_AURA('UNIT_AURA','mouseover')
 			return
 		end
+
+		-- only want dose applications/removals for mouseover
+		if MOUSEOVER_EVENTS[event] then return end
+
+		local castTime,_,_,_,name,_,_,_,targetName = ...
 
 		-- only listen for simple removals/additions from now
 		-- fetch the subject's nameplate
