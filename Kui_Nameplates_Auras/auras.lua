@@ -160,7 +160,8 @@ local function OnAuraUpdate(self, elapsed)
 		if timeLeft < 0 then
 			-- used when a non-targeted mob's auras timer gets below 0
 			-- but the combat log hasn't reported that it has faded yet.
-			self.time:SetText('0')
+			self.time:Hide()
+			self:SetScript('OnUpdate', nil)
 		end
 		
 		if mod.db.profile.display.decimal and
@@ -350,14 +351,14 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	if not guid then return end
 	if guid ~= UnitGUID('player') then return end
 
-	if UnitGUID('mouseover') == targetGUID then
-		-- update the mouseover's auras
-		self:UNIT_AURA('UNIT_AURA','mouseover')
-	end
-
 	-- only listen for removals/additions
 	if not REMOVAL_EVENTS[event] and not ADDITION_EVENTS[event] then
 		return
+	end
+	
+	if UnitGUID('mouseover') == targetGUID then
+		-- update the mouseover's auras
+		self:UNIT_AURA('UNIT_AURA','mouseover')
 	end
 
 	-- fetch the subject's nameplate
