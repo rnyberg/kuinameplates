@@ -14,19 +14,25 @@ local whitelist, _
 local GetTime, floor, ceil = GetTime, floor, ceil
 local UnitExists,UnitGUID=UnitExists,UnitGUID
 
+-- store profiles to reduce lookup in OnAuraUpdate
+local db_display,db_behav
+
 -- auras pulsate when they have less than this many seconds remaining
 local FADE_THRESHOLD = 5
 
 -- combat log events to listen to for fading auras
 local REMOVAL_EVENTS = {
---	['SPELL_DISPEL'] = true,
 	['SPELL_AURA_REMOVED'] = true,
 	['SPELL_AURA_BROKEN'] = true,
 	['SPELL_AURA_BROKEN_SPELL'] = true,
 }
-
 local ADDITION_EVENTS = {
 	['SPELL_AURA_APPLIED'] = true,
+}
+local MOUSEOVER_EVENTS = {
+	['SPELL_AURA_REMOVED_DOSE'] = true,
+	['SPELL_AURA_APPLIED_DOSE'] = true,
+	['SPELL_AURA_REFRESH'] = true,
 }
 
 local function ArrangeButtons(self)
@@ -112,7 +118,7 @@ local function OnAuraUpdate(self, elapsed)
 	if self.elapsed <= 0 then
 		local timeLeft = self.expirationTime - GetTime()
 		
-		if mod.db.profile.display.pulsate then
+		if db_display.pulsate then
 			if self.doPulsate and timeLeft > FADE_THRESHOLD then
 				-- reset pulsating status if the time is extended
 				StopPulsatingAura(self)
@@ -123,14 +129,14 @@ local function OnAuraUpdate(self, elapsed)
 			end
 		end
 
-		if mod.db.profile.display.timerThreshold > -1 and
-		   timeLeft > mod.db.profile.display.timerThreshold
+		if db_display.timerThreshold > -1 and
+		   timeLeft > db_display.timerThreshold
 		then
 			self.time:Hide()
 		else
 			local timeLeftS
 
-			if mod.db.profile.display.decimal and
+			if db_display.decimal and
 			   timeLeft <= 1 and timeLeft > 0
 			then
 				-- decimal places for the last second
@@ -162,9 +168,11 @@ local function OnAuraUpdate(self, elapsed)
 			-- but the combat log hasn't reported that it has faded yet.
 			self.time:Hide()
 			self:SetScript('OnUpdate', nil)
+			StopPulsatingAura(self)
+			return
 		end
 		
-		if mod.db.profile.display.decimal and
+		if db_display.decimal and
 		   timeLeft <= 2 and timeLeft > 0
 		then
 			-- faster updates in the last two seconds
@@ -285,12 +293,12 @@ end
 function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
 	name = strlower(name) or nil
 	if  name and
-	   (not mod.db.profile.behav.useWhitelist or
+	   (not db_behav.useWhitelist or
 	    (whitelist[spellid] or whitelist[name])) and
-	   (duration >= mod.db.profile.display.lengthMin) and
-	   (mod.db.profile.display.lengthMax == -1 or (
+	   (duration >= db_display.lengthMin) and
+	   (db_display.lengthMax == -1 or (
 	   	duration > 0 and
-	    duration <= mod.db.profile.display.lengthMax))
+	    duration <= db_display.lengthMax))
 	then
 		local button = self:GetAuraButton(spellid, icon, count, duration, expirationTime)
 		self:Show()
@@ -347,41 +355,50 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	-- to detect aura updates on the mouseover, if it exists
 	-- (since UNIT_AURA doesn't fire for mouseover)
 	-- and place auras on frames for which GUIDs are know, if possible
-	local castTime, event, _, guid, name, _, _, targetGUID, targetName = ...
+	local guid = select(4,...)
 	if not guid then return end
 	if guid ~= UnitGUID('player') then return end
 
-	-- only listen for removals/additions
-	if not REMOVAL_EVENTS[event] and not ADDITION_EVENTS[event] then
-		return
-	end
-	
-	if UnitGUID('mouseover') == targetGUID then
-		-- update the mouseover's auras
-		self:UNIT_AURA('UNIT_AURA','mouseover')
-	end
+	local event = select(2,...)
 
-	-- fetch the subject's nameplate
-	local f = addon:GetNameplate(targetGUID, targetName)
-	if not f or not f.auras then return end
+	if  REMOVAL_EVENTS[event] or
+		ADDITION_EVENTS[event] or
+		MOUSEOVER_EVENTS[event]
+	then
+		local castTime,_,_,_,name,_,_,targetGUID,targetName = ...
 
-	local spId = select(12, ...)
-	if not spId then return end
-
-	if REMOVAL_EVENTS[event] then
-		if f.auras.spellIds[spId] then
-			f.auras.spellIds[spId]:Hide()
+		if MOUSEOVER_EVENTS[event] then
+			-- still want dose applications/removals for mouseover
+			if UnitGUID('mouseover') == targetGUID then
+				-- update the mouseover's auras
+				self:UNIT_AURA('UNIT_AURA','mouseover')
+			end
+			return
 		end
-	elseif ADDITION_EVENTS[event] then
-		if not f.auras.spellIds[spId] then
-			local spellName,_,icon = GetSpellInfo(spId)
-			f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
-		end
-	end
 
-	-- DEBUG
-	--print(event..' from '..name..' on '..targetName)
-	--print('(frame for guid: '..targetGUID..')')
+		-- only listen for simple removals/additions from now
+		-- fetch the subject's nameplate
+		local f = addon:GetNameplate(targetGUID, targetName)
+		if not f or not f.auras then return end
+
+		local spId = select(12, ...)
+		if not spId then return end
+
+		if REMOVAL_EVENTS[event] then
+			if f.auras.spellIds[spId] then
+				f.auras.spellIds[spId]:Hide()
+			end
+		elseif ADDITION_EVENTS[event] then
+			if not f.auras.spellIds[spId] then
+				local spellName,_,icon = GetSpellInfo(spId)
+				f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
+			end
+		end
+
+		-- DEBUG
+		--print(event..' from '..name..' on '..targetName)
+		--print('(frame for guid: '..targetGUID..')')
+	end
 end
 function mod:PLAYER_TARGET_CHANGED()
 	self:UNIT_AURA('UNIT_AURA', 'target')
@@ -426,6 +443,11 @@ function mod:WhitelistChanged()
 	whitelist = spelllist.GetImportantSpells(select(2, UnitClass("player")))
 end
 ---------------------------------------------------- Post db change functions --
+mod.configChangedListener = function(self)
+	db_display = self.db.profile.display
+	db_behav   = self.db.profile.behav
+end
+
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(val)
 	if val then
