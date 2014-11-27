@@ -408,6 +408,9 @@ end
 function mod:UPDATE_MOUSEOVER_UNIT()
 	self:UNIT_AURA('UNIT_AURA', 'mouseover')
 end
+function mod:GUIDStored(msg, f, unit)
+	self:UNIT_AURA('UNIT_AURA', unit)
+end
 function mod:UNIT_AURA(event, unit)
 	-- select the unit's nameplate
 	--unit = 'target' -- DEBUG
@@ -583,6 +586,7 @@ function mod:OnEnable()
 	self:RegisterMessage('KuiNameplates_PostCreate', 'Create')
 	self:RegisterMessage('KuiNameplates_PostShow', 'Show')
 	self:RegisterMessage('KuiNameplates_PostHide', 'Hide')
+	self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
 	self:RegisterMessage('KuiNameplates_PostTarget', 'PLAYER_TARGET_CHANGED')
 
 	self:RegisterEvent('UNIT_AURA')
