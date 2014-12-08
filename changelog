@@ -1,1 +1,7 @@
-* fix level text remains hidden after being displayed on a trivial frame
+* track auras using combat log events as well as unit events - makes multidotting and mouseover healing nicer
+* fix auras aren't correctly updated upon mouseover
+* various optimisations to auras
+* update destro warlock spells
+* add new devouring plague
+* add void entropy
+* add rend
