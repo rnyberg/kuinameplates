@@ -142,10 +142,7 @@ local function OnAuraUpdate(self, elapsed)
 				-- decimal places for the last second
 				timeLeftS = string.format("%.1f", timeLeft)
 			else
-				timeLeftS = (timeLeft > 60 and
-				             ceil(timeLeft/60)..'m' or
-				             floor(timeLeft)
-				            )
+				timeLeftS = (timeLeft > 60 and ceil(timeLeft/60)..'m' or floor(timeLeft))
 			end
 
 			if timeLeft <= 5 then
@@ -291,6 +288,8 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 	return button
 end
 function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
+	print('aura application of '..name)
+
 	name = strlower(name) or nil
 	if  name and
 	   (not db_behav.useWhitelist or
@@ -365,9 +364,9 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		ADDITION_EVENTS[event] or
 		MOUSEOVER_EVENTS[event]
 	then
-		local targetGUID = select(8,...)
+		local destGUID = select(8,...)
 
-		if UnitGUID('mouseover') == targetGUID then
+		if UnitGUID('mouseover') == destGUID then
 			-- event on the mouseover unit - update directly
 			self:UNIT_AURA('UNIT_AURA','mouseover')
 			return
@@ -376,21 +375,23 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		-- only want dose applications/removals for mouseover
 		if MOUSEOVER_EVENTS[event] then return end
 
-		local castTime,_,_,_,name,_,_,_,targetName = ...
+		local castTime,_,_,_,name,_,_,_,destName = ...
 
 		-- only listen for simple removals/additions from now
 		-- fetch the subject's nameplate
-		local f = addon:GetNameplate(targetGUID, targetName)
+		local f = addon:GetNameplate(destGUID, destName)
 		if not f or not f.auras then return end
 
 		local spId = select(12, ...)
 		if not spId then return end
 
 		if REMOVAL_EVENTS[event] then
+			-- hide an aura button when the combat log reports it has expired
 			if f.auras.spellIds[spId] then
 				f.auras.spellIds[spId]:Hide()
 			end
 		elseif ADDITION_EVENTS[event] then
+			-- show a placeholder button with no timer when possible
 			if not f.auras.spellIds[spId] then
 				local spellName,_,icon = GetSpellInfo(spId)
 				f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
@@ -398,8 +399,8 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		end
 
 		-- DEBUG
-		--print(event..' from '..name..' on '..targetName)
-		--print('(frame for guid: '..targetGUID..')')
+		--print(event..' from '..name..' on '..destName)
+		--print('(frame for guid: '..destGUID..')')
 	end
 end
 function mod:PLAYER_TARGET_CHANGED()
@@ -590,7 +591,6 @@ function mod:OnEnable()
 	self:RegisterMessage('KuiNameplates_PostTarget', 'PLAYER_TARGET_CHANGED')
 
 	self:RegisterEvent('UNIT_AURA')
-	self:RegisterEvent('PLAYER_TARGET_CHANGED')
 	self:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
 	self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 
@@ -603,7 +603,6 @@ function mod:OnEnable()
 end
 function mod:OnDisable()
 	self:UnregisterEvent('UNIT_AURA')
-	self:UnregisterEvent('PLAYER_TARGET_CHANGED')
 	self:UnregisterEvent('UPDATE_MOUSEOVER_UNIT')
 	self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 
