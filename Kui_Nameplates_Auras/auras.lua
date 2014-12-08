@@ -4,6 +4,12 @@
 -- All rights reserved
 
    Auras module for Kui_Nameplates core layout.
+
+   Applications fire twice for multiple reasons.
+    GUIDStore & PostTarget on a newly displayed frame
+    COMBAT_LOG_EVENT & UNIT_AURA on party targets/other valid units
+    UPDATE_MOUSEOVER_UNIT fires twice when clicking on targets
+    PostTarget + UPDATE_MOUSEOVER_UNIT x2 when clicking targets
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local spelllist = LibStub('KuiSpellList-1.0')
@@ -34,6 +40,10 @@ local MOUSEOVER_EVENTS = {
 	['SPELL_AURA_APPLIED_DOSE'] = true,
 	['SPELL_AURA_REFRESH'] = true,
 }
+
+local function debug_print(msg)
+	print(GetTime()..': '..msg)
+end
 
 local function ArrangeButtons(self)
 	local pv, pc
@@ -288,7 +298,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 	return button
 end
 function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
-	print('aura application of '..name)
+	--debug_print('aura application of '..name)
 
 	name = strlower(name) or nil
 	if  name and
@@ -366,6 +376,10 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	then
 		local destGUID = select(8,...)
 
+		-- events on the current target will be caught by UNIT_AURA
+		-- some other units will fire twice too, but this catches the majority
+		if destGUID == UnitGUID('target') then return end
+
 		if UnitGUID('mouseover') == destGUID then
 			-- event on the mouseover unit - update directly
 			self:UNIT_AURA('UNIT_AURA','mouseover')
@@ -382,6 +396,8 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		local f = addon:GetNameplate(destGUID, destName)
 		if not f or not f.auras then return end
 
+		--debug_print('COMBAT_LOG_EVENT fired on '..f.name.text)
+
 		local spId = select(12, ...)
 		if not spId then return end
 
@@ -397,10 +413,6 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 				f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
 			end
 		end
-
-		-- DEBUG
-		--print(event..' from '..name..' on '..destName)
-		--print('(frame for guid: '..destGUID..')')
 	end
 end
 function mod:PLAYER_TARGET_CHANGED()
@@ -419,6 +431,8 @@ function mod:UNIT_AURA(event, unit)
 	if not frame or not frame.auras then return end
 	if frame.trivial and not self.db.profile.showtrivial then return end
 	--unit = 'player' -- DEBUG
+
+	--debug_print('UNIT_AURA fired on '..frame.name.text)
 
 	local filter = 'PLAYER '
 	if UnitIsFriend(unit, 'player') then
