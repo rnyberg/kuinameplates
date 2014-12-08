@@ -1,4 +1,4 @@
-local MAJOR, MINOR = 'KuiSpellList-1.0', 7
+local MAJOR, MINOR = 'KuiSpellList-1.0', 8
 local KuiSpellList = LibStub:NewLibrary(MAJOR, MINOR)
 local _
 
@@ -124,6 +124,7 @@ local whitelist = {
 		[86346] = true,  -- colossus smash
 
 		[355] = true,    -- taunt
+		[772] = true,    -- rend
 		[1160] = true,   -- demoralizing shout
 		[1715] = true,   -- hamstring
 		[5246] = true,   -- intimidating shout
@@ -255,6 +256,7 @@ local whitelist = {
 		[605] = true,    -- dominate mind
 		[114404] = true, -- void tendril root
 		[129250] = true, -- power word: solace
+		[155361] = true, -- void entropy
 	},
 	ROGUE = { -- 5.2 COMPLETE
 		[703] = true,    -- garrote
