@@ -290,6 +290,10 @@ local function OnFrameHide(self)
         f.targetGlow:Hide()
     end
 
+    if f.targetArrows then
+        f.targetArrows:Hide()
+    end
+
     addon:ClearGUID(f)
 
     -- remove name from store
@@ -515,6 +519,9 @@ local function UpdateFrameCritical(self)
                     self:SetGlowColour(unpack(addon.db.profile.general.targetglowcolour))
                 end
 
+                if self.targetArrows then
+                    self.targetArrows:Show()
+                end
 
                 if self.highlight and addon.db.profile.general.highlight_target then
                     self.highlight:Show()
@@ -538,6 +545,10 @@ local function UpdateFrameCritical(self)
             if self.targetGlow then
                 self.targetGlow:Hide()
                 self:SetGlowColour()
+            end
+
+            if self.targetArrows then
+                self.targetArrows:Hide()
             end
 
             if self.highlight and addon.db.profile.general.highlight_target then
@@ -725,6 +736,10 @@ function addon:InitFrame(frame)
     self:CreateName(frame, f)
 
     -- target highlight --------------------------------------------------------
+    if self.db.profile.general.targetarrows then
+        self:CreateTargetArrows(f)
+    end
+
     if self.db.profile.general.targetglow then
         self:CreateTargetGlow(f)
     end

@@ -35,7 +35,8 @@ addon.defaultSizes = {
         raidicon = 18,
         targetGlowW = 106,
         ttargetGlowW = 50, -- target glow width on trivial units
-        targetGlowH = 5
+        targetGlowH = 5,
+        targetArrow = 25,
     }
 }
 
@@ -61,9 +62,10 @@ local defaults = {
             highlight_target = false,
             fixaa       = true, -- attempt to make plates appear sharper
             compatibility = false,
-            targetglow  = true,
             bartexture  = DEFAULT_BAR,
+            targetglow  = true,
             targetglowcolour = { .3, .7, 1, 1 },
+            targetarrows = false,
             hheight     = 10,
             thheight    = 7,
             width       = 100,

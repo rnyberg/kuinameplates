@@ -240,3 +240,25 @@ function addon:UpdateTargetGlow(f, trivial)
         f.targetGlow:SetSize(self.sizes.tex.targetGlowW, self.sizes.tex.targetGlowH)
     end
 end
+---------------------------------------------------------------- Target arrow --
+function addon:CreateTargetArrows(f)
+    local arrowSize = floor(self.sizes.tex.targetArrow)
+    local ta = CreateFrame('Frame',nil,f.overlay)
+
+    ta.left = ta:CreateTexture(nil,'ARTWORK')
+    ta.left:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-arrow')
+    ta.left:SetPoint('RIGHT',f.overlay,'LEFT',14,-1)
+    ta.left:SetSize(arrowSize,arrowSize)
+
+    ta.right = ta:CreateTexture(nil,'ARTWORK')
+    ta.right:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-arrow')
+    ta.right:SetTexCoord(1,0,0,1)
+    ta.right:SetPoint('LEFT',f.overlay,'RIGHT',-14,-1)
+    ta.right:SetSize(arrowSize,arrowSize)
+
+    ta.left:SetVertexColor(unpack(self.db.profile.general.targetglowcolour))
+    ta.right:SetVertexColor(unpack(self.db.profile.general.targetglowcolour))
+
+    ta:Hide()
+    f.targetArrows = ta
+end
