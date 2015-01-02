@@ -4,12 +4,6 @@
 -- All rights reserved
 
    Auras module for Kui_Nameplates core layout.
-
-   Applications fire twice for multiple reasons.
-    GUIDStore & PostTarget on a newly displayed frame
-    COMBAT_LOG_EVENT & UNIT_AURA on party targets/other valid units
-    UPDATE_MOUSEOVER_UNIT fires twice when clicking on targets
-    PostTarget + UPDATE_MOUSEOVER_UNIT x2 when clicking targets
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local spelllist = LibStub('KuiSpellList-1.0')
