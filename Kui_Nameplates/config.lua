@@ -344,6 +344,12 @@ do
                                 type = 'toggle',
                                 order = 5
                             },
+                            avoidraidicon = {
+                                name = 'Don\'t fade units with raid icons',
+                                desc = 'Avoid fading units which have a raid icon (skull, cross, etc).',
+                                type = 'toggle',
+                                order = 10
+                            },
                         },
                     },
                 }

@@ -348,6 +348,9 @@ local function OnFrameUpdate(self, e)
     -- determine alpha value!
     if (f.defaultAlpha == 1 and UnitExists('target'))
        or
+       -- avoid fading units with a raid icon
+       (addon.db.profile.fade.rules.avoidraidicon and f.icon:IsVisible())
+       or
        -- avoid fading low hp units
        (((f.friend and addon.db.profile.fade.rules.avoidfriendhp) or
         (not f.friend and addon.db.profile.fade.rules.avoidhostilehp)) and
@@ -437,39 +440,46 @@ end
 -- stuff that needs to be updated often
 local function UpdateFrameCritical(self)
     ------------------------------------------------------------------ Threat --
-    if not self.targetGlow or not self.target then
-        if self.glow:IsVisible() then
-            self.glow.wasVisible = true
+    if self.glow:IsVisible() then
+        -- check the default glow colour every frame while it is visible
+        self.glow.wasVisible = true
+        self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
 
-            -- set glow to the current default ui's colour
-            self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
+        if not self.friend and addon.TankModule and addon.TankMode then
+            -- in tank mode
+            self.hasThreat = true
+            -- we are holding threat if the default glow is red
+            self.holdingThreat = self.glow.r > .9 and (self.glow.g + self.glow.b) < .1
+
+            if not self.targetGlow or not self.target then
+                -- set glow to tank colour unless this is the current target
+                self:SetGlowColour(unpack(addon.TankModule.db.profile.glowcolour))
+            end
+
+            if self.holdingThreat then
+                self:SetHealthColour(true, unpack(addon.TankModule.db.profile.barcolour))
+            else
+                -- losing/gaining threat
+                self:SetHealthColour(true, unpack(addon.TankModule.db.profile.midcolour))
+            end
+        elseif not self.targetGlow or not self.target then
+            -- not in tank mode, so set glow to default ui's current colour
+            -- only when this isn't the current target
             self:SetGlowColour(self.glow.r, self.glow.g, self.glow.b)
+        end
+    elseif self.glow.wasVisible then
+        self.glow.wasVisible = nil
 
-            if not self.friend and addon.TankModule and addon.TankMode then
-                -- in tank mode; is the default glow red (are we tanking)?
-    			self.hasThreat = true
-    			self.holdingThreat = self.glow.r > .9 and (self.glow.g + self.glow.b) < .1
-
-    			self:SetGlowColour(unpack(addon.TankModule.db.profile.glowcolour))
-
-    			if self.holdingThreat then
-    				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.barcolour))
-    			else
-    				-- losing/gaining threat
-    				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.midcolour))
-    			end
-            end
-        elseif self.glow.wasVisible then
-            self.glow.wasVisible = nil
-
-            -- restore shadow glow colour
+        if not self.targetGlow or not self.target then
+            -- restore default glow colour
             self:SetGlowColour()
+        end
 
-            if self.hasThreat then
-                -- lost threat
-                self.hasThreat = nil
-                self:SetHealthColour(false)
-            end
+        if self.hasThreat then
+            -- lost threat
+            self.hasThreat = nil
+            self:SetHealthColour(false)
+            print('lost threat')
         end
     end
     ------------------------------------------------------------ Target stuff --
@@ -724,7 +734,7 @@ function addon:InitFrame(frame)
     f.icon:SetParent(f.overlay)
     f.icon:SetSize(addon.sizes.tex.raidicon, addon.sizes.tex.raidicon)
     f.icon:ClearAllPoints()
-    f.icon:SetPoint('LEFT', f.health, 'RIGHT', 5, 1)
+    f.icon:SetPoint('CENTER',0,-21)
 
     --@debug@
     if _G['KuiNameplatesDebug'] then

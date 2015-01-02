@@ -32,7 +32,7 @@ addon.defaultSizes = {
         small     = 7
     },
     tex = {
-        raidicon = 20,
+        raidicon = 18,
         targetGlowW = 106,
         ttargetGlowW = 50, -- target glow width on trivial units
         targetGlowH = 5
@@ -90,6 +90,7 @@ local defaults = {
                 avoidfriendhp  = false,
                 avoidhpval  = 20,
                 avoidcast   = false,
+                avoidraidicon = true,
             },
         },
         text = {
