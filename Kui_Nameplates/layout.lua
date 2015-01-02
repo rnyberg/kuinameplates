@@ -748,7 +748,7 @@ function addon:InitFrame(frame)
     f.icon:SetParent(f.overlay)
     f.icon:SetSize(addon.sizes.tex.raidicon, addon.sizes.tex.raidicon)
     f.icon:ClearAllPoints()
-    f.icon:SetPoint('CENTER',0,-21)
+    f.icon:SetPoint('LEFT',f.overlay,'RIGHT',8,0)
 
     --@debug@
     if _G['KuiNameplatesDebug'] then

@@ -406,7 +406,14 @@ addon.configChangedFuncs.runOnce.font = function(val)
 end
 
 addon.configChangedFuncs.targetglowcolour = function(frame, val)
-    frame.targetGlow:SetVertexColor(unpack(val))
+    if frame.targetGlow then
+        frame.targetGlow:SetVertexColor(unpack(val))
+    end
+
+    if frame.targetArrows then
+        frame.targetArrows.left:SetVertexColor(unpack(val))
+        frame.targetArrows.right:SetVertexColor(unpack(val))
+    end
 end
 
 addon.configChangedFuncs.strata = function(frame,val)
