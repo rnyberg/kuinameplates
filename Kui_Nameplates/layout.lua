@@ -437,37 +437,39 @@ end
 -- stuff that needs to be updated often
 local function UpdateFrameCritical(self)
     ------------------------------------------------------------------ Threat --
-    if self.glow:IsVisible() then
-        self.glow.wasVisible = true
+    if not self.targetGlow or not self.target then
+        if self.glow:IsVisible() then
+            self.glow.wasVisible = true
 
-        -- set glow to the current default ui's colour
-        self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
-        self:SetGlowColour(self.glow.r, self.glow.g, self.glow.b)
+            -- set glow to the current default ui's colour
+            self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
+            self:SetGlowColour(self.glow.r, self.glow.g, self.glow.b)
 
-        if not self.friend and addon.TankModule and addon.TankMode then
-            -- in tank mode; is the default glow red (are we tanking)?
-			self.hasThreat = true
-			self.holdingThreat = self.glow.r > .9 and (self.glow.g + self.glow.b) < .1
+            if not self.friend and addon.TankModule and addon.TankMode then
+                -- in tank mode; is the default glow red (are we tanking)?
+    			self.hasThreat = true
+    			self.holdingThreat = self.glow.r > .9 and (self.glow.g + self.glow.b) < .1
 
-			self:SetGlowColour(unpack(addon.TankModule.db.profile.glowcolour))
+    			self:SetGlowColour(unpack(addon.TankModule.db.profile.glowcolour))
 
-			if self.holdingThreat then
-				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.barcolour))
-			else
-				-- losing/gaining threat
-				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.midcolour))
-			end
-        end
-    elseif self.glow.wasVisible then
-        self.glow.wasVisible = nil
+    			if self.holdingThreat then
+    				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.barcolour))
+    			else
+    				-- losing/gaining threat
+    				self:SetHealthColour(true, unpack(addon.TankModule.db.profile.midcolour))
+    			end
+            end
+        elseif self.glow.wasVisible then
+            self.glow.wasVisible = nil
 
-        -- restore shadow glow colour
-        self:SetGlowColour()
+            -- restore shadow glow colour
+            self:SetGlowColour()
 
-        if self.hasThreat then
-            -- lost threat
-            self.hasThreat = nil
-            self:SetHealthColour(false)
+            if self.hasThreat then
+                -- lost threat
+                self.hasThreat = nil
+                self:SetHealthColour(false)
+            end
         end
     end
     ------------------------------------------------------------ Target stuff --
@@ -501,7 +503,9 @@ local function UpdateFrameCritical(self)
 
                 if self.targetGlow then
                     self.targetGlow:Show()
+                    self:SetGlowColour(unpack(addon.db.profile.general.targetglowcolour))
                 end
+
 
                 if self.highlight and addon.db.profile.general.highlight_target then
                     self.highlight:Show()
@@ -524,6 +528,7 @@ local function UpdateFrameCritical(self)
 
             if self.targetGlow then
                 self.targetGlow:Hide()
+                self:SetGlowColour()
             end
 
             if self.highlight and addon.db.profile.general.highlight_target then
