@@ -479,7 +479,6 @@ local function UpdateFrameCritical(self)
             -- lost threat
             self.hasThreat = nil
             self:SetHealthColour(false)
-            print('lost threat')
         end
     end
     ------------------------------------------------------------ Target stuff --
