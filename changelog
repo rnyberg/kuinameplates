@@ -1,7 +1,4 @@
-* track auras using combat log events as well as unit events - makes multidotting and mouseover healing nicer
-* fix auras aren't correctly updated upon mouseover
-* various optimisations to auras
-* update destro warlock spells
-* add new devouring plague
-* add void entropy
-* add rend
+* add option to show target arrows
+* add option to avoid fading frames with raid icons (enabled by default)
+* enabling the target glow option now also causes the usual frame glow to change to that colour on targets. This overrides the threat glow but doesn't stop tank mode from updating the health bar colour.
+* Stanzilla: added new moonfire, sunfire spell ids
