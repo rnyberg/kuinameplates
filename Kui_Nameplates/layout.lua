@@ -277,7 +277,7 @@ local function OnFrameShow(self)
 
     f.DoShow = true
     -- dispatch the PostShow message after the first UpdateFrame
-    f.DispatchPostShow = true 
+    f.DispatchPostShow = true
 end
 local function OnFrameHide(self)
     self = self.kuiParent

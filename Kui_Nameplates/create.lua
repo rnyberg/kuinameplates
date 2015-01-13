@@ -33,7 +33,7 @@ function addon:UpdateBackground(f, trivial)
         -- switch to trivial sizes
         f.bg.fill:SetSize(self.sizes.frame.twidth, self.sizes.frame.theight)
         f.bg.fill:SetPoint('BOTTOMLEFT', f.x, f.y)
-        
+
         f.bg:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMLEFT',
             -self.sizes.frame.bgOffset/2,
             -self.sizes.frame.bgOffset/2)
@@ -42,8 +42,8 @@ function addon:UpdateBackground(f, trivial)
             self.sizes.frame.bgOffset/2)
     elseif not trivial then
         -- switch back to normal sizes
-        f.bg.fill:SetSize(self.sizes.frame.width, self.sizes.frame.height)      
-        
+        f.bg.fill:SetSize(self.sizes.frame.width, self.sizes.frame.height)
+
         f.bg.fill:SetPoint('BOTTOMLEFT', f.x, f.y)
 
         f.bg:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMLEFT',
@@ -187,7 +187,7 @@ function addon:UpdateLevel(f, trivial)
     end
 end
 ------------------------------------------------------------------- Name text --
-function addon:CreateName(frame, f) 
+function addon:CreateName(frame, f)
     f.name = f:CreateFontString(f.overlay, {
         font = self.font, size = 'name', outline = 'OUTLINE' })
     f.name:SetJustifyV('BOTTOM')
