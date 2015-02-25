@@ -293,22 +293,33 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 end
 function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
 	--debug_print('aura application of '..name)
-
 	name = strlower(name) or nil
-	if  name and
-        (not db_behav.useWhitelist or
-        (whitelist[spellid] or whitelist[name])) and
-        (duration >= db_display.lengthMin) and
-        (db_display.lengthMax == -1 or (
-        duration > 0 and
-        duration <= db_display.lengthMax))
-	then
-		local button = self:GetAuraButton(spellid, icon, count, duration, expirationTime)
-		self:Show()
+	if not name then return end
 
-		button:Show()
-		button.used = true
+	if  db_behav.useWhitelist and
+		not (whitelist[spellid] or whitelist[name])
+	then
+		-- not in whitelist
+		return
 	end
+
+	if duration and duration > 0 and duration < db_display.lengthMin then
+		-- duration below minimum
+		return
+	end
+
+	if  db_display.lengthMax > -1 and
+		(not duration or duration <= 0 or duration > db_display.lengthMax)
+	then
+		-- duration above maximum or timeless and a maximum duration is set
+		return
+	end
+
+	local button = self:GetAuraButton(spellid, icon, count, duration, expirationTime)
+	self:Show()
+
+	button:Show()
+	button.used = true
 end
 ----------------------------------------------------------------------- hooks --
 function mod:Create(msg, frame)
@@ -460,6 +471,14 @@ end
 mod.configChangedListener = function(self)
 	db_display = self.db.profile.display
 	db_behav   = self.db.profile.behav
+
+	if not db_display.lengthMax then
+		db_display.lengthMax = -1
+	end
+
+	if not db_display.lengthMin then
+		db_display.lengthMin = 0
+	end
 end
 
 mod.configChangedFuncs = { runOnce = {} }
