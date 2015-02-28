@@ -44,23 +44,28 @@ end
 -- get default health bar colour, parse it into one of our custom colours
 -- and the reaction of the unit toward the player
 local function SetHealthColour(self,sticky,r,g,b)
-	if sticky then
-		-- sticky colour; override other colours
-		self.health:SetStatusBarColor(r,g,b)
-		self.stickyHealthColour = true
-		self.health.reset = true
-		return
-	end
+    if sticky == false then
+        -- unstick and reset
+        self.health.reset = true
+        self.healthColourPriority = nil
+        sticky = nil
+    elseif sticky == true then
+        -- convert legacy stickiness
+        sticky = 1
+    end
+    -- nil sticky = just update health colour
 
-	if self.stickyHealthColour then
-		if sticky == nil then
-			return
-		elseif sticky == false then
-			-- unstick
-			self.stickyHealthColour = false
-		end
-	end
+    if sticky then
+        if  not self.healthColourPriority or
+            sticky >= self.healthColourPriority
+        then
+            self.health:SetStatusBarColor(r,g,b)
+            self.healthColourPriority = sticky
+        end
+        return
+    end
 
+    -- update health colour from default (r,g,b arguments are ignored)
     local r, g, b = self.oldHealth:GetStatusBarColor()
     if self.health.reset  or
        r ~= self.health.r or
@@ -305,7 +310,7 @@ local function OnFrameHide(self)
     f.hasThreat = nil
     f.target    = nil
     f.targetDelay = nil
-	f.stickyHealthColour = nil
+	f.healthColourPriority = nil
 
     -- force un-highlight
     OnFrameLeave(self)
@@ -461,10 +466,10 @@ local function UpdateFrameCritical(self)
             end
 
             if self.holdingThreat then
-                self:SetHealthColour(true, unpack(addon.TankModule.db.profile.barcolour))
+                self:SetHealthColour(10, unpack(addon.TankModule.db.profile.barcolour))
             else
                 -- losing/gaining threat
-                self:SetHealthColour(true, unpack(addon.TankModule.db.profile.midcolour))
+                self:SetHealthColour(10, unpack(addon.TankModule.db.profile.midcolour))
             end
         elseif not self.targetGlow or not self.target then
             -- not in tank mode, so set glow to default ui's current colour
