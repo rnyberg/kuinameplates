@@ -10,32 +10,48 @@ local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('Arena', 'AceEvent-3.0')
 
 mod.uiName = "Arena modifications"
-mod.in_arena = nil
+
+local in_arena
+local cache = {}
 
 function mod:IsArenaPlate(frame)
-    -- TODO we should cache this after the event runs telling us it's available
-    -- rather than every time a plate becomes visible
-    for i = 1, GetNumArenaOpponents() do
-        print('check arena'..i)
-        if frame.name.text == GetUnitName('arena'..i) or
-           frame.name.text == GetUnitName('arenapet'..i)
-        then
-            print(frame.name.text..' is '..i)
-            frame.level:SetText('arena '..i)
-        end
+    if cache[frame.name.text] then
+        frame.level:SetText(cache[frame.name.text])
+    else
+        frame.level:SetText('?')
     end
 end
 
 function mod:PLAYER_ENTERING_WORLD()
     in_instance, instance_type = IsInInstance()
     if in_instance and instance_type == 'arena' then
-        self.in_arena = true
         print('in arena')
+        in_arena = true
+        self:RegisterEvent('ARENA_OPPONENT_UPDATE')
+    else
+        in_arena = nil
+        self:UnregisterEvent('ARENA_OPPONENT_UPDATE')
+        wipe(cache)
     end
 end
 
+function mod:ARENA_OPPONENT_UPDATE(event, unit, message)
+    print('opponent update fired for '..unit)
+
+    -- cache opponent names as they become available
+    -- TODO not sure if this fires for pets
+    if not unit then return end
+    local id = tonumber(strsub(unit, -1))
+    local name = GetUnitName(unit)
+    if not id or not name then return end
+
+    print(id..' = '..name)
+
+    cache[name] = id
+end
+
 function mod:PostShow(msg, frame)
-    if self.in_arena then
+    if in_arena then
         self:IsArenaPlate(frame)
     end
 end
