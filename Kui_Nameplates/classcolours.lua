@@ -14,11 +14,13 @@ local cache_index = {}
 
 mod.uiName = "Class colours"
 
+-- functions ###################################################################
 function mod:SetClassColour(frame, cc)
     frame.name.class_coloured = true
     frame.name:SetTextColor(cc.r,cc.g,cc.b)
 end
 
+-- message handlers ############################################################
 function mod:GUIDStored(msg, f, unit)
     -- get colour from unit definition and override cache
     if not UnitIsPlayer(unit) then return end
@@ -52,6 +54,7 @@ function mod:PostHide(msg, f)
     f.name:SetTextColor(1,1,1,1)
 end
 
+-- config changed hooks ########################################################
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.friendly = function(v)
     if v then
@@ -61,6 +64,15 @@ mod.configChangedFuncs.runOnce.friendly = function(v)
     end
 end
 
+mod.configChangedFuncs.friendly = function(f,v)
+    if v then
+        mod:PostShow(nil, f)
+    else
+        mod:PostHide(nil, f)
+    end
+end
+
+-- config hooks ################################################################
 function mod:GetOptions()
     return {
         friendly = {
