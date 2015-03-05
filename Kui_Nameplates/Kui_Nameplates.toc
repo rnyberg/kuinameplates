@@ -12,6 +12,7 @@ create.lua
 layout.lua
 
 tankmode.lua
+classcolours.lua
 castbar.lua
 castwarnings.lua
 combopoints.lua
