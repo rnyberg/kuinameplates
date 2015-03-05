@@ -79,7 +79,13 @@ function mod:GetOptions()
             name = 'Class colour friendly player names',
             desc = 'Class colour the names of friendly players and dim the names of friendly players with no class information. Note that friendly players will only become class coloured once you mouse over their frames, at which point their class will be cached.',
             type = 'toggle',
+            width = 'double',
             order = 10
+        },
+        enemy = {
+            name = "The option to toggle class colours on enemy players' health bars can be found in the default interface options. Click the 'Game' tab at the top left of this window, click 'Names' in the list on the left and check or uncheck the 'Class Colors in Nameplates' option at the bottom right.",
+            type = 'description',
+            fontSize = 'medium'
         }
     }
 end

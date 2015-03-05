@@ -11,6 +11,7 @@ config.lua
 create.lua
 layout.lua
 
+arena.lua
 tankmode.lua
 classcolours.lua
 castbar.lua
