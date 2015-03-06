@@ -14,6 +14,11 @@ mod.uiName = "Arena modifications"
 local in_arena
 
 function mod:IsArenaPlate(frame)
+    if frame.friend then
+        frame.level:SetText()
+        return
+    end
+
     -- strip different-realm indicator
     local name = gsub(frame.name.text, ' %(%*%)$', '')
 
