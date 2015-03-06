@@ -12,7 +12,6 @@ local mod = addon:NewModule('Arena', 'AceEvent-3.0')
 mod.uiName = "Arena modifications"
 
 local in_arena
-local cache = {}
 
 function mod:IsArenaPlate(frame)
     for i = 1, GetNumArenaOpponents() do
@@ -32,11 +31,9 @@ end
 function mod:PLAYER_ENTERING_WORLD()
     in_instance, instance_type = IsInInstance()
     if in_instance and instance_type == 'arena' then
-        print('in arena')
         in_arena = true
     else
         in_arena = nil
-        wipe(cache)
     end
 end
 
