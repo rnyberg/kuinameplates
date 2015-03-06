@@ -14,13 +14,20 @@ mod.uiName = "Arena modifications"
 local in_arena
 
 function mod:IsArenaPlate(frame)
+    -- strip different-realm indicator
+    local name = gsub(frame.name.text, ' %(%*%)$', '')
+
     for i = 1, GetNumArenaOpponents() do
-        if frame.name.text == GetUnitName('arena'..i) then
+        if name == UnitName('arena'..i) and
+           frame.health.max == UnitHealthMax('arena'..i)
+        then
             frame.level:SetText(i)
-            break
-        elseif frame.name.text == GetUnitName('arenapet'..i) then
+            return
+        elseif name == UnitName('arenapet'..i) and
+               frame.health.max == UnitHealthMax('arenapet'..i)
+        then
             frame.level:SetText(i..'*')
-            break
+            return
         end
     end
 
@@ -32,8 +39,10 @@ function mod:PLAYER_ENTERING_WORLD()
     in_instance, instance_type = IsInInstance()
     if in_instance and instance_type == 'arena' then
         in_arena = true
+        self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
     else
         in_arena = nil
+        self:UnregisterMessage('KuiNameplates_PostShow', 'PostShow')
     end
 end
 
@@ -49,5 +58,5 @@ end
 
 function mod:OnEnable()
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
-    self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
 end
+
