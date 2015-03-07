@@ -80,21 +80,21 @@ local function SetHealthColour(self,sticky,r,g,b)
         if g > .9 and r == 0 and b == 0 then
             -- friendly NPC
             self.friend = true
-            r, g, b = unpack(addon.db.profile.general.reactioncolours.friendlycol)
+            r, g, b = unpack(addon.db.profile.hp.reactioncolours.friendlycol)
         elseif b > .9 and r == 0 and g == 0 then
             -- friendly player
             self.friend = true
             self.player = true
-            r, g, b = unpack(addon.db.profile.general.reactioncolours.playercol)
+            r, g, b = unpack(addon.db.profile.hp.reactioncolours.playercol)
         elseif r > .9 and g == 0 and b == 0 then
             -- enemy NPC
-            r, g, b = unpack(addon.db.profile.general.reactioncolours.hatedcol)
+            r, g, b = unpack(addon.db.profile.hp.reactioncolours.hatedcol)
         elseif (r + g) > 1.8 and b == 0 then
             -- neutral NPC
-            r, g, b = unpack(addon.db.profile.general.reactioncolours.neutralcol)
+            r, g, b = unpack(addon.db.profile.hp.reactioncolours.neutralcol)
         elseif r < .6 and (r+g) == (r+b) then
             -- tapped NPC
-            r, g, b = unpack(addon.db.profile.general.reactioncolours.tappedcol)
+            r, g, b = unpack(addon.db.profile.hp.reactioncolours.tappedcol)
         else
             -- enemy player, use default UI colour
             self.player = true

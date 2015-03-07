@@ -1,3 +1,4 @@
 * hostile player and pet levels are now replaced with their arena id in arenas
 * add option to class colour friendly player's names
 * GUIDs are now matched to players' nameplates upon mousing over their unit frames and models in the 3d world (which allows the nameplates to display class colours, auras, etc)
+* reaction colour options moved under "Health display"

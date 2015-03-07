@@ -68,6 +68,7 @@ do
 
     function handlerProto:Get(info, ...)
         local p, k = self:ResolveInfo(info)
+        if not p[k] then return end
 
         if info.type == 'color' then
             return unpack(p[k])
@@ -237,39 +238,6 @@ do
                         values = StrataSelectList,
                         order = 27
                     },
-					reactioncolours = {
-						name = 'Reaction colours',
-						type = 'group',
-						inline = true,
-						order = 30,
-						args = {
-							hatedcol = {
-								name = 'Hostile',
-								type = 'color',
-								order = 1
-							},
-							neutralcol = {
-								name = 'Neutral',
-								type = 'color',
-								order = 2
-							},
-							friendlycol = {
-								name = 'Friendly',
-								type = 'color',
-								order = 3
-							},
-							tappedcol = {
-								name = 'Tapped',
-								type = 'color',
-								order = 4
-							},
-							playercol = {
-								name = 'Friendly player',
-								type = 'color',
-								order = 5
-							}
-						}
-					},
                 }
             },
             fade = {
@@ -389,39 +357,72 @@ do
                 type = 'group',
                 order = 4,
                 args = {
+                    reactioncolours = {
+                        name = 'Reaction colours',
+                        type = 'group',
+                        inline = true,
+                        order = 1,
+                        args = {
+                            hatedcol = {
+                                name = 'Hostile',
+                                type = 'color',
+                                order = 1
+                            },
+                            neutralcol = {
+                                name = 'Neutral',
+                                type = 'color',
+                                order = 2
+                            },
+                            friendlycol = {
+                                name = 'Friendly',
+                                type = 'color',
+                                order = 3
+                            },
+                            tappedcol = {
+                                name = 'Tapped',
+                                type = 'color',
+                                order = 4
+                            },
+                            playercol = {
+                                name = 'Friendly player',
+                                type = 'color',
+                                order = 5
+                            }
+                        }
+                    },
                     showalt = {
                         name = 'Show contextual health',
                         desc = 'Show alternate (contextual) health values as well as main values',
                         type = 'toggle',
-                        order = 1
+                        order = 10
                     },
                     mouseover = {
                         name = 'Show on mouse over',
                         desc = 'Show health only on mouse over or on the targeted plate',
                         type = 'toggle',
-                        order = 2
+                        order = 20
                     },
                     smooth = {
                         name = 'Smooth health bar',
                         desc = 'Smoothly animate health bar value updates',
                         type = 'toggle',
                         width = 'full',
-                        order = 3
+                        order = 30
                     },
                     friendly = {
                         name = 'Friendly health format',
                         desc = 'The health display pattern for friendly units',
                         type = 'input',
                         pattern = '([<=]:[dmcpb];)',
-                        order = 5
+                        order = 40
                     },
                     hostile = {
                         name = 'Hostile health format',
                         desc = 'The health display pattern for hostile or neutral units',
                         type = 'input',
                         pattern = '([<=]:[dmcpb];)',
-                        order = 6
-                    }
+                        order = 50
+                    },
                 }
             },
             fonts = {

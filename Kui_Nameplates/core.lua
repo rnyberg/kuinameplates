@@ -73,13 +73,6 @@ local defaults = {
             leftie      = false,
             glowshadow  = true,
             strata      = 'BACKGROUND',
-			reactioncolours = {
-				hatedcol    = { .7, .2, .1 },
-				neutralcol  = {  1, .8,  0 },
-				friendlycol = { .2, .6, .1 },
-				tappedcol   = { .5, .5, .5 },
-				playercol   = { .2, .5, .9 }
-			},
         },
         fade = {
             smooth      = true, -- smoothy fade plates
@@ -100,6 +93,13 @@ local defaults = {
             healthoffset = 2.5,
         },
         hp = {
+            reactioncolours = {
+                hatedcol    = { .7, .2, .1 },
+                neutralcol  = {  1, .8,  0 },
+                friendlycol = { .2, .6, .1 },
+                tappedcol   = { .5, .5, .5 },
+                playercol   = { .2, .5, .9 }
+            },
             friendly  = '<:d;', -- health display pattern for friendly units
             hostile   = '<:p;', -- health display pattern for enemy units
             showalt   = false, -- show alternate health values
@@ -467,6 +467,20 @@ function addon:OnInitialize()
     
     self.db.RegisterCallback(self, 'OnProfileChanged', 'ProfileChanged')
     LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMMediaRegistered')
+
+    -- move old reactioncolours config
+    if self.db.profile.general.reactioncolours then
+        local rc = self.db.profile.general.reactioncolours
+        local nrc = self.db.profile.hp.reactioncolours
+
+        if rc.hatedcol then nrc.hatedcol = rc.hatedcol end
+        if rc.neutralcol then nrc.neutralcol = rc.neutralcol end
+        if rc.friendlycol then nrc.friendlycol = rc.friendlycol end
+        if rc.tappedcol then nrc.tappedcol = rc.tappedcol end
+        if rc.playercol then nrc.playercol = rc.playercol end
+        
+        self.db.profile.general.reactioncolours = nil
+    end
 
     addon:CreateConfigChangedListener(addon)
 end
