@@ -19,7 +19,7 @@ local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local slowUpdateTime, critUpdateTime = 1, .1
 
 --@debug@
-KuiNameplatesDebug=true
+--KuiNameplatesDebug=true
 --KuiNameplatesDrawFrames=true
 --@end-debug@
 
