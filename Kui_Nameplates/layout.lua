@@ -19,7 +19,8 @@ local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local slowUpdateTime, critUpdateTime = 1, .1
 
 --@debug@
---KuiNameplatesDebug=true
+KuiNameplatesDebug=true
+--KuiNameplatesDrawFrames=true
 --@end-debug@
 
 --------------------------------------------------------------------- globals --
@@ -700,7 +701,7 @@ function addon:InitFrame(frame)
         f:Hide()
 
         --@debug@
-        if _G['KuiNameplatesDebug'] then
+        if _G['KuiNameplatesDrawFrames'] then
             f:SetBackdrop({ bgFile = kui.m.t.solid })
             f:SetBackdropColor(0,0,0,.5)
         end
@@ -756,10 +757,12 @@ function addon:InitFrame(frame)
     f.icon:SetPoint('LEFT',f.overlay,'RIGHT',8,0)
 
     --@debug@
-    if _G['KuiNameplatesDebug'] then
+    if _G['KuiNameplatesDrawFrames'] then
         frame:SetBackdrop({bgFile=kui.m.t.solid})
         frame:SetBackdropColor(1, 1, 1, .5)
+    end
 
+    if _G['KuiNameplatesDebug'] then
         f.isfriend = f:CreateFontString(f.overlay)
         f.isfriend:SetPoint('BOTTOM', frame, 'TOP')
 

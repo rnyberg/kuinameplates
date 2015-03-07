@@ -132,7 +132,7 @@ do
 
     function addon:GetGUID(f)
         -- give this frame a guid if we think we already know it
-        if knownGUIDs[f.name.text] then
+        if f.player and knownGUIDs[f.name.text] then
             f.guid = knownGUIDs[f.name.text]
             loadedGUIDs[f.guid] = f
         end
@@ -217,6 +217,15 @@ do
         end
 
         return self:GetNameplate(guid, name)
+    end
+
+    function addon:UPDATE_MOUSEOVER_UNIT(event)
+        if not UnitIsPlayer('mouseover') then return end
+        -- if mouseover is a player, we can -probably- assign its' GUID
+        local f = self:GetUnitPlate('mouseover')
+        if f and f.player then
+            self:StoreGUID(f, 'mouseover')
+        end
     end
 end
 ------------------------------------------------------------ helper functions --
@@ -530,6 +539,8 @@ function addon:OnEnable()
             end
         end)
     end
+
+    addon:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
 
     self:ToggleCombatEvents(self.db.profile.general.combat)
     addon:ScheduleRepeatingTimer('OnUpdate', .1)
