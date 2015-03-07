@@ -2,10 +2,6 @@
 -- Kui_Nameplates
 -- By Kesava at curse.com
 -- All rights reserved
---
--- This file essentially creates "my" core layout. The eventual idea is to split
--- this into a seperate addon. That will come after a few necessary things are
--- ported to support that capability, such as the ability to theme cast bars.
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local kui = LibStub('Kui-1.0')
@@ -169,19 +165,14 @@ function addon:CreateLevel(frame, f)
     f.level:SetHeight(10)
     f.level:ClearAllPoints()
 
-    f.level.enabled = true
+    if self.db.profile.text.level then
+        f.level.enabled = true
+    end
 end
 function addon:UpdateLevel(f, trivial)
-    if not f.level.enabled then
-        f.level:Hide()
-        f.level:SetWidth(.1)
-        return
-    end
-
     if trivial then
         f.level:Hide()
     else
-        f.level:Show()
         f.level:SetPoint('TOPLEFT', f.health, 'BOTTOMLEFT',
                          2.5, self.db.profile.text.healthoffset + 4)
     end

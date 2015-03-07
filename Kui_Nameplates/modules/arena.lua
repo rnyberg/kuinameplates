@@ -40,13 +40,24 @@ function mod:IsArenaPlate(frame)
     frame.level:SetText('?')
 end
 
+function mod:PostShow(msg, frame)
+    if in_arena and not frame.friend then
+        self:IsArenaPlate(frame)
+        frame.level:SetWidth(0)
+        frame.level:Show()
+    end
+end
+
 function mod:UNIT_NAME_UPDATE(event, unit)
     if not strfind(unit, "^arena") then return end
 
     local frame = addon:GetUnitPlate(unit)
     if not frame then return end
+    if frame.friend then return end
 
     self:IsArenaPlate(frame)
+    frame.level:SetWidth(0)
+    frame.level:Show()
 end
 
 function mod:PLAYER_ENTERING_WORLD()
@@ -59,12 +70,6 @@ function mod:PLAYER_ENTERING_WORLD()
         in_arena = nil
         self:UnregisterMessage('KuiNameplates_PostShow', 'PostShow')
         self:UnregisterEvent('UNIT_NAME_UPDATE')
-    end
-end
-
-function mod:PostShow(msg, frame)
-    if in_arena then
-        self:IsArenaPlate(frame)
     end
 end
 

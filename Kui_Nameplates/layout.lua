@@ -226,29 +226,6 @@ local function OnFrameShow(self)
     local f = self.kui
     local trivial = f.firstChild:GetScale() < 1 and not addon.notrivial
 
-    -- classifications
-    if not trivial and f.level.enabled then
-        if f.boss:IsVisible() then
-            f.level:SetText('Boss')
-            f.level:SetTextColor(1,.2,.2)
-            f.level:Show()
-        elseif f.state:IsVisible() then
-            if f.state:GetTexture() == "Interface\\Tooltips\\EliteNameplateIcon"
-            then
-                f.level:SetText(f.level:GetText()..'+')
-            else
-                f.level:SetText(f.level:GetText()..'r')
-            end
-        end
-    else
-        f.level:Hide()
-    end
-
-    if f.state:IsVisible() then
-        -- hide the elite/rare dragon
-        f.state:Hide()
-    end
-
     ---------------------------------------------- Trivial sizing/positioning --
     if addon.uiscale then
         -- change our parent frame size if we're using fixaa..
@@ -272,6 +249,31 @@ local function OnFrameShow(self)
         addon:UpdateTargetGlow(f, trivial)
 
         f.doneFirstShow = true
+    end
+
+    -- classifications
+    if not trivial and f.level.enabled then
+        if f.boss:IsVisible() then
+            f.level:SetText('Boss')
+            f.level:SetTextColor(1,.2,.2)
+        elseif f.state:IsVisible() then
+            if f.state:GetTexture() == "Interface\\Tooltips\\EliteNameplateIcon" then
+                f.level:SetText(f.level:GetText()..'+')
+            else
+                f.level:SetText(f.level:GetText()..'r')
+            end
+        end
+
+        f.level:SetWidth(0)
+        f.level:Show()
+    else
+        f.level:SetWidth(.1)
+        f.level:Hide()
+    end
+
+    if f.state:IsVisible() then
+        -- hide the elite/rare dragon
+        f.state:Hide()
     end
 
     -- run updates immediately after the frame is shown
@@ -732,13 +734,7 @@ function addon:InitFrame(frame)
         self:CreateAltHealthText(frame, f)
     end
 
-    if self.db.profile.text.level then
-        self:CreateLevel(frame, f)
-    else
-        f.level:Hide()
-        f.level:SetWidth(.1)
-    end
-
+    self:CreateLevel(frame, f)
     self:CreateName(frame, f)
 
     -- target highlight --------------------------------------------------------
