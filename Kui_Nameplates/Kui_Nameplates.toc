@@ -11,11 +11,11 @@ config.lua
 create.lua
 layout.lua
 
-arena.lua
-tankmode.lua
-classcolours.lua
-castbar.lua
-castwarnings.lua
-combopoints.lua
+modules\arena.lua
+modules\castbar.lua
+modules\castwarnings.lua
+modules\classcolours.lua
+modules\combopoints.lua
+modules\tankmode.lua
 
 custom.lua
