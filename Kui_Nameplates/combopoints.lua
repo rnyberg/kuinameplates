@@ -87,8 +87,7 @@ function mod:UNIT_COMBO_POINTS(event,unit)
 	-- only works for player > target
 	if unit ~= 'player' then return end
 
-	local guid, name = UnitGUID('target'), UnitName('target')
-	local f = addon:GetNameplate(guid, name)
+	local f = addon:GetUnitPlate('target')
 	
 	if f and f.combopoints then
 		local points = GetComboPoints('player', 'target')

@@ -432,7 +432,7 @@ end
 function mod:UNIT_AURA(event, unit)
 	-- select the unit's nameplate
 	--unit = 'target' -- DEBUG
-	local frame = addon:GetNameplate(UnitGUID(unit), nil)
+	local frame = addon:GetUnitPlate(unit)
 	if not frame or not frame.auras then return end
 	if frame.trivial and not self.db.profile.showtrivial then return end
 	--unit = 'player' -- DEBUG

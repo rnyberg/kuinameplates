@@ -206,6 +206,18 @@ do
             return nil
         end
     end
+
+    -- return the given unit's nameplate
+    function addon:GetUnitPlate(unit)
+        local guid = UnitGUID(unit)
+        local name, realm = UnitName(unit)
+
+        if realm then
+            name = name.." (*)"
+        end
+
+        return self:GetNameplate(guid, name)
+    end
 end
 ------------------------------------------------------------ helper functions --
 -- cycle all frames' fontstrings and reset the font

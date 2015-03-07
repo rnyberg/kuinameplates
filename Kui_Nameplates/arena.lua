@@ -40,14 +40,25 @@ function mod:IsArenaPlate(frame)
     frame.level:SetText('?')
 end
 
+function mod:UNIT_NAME_UPDATE(event, unit)
+    if not strfind(unit, "^arena") then return end
+
+    local frame = addon:GetUnitPlate(unit)
+    if not frame then return end
+
+    self:IsArenaPlate(frame)
+end
+
 function mod:PLAYER_ENTERING_WORLD()
     in_instance, instance_type = IsInInstance()
     if in_instance and instance_type == 'arena' then
         in_arena = true
         self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
+        self:RegisterEvent('UNIT_NAME_UPDATE')
     else
         in_arena = nil
         self:UnregisterMessage('KuiNameplates_PostShow', 'PostShow')
+        self:UnregisterEvent('UNIT_NAME_UPDATE')
     end
 end
 
