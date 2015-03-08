@@ -209,14 +209,13 @@ do
 
     -- return the given unit's nameplate
     function addon:GetUnitPlate(unit)
-        local guid = UnitGUID(unit)
-        local name, realm = UnitName(unit)
+        local name,realm = UnitName(unit)
 
-        if realm then
-            name = name.." (*)"
+        if realm and UnitRealmRelationship(unit) == LE_REALM_RELATION_COALESCED then
+            name = name .. ' (*)'
         end
 
-        return self:GetNameplate(guid, name)
+        return self:GetNameplate(UnitGUID(unit), name)
     end
 
     function addon:UPDATE_MOUSEOVER_UNIT(event)
