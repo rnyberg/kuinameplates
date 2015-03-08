@@ -14,6 +14,8 @@ local whitelist, _
 local GetTime, floor, ceil = GetTime, floor, ceil
 local UnitExists,UnitGUID=UnitExists,UnitGUID
 
+local PLAYER_GUID
+
 -- store profiles to reduce lookup in OnAuraUpdate
 local db_display,db_behav
 
@@ -371,7 +373,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	-- and place auras on frames for which GUIDs are know, if possible
 	local guid = select(4,...)
 	if not guid then return end
-	if guid ~= UnitGUID('player') then return end
+	if guid ~= PLAYER_GUID then return end
 
 	local event = select(2,...)
 
@@ -462,6 +464,9 @@ function mod:UNIT_AURA(event, unit, frame)
 
 		button.used = nil
 	end
+end
+function mod:PLAYER_ENTERING_WORLD(event)
+    PLAYER_GUID = UnitGUID('player')
 end
 function mod:WhitelistChanged()
 	-- update spell whitelist
@@ -620,6 +625,7 @@ function mod:OnEnable()
 	self:RegisterEvent('UNIT_AURA')
 	self:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
 	self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+	self:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 	local _, frame
 	for _, frame in pairs(addon.frameList) do
@@ -629,9 +635,14 @@ function mod:OnEnable()
 	end
 end
 function mod:OnDisable()
+	self:UnregisterMessage('KuiNameplates_PostShow', 'Show')
+	self:UnregisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
+	self:UnregisterMessage('KuiNameplates_PostTarget', 'PLAYER_TARGET_CHANGED')
+
 	self:UnregisterEvent('UNIT_AURA')
 	self:UnregisterEvent('UPDATE_MOUSEOVER_UNIT')
 	self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+	self:UnregisterEvent('PLAYER_ENTERING_WORLD')
 
 	local _, frame
 	for _, frame in pairs(addon.frameList) do
