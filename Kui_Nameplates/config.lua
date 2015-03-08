@@ -244,7 +244,7 @@ do
                         type = 'range',
                         min = 1,
                         max = 100,
-                        step = 1,
+                        bigStep = 1,
                         order = 50
                     },
                 }
@@ -260,7 +260,7 @@ do
                         type = 'range',
                         min = 0,
                         max = 1,
-                        step = .01,
+                        bigStep = .01,
                         isPercent = true,
                         order = 4
                     },
@@ -337,7 +337,7 @@ do
                         desc = 'Offset of the text on the top and bottom of the health bar: level, name, standard health and contextual health. The offset is reversed for contextual health.\n'..
                                'Note that the default values end in .5 as this prevents jittering text, but only if "fix aliasing" is also enabled.',
                         type = 'range',
-                        step = .5,
+                        bigStep = .5,
                         softMin = -5,
                         softMax = 10,
                         order = 1
