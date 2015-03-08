@@ -23,6 +23,7 @@ end
 -- message handlers ############################################################
 function mod:GUIDStored(msg, f, unit)
     -- get colour from unit definition and override cache
+    if not (f.friend and f.player) then return end
     if not UnitIsPlayer(unit) then return end
     if UnitIsFriend('player',unit) then
         local class = select(2,UnitClass(unit))
@@ -39,10 +40,11 @@ function mod:GUIDStored(msg, f, unit)
 end
 
 function mod:PostShow(msg, f)
+    if not (f.friend and f.player) then return end
     if cache[f.name.text] then
         -- restore colour from cache
         self:SetClassColour(f, cc_table[cache[f.name.text]])
-    elseif f.friend and f.player then
+    else
         -- a friendly player with no class information
         -- make their name slightly gray
         f.name:SetTextColor(.7,.7,.7)
