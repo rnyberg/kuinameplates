@@ -462,7 +462,7 @@ local function UpdateFrameCritical(self)
         self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
 
         if not self.friend and addon.TankModule and addon.TankMode then
-            local profile_tankmodule = addon.TankModule.db.profile.glowcolour
+            local profile_tankmodule = addon.TankModule.db.profile
 
             -- in tank mode
             self.hasThreat = true

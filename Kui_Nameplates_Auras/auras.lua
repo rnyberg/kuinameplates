@@ -427,12 +427,12 @@ function mod:UPDATE_MOUSEOVER_UNIT()
 	self:UNIT_AURA('UNIT_AURA', 'mouseover')
 end
 function mod:GUIDStored(msg, f, unit)
-	self:UNIT_AURA('UNIT_AURA', unit)
+	self:UNIT_AURA('UNIT_AURA', unit, f)
 end
-function mod:UNIT_AURA(event, unit)
+function mod:UNIT_AURA(event, unit, frame)
 	-- select the unit's nameplate
 	--unit = 'target' -- DEBUG
-	local frame = addon:GetUnitPlate(unit)
+    frame = frame or addon:GetUnitPlate(unit)
 	if not frame or not frame.auras then return end
 	if frame.trivial and not self.db.profile.showtrivial then return end
 	--unit = 'player' -- DEBUG
