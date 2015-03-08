@@ -49,7 +49,7 @@ do
 
     function handlerProto:ResolveInfo(info)
         local p = self.dbPath.db.profile
-    
+
         local child, k
         for i = 1, #info do
             k = info[i]
@@ -231,12 +231,21 @@ do
                         values = AceGUIWidgetLSMlists.statusbar,
                         order = 25,
                     },
-                    strata = { 
+                    strata = {
                         name = 'Frame strata',
                         desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 10.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
                         type = 'select',
                         values = StrataSelectList,
                         order = 27
+                    },
+                    lowhealthval = {
+                        name = 'Low health value',
+                        desc = 'Low health value used by some modules, such as frame fading.',
+                        type = 'range',
+                        min = 1,
+                        max = 100,
+                        step = 1,
+                        order = 50
                     },
                 }
             },
@@ -291,27 +300,15 @@ do
                         args = {
                             avoidhostilehp = {
                                 name = 'Don\'t fade hostile units at low health',
-                                desc = 'Avoid fading hostile units which are at or below a health value, determined by low health value.',
+                                desc = 'Avoid fading hostile units which are at or below a health value, determined by low health value under general display options.',
                                 type = 'toggle',
                                 order = 1
                             },
                             avoidfriendhp = {
                                 name = 'Don\'t fade friendly units at low health',
-                                desc = 'Avoid fading friendly units which are at or below a health value, determined by low health value.',
+                                desc = 'Avoid fading friendly units which are at or below a health value, determined by low health value under general display options.',
                                 type = 'toggle',
                                 order = 2
-                            },
-                            avoidhpval = {
-                                name = 'Low health value',
-                                desc = 'The health percentage at which to keep nameplates faded in.',
-                                type = 'range',
-                                min = 1,
-                                max = 100,
-                                step = 1,
-                                disabled = function(info)
-                                    return not addon.db.profile.fade.rules.avoidhostilehp and not addon.db.profile.fade.rules.avoidfriendhp
-                                end,
-                                order = 3
                             },
                             avoidcast = {
                                 name = 'Don\'t fade casting units',
