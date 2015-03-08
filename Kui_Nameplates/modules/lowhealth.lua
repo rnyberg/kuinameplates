@@ -66,7 +66,7 @@ end
 function mod:OnInitialize()
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
-            enabled = false,
+            enabled = true,
             priority = false,
             colour = { 1, 1, .85 }
         }
