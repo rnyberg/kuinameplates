@@ -260,6 +260,7 @@ do
                         type = 'range',
                         min = 0,
                         max = 1,
+                        step = .01,
                         isPercent = true,
                         order = 4
                     },

@@ -17,5 +17,6 @@ modules\castwarnings.lua
 modules\classcolours.lua
 modules\combopoints.lua
 modules\tankmode.lua
+modules\lowhealth.lua
 
 custom.lua

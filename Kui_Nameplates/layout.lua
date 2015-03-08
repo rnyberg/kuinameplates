@@ -143,7 +143,7 @@ do
 		-- store values for external access
 		frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
 		frame.health.curr = curr
-		frame.health.percent = frame.health.curr / frame.health.max * 100
+		frame.health.percent = floor(frame.health.curr / frame.health.max * 100)
 
 		frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
 		frame.health:SetValue(frame.health.curr)
@@ -181,7 +181,7 @@ do
 					big = kui.num(frame.health.curr)
 					sml = frame.health.curr ~= frame.health.max and kui.num(frame.health.max)
 				elseif display == 'p' then
-					big = floor(frame.health.percent)
+					big = frame.health.percent
 					sml = kui.num(frame.health.curr)
 				end
 

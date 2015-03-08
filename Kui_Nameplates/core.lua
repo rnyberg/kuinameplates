@@ -69,10 +69,11 @@ local defaults = {
             hheight     = 10,
             thheight    = 7,
             width       = 100,
-            twidth      = 55, 
+            twidth      = 55,
             leftie      = false,
             glowshadow  = true,
             strata      = 'BACKGROUND',
+            lowhealthval = 20,
         },
         fade = {
             smooth      = true, -- smoothy fade plates
@@ -83,7 +84,6 @@ local defaults = {
             rules = {
                 avoidhostilehp = false,
                 avoidfriendhp  = false,
-                avoidhpval  = 20,
                 avoidcast   = false,
                 avoidraidicon = true,
             },
@@ -280,7 +280,7 @@ local function CreateFontString(self, parent, obj)
     -- correctly. Used by SetFontSize.
     local sizeKey
 
-    obj = obj or {} 
+    obj = obj or {}
     obj.mono = addon.db.profile.fonts.options.monochrome
     obj.outline = addon.db.profile.fonts.options.outline
     obj.size = (addon.db.profile.fonts.options.onesize and 'name') or obj.size or 'name'
@@ -324,7 +324,7 @@ local function ScaleFontSize(key)
     -- neither do fonts, but they need to be scaled with the fontscale option
     local size = addon.defaultSizes.font[key]
     addon.sizes.font[key] = size * addon.db.profile.fonts.options.fontscale
-        
+
     if addon.uiscale then
         addon.sizes.font[key] = addon.sizes.font[key] / addon.uiscale
     end
@@ -464,7 +464,7 @@ function addon:OnInitialize()
     -- enable ace3 profiles
     LibStub('AceConfig-3.0'):RegisterOptionsTable('kuinameplates-profiles', LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db))
     LibStub('AceConfigDialog-3.0'):AddToBlizOptions('kuinameplates-profiles', 'Profiles', 'Kui Nameplates')
-    
+
     self.db.RegisterCallback(self, 'OnProfileChanged', 'ProfileChanged')
     LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMMediaRegistered')
 
@@ -478,7 +478,7 @@ function addon:OnInitialize()
         if rc.friendlycol then nrc.friendlycol = rc.friendlycol end
         if rc.tappedcol then nrc.tappedcol = rc.tappedcol end
         if rc.playercol then nrc.playercol = rc.playercol end
-        
+
         self.db.profile.general.reactioncolours = nil
     end
 
@@ -489,7 +489,7 @@ function addon:OnEnable()
     -- get font and status bar texture from LSM
     self.font = LSM:Fetch(LSM.MediaType.FONT, self.db.profile.fonts.options.font)
     self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, self.db.profile.general.bartexture)
-    
+
     -- handle deleted or invalid files
     if not self.font then
         self.font = LSM:Fetch(LSM.MediaType.FONT, DEFAULT_FONT)
@@ -535,7 +535,7 @@ function addon:OnEnable()
 
         f:SetScript('OnUpdate', function()
             local limit = 30/GetFramerate()
-            
+
             for bar, value in pairs(smoothing) do
                 local cur = bar:GetValue()
                 local new = cur + min((value-cur)/3, max(value-cur, limit))
