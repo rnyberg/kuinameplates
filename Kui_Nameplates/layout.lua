@@ -341,8 +341,8 @@ local function OnFrameUpdate(self, e)
 
     if f.fixaa then
         ------------------------------------------------------------ Position --
-        local scale = f.firstChild:GetScale()
         local x, y = select(4, f.firstChild:GetPoint())
+        local scale = f.firstChild:GetScale()
         x = (x / addon.uiscale) * scale
         y = (y / addon.uiscale) * scale
 
@@ -362,21 +362,11 @@ local function OnFrameUpdate(self, e)
 
     ------------------------------------------------------------------- Alpha --
     -- determine alpha value!
-    if (f.defaultAlpha == 1 and UnitExists('target'))
-       or
-       -- avoid fading units with a raid icon
-       (profile_fade_rules.avoidraidicon and f.icon:IsVisible())
-       or
-       -- avoid fading low hp units
-       (((f.friend and profile_fade_rules.avoidfriendhp) or
-        (not f.friend and profile_fade_rules.avoidhostilehp)) and
-         f.health.percent <= profile_lowhealthval
-       )
-       or
-       -- avoid fading casting units
-       (f.castbar and profile_fade_rules.avoidcast and f.castbar:IsShown())
-       or
-       -- avoid fading mouse-over'd units
+    if (f.defaultAlpha == 1 and UnitExists('target')) or
+       (profile_fade_rules.avoidraidicon and f.icon:IsVisible()) or
+       (f.friend and profile_fade_rules.avoidfriendhp and f.health.percent <= profile_lowhealthval) or
+       (not f.friend and profile_fade_rules.avoidhostilehp and f.health.percent <= profile_lowhealthval) or
+       (f.castbar and f.castbar:IsShown() and profile_fade_rules.avoidcast) or
        (profile_fade.fademouse and f.highlighted)
     then
         f.currentAlpha = 1
@@ -384,7 +374,7 @@ local function OnFrameUpdate(self, e)
         -- if a target exists or fadeall is enabled...
         f.currentAlpha = profile_fade.fadedalpha or .3
     else
-        -- nothing is targeted!
+        -- default when nothing is targeted
         f.currentAlpha = 1
     end
     ------------------------------------------------------------------ Fading --
