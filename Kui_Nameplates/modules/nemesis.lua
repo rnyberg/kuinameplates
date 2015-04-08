@@ -7,6 +7,7 @@
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('NemesisHelper', 'AceEvent-3.0')
+local kui = LibStub('Kui-1.0')
 local _
 
 mod.uiName = 'Nemesis helper'
@@ -51,6 +52,7 @@ local raceStore = {}
 local storeIndex = {}
 local activeNemesis = {}
 
+-- helper functions ############################################################
 local function GetGUIDInfo(guid)
     if not guid or guid == "" then return end
 
@@ -77,6 +79,7 @@ local function GetGUIDInfo(guid)
     end
 end
 
+-- message listeners ###########################################################
 function mod:PostCreate(msg, frame)
     -- create race icon
     frame.raceIcon = CreateFrame('Frame')
@@ -122,13 +125,11 @@ function mod:PostShow(msg, frame)
         assert(RACE_ICON_OFFSETS[race], 'No offset for race ID: '..race)
         frame.raceIcon.icon:SetTexCoord(unpack(RACE_ICON_OFFSETS[race]))
         frame.raceIcon:Show()
-        frame.raceIcon.glow:Show()
     end
 end
 
 function mod:PostHide(msg, frame)
     frame.raceIcon:Hide()
-    frame.raceIcon.glow:Hide()
 end
 
 function mod:GUIDStored(msg, frame)
@@ -136,6 +137,7 @@ function mod:GUIDStored(msg, frame)
     self:PostShow(nil, frame)
 end
 
+-- events ######################################################################
 function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     -- watch for GUIDs in the combat log
     local sourceGUID = select(4,...)
@@ -159,7 +161,6 @@ function mod:PLAYER_ENTERING_WORLD(event,...)
         self:SoftDisable()
     else
         self:SoftEnable()
-        self:QuestUpdate()
     end
 end
 
@@ -178,41 +179,46 @@ function mod:QuestUpdate(event,...)
     end
 
     if nemeses > 0 then
-        -- only watch quest updates when a nemesis quest is active
+        -- only watch combat log/quest updates when a nemesis quest is active
+        self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
         self:RegisterEvent('QUEST_LOG_UPDATE', 'QuestUpdate')
         print('nemeses: '..nemeses)
     else
+        self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
         self:UnregisterEvent('QUEST_LOG_UPDATE')
         print('no nemesis quests')
     end
 end
 
+-- mod functions ###############################################################
 function mod:SoftDisable()
     -- stop watching combat/quest log but still create elements
+    -- still watch PLAYER_ENTERING_WORLD to reactivate upon entering draenor
     self:UnregisterMessage('KuiNameplates_GUIDStored')
     self:UnregisterMessage('KuiNameplates_PostShow')
     self:UnregisterMessage('KuiNameplates_PostHide')
 
-    self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
     self:UnregisterEvent('QUEST_ACCEPTED')
     self:UnregisterEvent('QUEST_LOG_UPDATE')
+    self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 end
 function mod:SoftEnable()
     self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
     self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
     self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
 
-    self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
     self:RegisterEvent('QUEST_ACCEPTED', 'QuestUpdate')
+
+    self:QuestUpdate()
 end
 
+-- initialise ##################################################################
 function mod:OnInitialize()
     self:SetEnabledState(true)
 end
 
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
-    self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
 
     self:SoftEnable()
