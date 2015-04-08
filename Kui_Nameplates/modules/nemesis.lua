@@ -4,14 +4,10 @@
 --
 -- Displays a race icon on enemy nameplates if they are the target of your
 -- nemesis quest.
---
--- TODO
--- scan quests, don't activate with no nemesis quest
--- only display icon on active nemesis target
--- only display icon in draenor
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('NemesisHelper', 'AceEvent-3.0')
+local _
 
 mod.uiName = 'Nemesis helper'
 
@@ -48,14 +44,19 @@ local NEMESIS_QUEST_IDS = {
     ['Goblin']   = { 36969, 36970 }
 }
 
+local CONTINENT_ID
+local DRAENOR_CONTINENT_ID = 7
+
 local raceStore = {}
 local storeIndex = {}
+local activeNemesis = {}
 
 local function GetGUIDInfo(guid)
     if not guid or guid == "" then return end
 
     local raceName,raceID,_,name = select(3, GetPlayerInfoByGUID(guid))
-    if not name then return end
+    if not raceID or not name then return end
+    if not activeNemesis[raceID] then return end
 
     if not raceStore[name] then
         -- don't increment with overwrites
@@ -147,17 +148,68 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     end
 end
 
+function mod:PLAYER_ENTERING_WORLD(event,...)
+    -- check that we're in draenor
+    SetMapToCurrentZone()
+    CONTINENT_ID = GetCurrentMapContinent()
+
+    if CONTINENT_ID ~= DRAENOR_CONTINENT_ID then
+        self:SoftDisable()
+    else
+        self:SoftEnable()
+        self:QuestUpdate()
+    end
+end
+
+function mod:QuestUpdate(event,...)
+    -- search for active nemesis quests
+    wipe(activeNemesis)
+    print('nemesis wiped')
+
+    for race,ids in pairs(NEMESIS_QUEST_IDS) do
+        for _,id in pairs(ids) do
+            if GetQuestLogIndexByID(id) ~= 0 then
+                activeNemesis[race] = true
+                print('active nemesis: '..race)
+            end
+        end
+    end
+end
+
+function mod:SoftDisable()
+    -- stop watching combat/quest log but still create elements
+    self:UnregisterMessage('KuiNameplates_GUIDStored')
+    self:UnregisterMessage('KuiNameplates_PostShow')
+    self:UnregisterMessage('KuiNameplates_PostHide')
+
+    self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+    self:UnregisterEvent('QUEST_ACCEPTED')
+    self:UnregisterEvent('QUEST_LOG_UPDATE')
+end
+function mod:SoftEnable()
+    self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
+    self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
+    self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
+
+    self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+    self:RegisterEvent('QUEST_ACCEPTED', 'QuestUpdate')
+    self:RegisterEvent('QUEST_LOG_UPDATE', 'QuestUpdate')
+end
+
 function mod:OnInitialize()
     self:SetEnabledState(true)
 end
 
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
-    self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
-    self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
-    self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
     self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+    self:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+    self:SoftEnable()
 end
 function mod:OnDisable()
     self:UnregisterMessage('KuiNameplates_PostCreate', 'PostCreate')
+    self:UnregisterEvent('PLAYER_ENTERING_WORLD', 'QuestUpdate')
+
+    self:SoftDisable()
 end
