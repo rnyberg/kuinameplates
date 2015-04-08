@@ -4,6 +4,11 @@
 --
 -- Displays a race icon on enemy nameplates if they are the target of your
 -- nemesis quest.
+--
+-- TODO
+-- scan quests, don't activate with no nemesis quest
+-- only display icon on active nemesis target
+-- only display icon in draenor
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('NemesisHelper', 'AceEvent-3.0')
@@ -63,6 +68,12 @@ local function GetGUIDInfo(guid)
     end
 
     raceStore[name] = raceID
+
+    -- update nameplate if it is visible
+    local frame = addon:GetNameplate(guid, name)
+    if frame then
+        mod:PostShow(nil, frame)
+    end
 end
 
 function mod:PostCreate(msg, frame)
@@ -102,9 +113,9 @@ function mod:PostCreate(msg, frame)
 end
 function mod:PostShow(msg, frame)
     if not frame.name.text then return end
-    frame.name.text = gsub(frame.name.text, ' %(%*%)', '')
+    local name = gsub(frame.name.text, ' %(%*%)', '')
 
-    local race = raceStore[frame.name.text]
+    local race = raceStore[name]
     if race then
         assert(RACE_ICON_OFFSETS[race], 'No offset for race ID: '..race)
         frame.raceIcon.icon:SetTexCoord(unpack(RACE_ICON_OFFSETS[race]))
