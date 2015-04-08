@@ -54,7 +54,7 @@ local activeNemesis = {}
 
 -- helper functions ############################################################
 local function GetGUIDInfo(guid)
-    if not guid or guid == "" then return end
+    if not guid or guid == "" or not strmatch(guid, "^Player%-") then return end
 
     local raceName,raceID,_,name = select(3, GetPlayerInfoByGUID(guid))
     if not raceID or not name then return end
