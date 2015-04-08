@@ -18,5 +18,6 @@ modules\classcolours.lua
 modules\combopoints.lua
 modules\tankmode.lua
 modules\lowhealth.lua
+modules\nemesis.lua
 
 custom.lua

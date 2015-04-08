@@ -130,6 +130,19 @@ do
     local knownGUIDs = {} -- GUIDs that we can relate to names (i.e. players)
     local knownIndex = {}
 
+    function addon:StoreNameWithGUID(name,guid)
+        -- used to provide aggressive name -> guid matching
+        -- should only be used for players
+        if not name or not guid then return end
+        knownGUIDs[name] = guid
+        tinsert(knownIndex, name)
+
+        -- purging index > 100 names
+        if #knownIndex > 100 then
+            knownGUIDs[tremove(knownIndex, 1)] = nil
+        end
+    end
+
     function addon:GetGUID(f)
         -- give this frame a guid if we think we already know it
         if f.player and knownGUIDs[f.name.text] then
@@ -157,13 +170,7 @@ do
         if UnitIsPlayer(unit) then
             -- we can probably assume this unit has a unique name
             -- nevertheless, overwrite this each time. just in case.
-            knownGUIDs[f.name.text] = guid
-            tinsert(knownIndex, f.name.text)
-
-            -- and start purging > 100 names
-            if #knownIndex > 100 then
-                knownGUIDs[tremove(knownIndex, 1)] = nil
-            end
+            self:StoreNameWithGUID(f.name.text, guid)
         elseif loadedNames[f.name.text] == f then
             -- force the registered f for this name to change
             loadedNames[f.name.text] = nil
