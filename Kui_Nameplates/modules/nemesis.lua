@@ -113,6 +113,7 @@ function mod:PostCreate(msg, frame)
     return
 end
 function mod:PostShow(msg, frame)
+    -- show icon on frames we know the race for
     if not frame.name.text then return end
     local name = gsub(frame.name.text, ' %(%*%)', '')
 
@@ -136,6 +137,7 @@ function mod:GUIDStored(msg, frame)
 end
 
 function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
+    -- watch for GUIDs in the combat log
     local sourceGUID = select(4,...)
 
     if sourceGUID then
@@ -164,15 +166,24 @@ end
 function mod:QuestUpdate(event,...)
     -- search for active nemesis quests
     wipe(activeNemesis)
-    print('nemesis wiped')
+    local nemeses = 0
 
     for race,ids in pairs(NEMESIS_QUEST_IDS) do
         for _,id in pairs(ids) do
             if GetQuestLogIndexByID(id) ~= 0 then
                 activeNemesis[race] = true
-                print('active nemesis: '..race)
+                nemeses = nemeses + 1
             end
         end
+    end
+
+    if nemeses > 0 then
+        -- only watch quest updates when a nemesis quest is active
+        self:RegisterEvent('QUEST_LOG_UPDATE', 'QuestUpdate')
+        print('nemeses: '..nemeses)
+    else
+        self:UnregisterEvent('QUEST_LOG_UPDATE')
+        print('no nemesis quests')
     end
 end
 
@@ -193,7 +204,6 @@ function mod:SoftEnable()
 
     self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
     self:RegisterEvent('QUEST_ACCEPTED', 'QuestUpdate')
-    self:RegisterEvent('QUEST_LOG_UPDATE', 'QuestUpdate')
 end
 
 function mod:OnInitialize()
