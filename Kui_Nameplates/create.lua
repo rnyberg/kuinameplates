@@ -17,7 +17,7 @@ function addon:CreateBackground(frame, f)
     -- solid background
     f.bg.fill = f:CreateTexture(nil, 'ARTWORK', nil, 1)
     f.bg.fill:SetTexture(kui.m.t.solid)
-    f.bg.fill:SetVertexColor(0, 0, 0, .8)
+    f.bg.fill:SetVertexColor(0, 0, 0, 1)
 end
 function addon:UpdateBackground(f, trivial)
     f.bg:ClearAllPoints()
