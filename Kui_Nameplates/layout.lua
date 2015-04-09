@@ -115,14 +115,14 @@ local function SetGlowColour(self, r, g, b, a)
         r, g, b = 0, 0, 0
 
         if profile.general.glowshadow then
-            a = .85
+            a = .8
         else
             a = 0
         end
     end
 
     if not a then
-        a = .85
+        a = .8
     end
 
     self.bg:SetVertexColor(r, g, b, a)

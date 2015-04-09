@@ -10,16 +10,14 @@ local kui = LibStub('Kui-1.0')
 function addon:CreateBackground(frame, f)
     -- frame glow
     --f.bg:SetParent(f)
-    f.bg = f:CreateTexture(nil, 'ARTWORK')
+    f.bg = f:CreateTexture(nil, 'ARTWORK', nil, 0)
     f.bg:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\FrameGlow')
-    f.bg:SetTexCoord(0, .469, 0, .625)
-    f.bg:SetVertexColor(0, 0, 0, .9)
+    f.bg:SetVertexColor(0, 0, 0, .8)
 
     -- solid background
-    f.bg.fill = f:CreateTexture(nil, 'BACKGROUND')
+    f.bg.fill = f:CreateTexture(nil, 'ARTWORK', nil, 1)
     f.bg.fill:SetTexture(kui.m.t.solid)
     f.bg.fill:SetVertexColor(0, 0, 0, .8)
-    f.bg.fill:SetDrawLayer('ARTWORK', 1) -- 1 sub-layer above .bg
 end
 function addon:UpdateBackground(f, trivial)
     f.bg:ClearAllPoints()

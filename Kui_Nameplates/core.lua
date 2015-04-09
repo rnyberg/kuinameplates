@@ -23,7 +23,7 @@ addon.defaultSizes = {
         height   = 10,
         twidth   = 55, -- trivial unit width
         theight  = 7,  -- "            height
-        bgOffset = 4   -- inset of the frame glow
+        bgOffset = 6   -- inset of the frame glow
     },
     font = {
         large     = 9,
