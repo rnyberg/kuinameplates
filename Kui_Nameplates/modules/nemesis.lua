@@ -87,29 +87,30 @@ function mod:PostCreate(msg, frame)
     frame.raceIcon = CreateFrame('Frame')
     local ri = frame.raceIcon
 
-    frame.raceIcon.bg = ri:CreateTexture(nil, 'ARTWORK', nil, 3)
-    frame.raceIcon.icon = ri:CreateTexture(nil, 'ARTWORK', nil, 4)
+    frame.raceIcon.bg = ri:CreateTexture(nil, 'ARTWORK', nil, 4)
+    frame.raceIcon.icon = ri:CreateTexture(nil, 'ARTWORK', nil, 3)
     frame.raceIcon.glow = ri:CreateTexture(nil, 'ARTWORK', nil, 2)
 
     local ribg = frame.raceIcon.bg
     local rii = frame.raceIcon.icon
     local rig = frame.raceIcon.glow
 
-    ri:SetPoint('LEFT', frame.health, 'RIGHT', 2, 0)
+    ri:SetPoint('LEFT', frame.health, 'RIGHT', 3, 0)
     ri:SetSize(iconSize, iconSize)
     ri:Hide()
 
-    ribg:SetTexture(kui.m.t.solid)
-    ribg:SetAllPoints(ri)
+    rii:SetTexture(RACE_ICON_TEXTURE)
+    rii:SetPoint('TOPLEFT', ri, 1, -1)
+    rii:SetPoint('BOTTOMRIGHT', ri, -1, 1)
+
+    ribg:SetTexture('Interface\\AddOns\\Kui_Media\\t\\CheckButtonHilightWhite')
+    ribg:SetPoint('TOPLEFT', ri)
+    ribg:SetPoint('BOTTOMRIGHT', ri)
     ribg:SetVertexColor(0,0,0)
 
-    rii:SetTexture(RACE_ICON_TEXTURE)
-    rii:SetPoint('TOPLEFT', ribg, 1, -1)
-    rii:SetPoint('BOTTOMRIGHT', ribg, -1, 1)
-
-    rig:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\combopoint-glow')
-    rig:SetPoint('TOPLEFT', ribg, -glowSize, glowSize)
-    rig:SetPoint('BOTTOMRIGHT', ribg, glowSize, -glowSize)
+	rig:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\combopoint-glow')
+    rig:SetPoint('TOPLEFT', ri, -glowSize, glowSize)
+    rig:SetPoint('BOTTOMRIGHT', ri, glowSize+1, -glowSize-1)
     rig:SetVertexColor(1,0,0)
 end
 function mod:PostShow(msg, frame)
@@ -239,7 +240,7 @@ function mod:OnInitialize()
         }
     })
 
-    addon:RegisterSize('frame', 'raceIconSize', 12)
+    addon:RegisterSize('frame', 'raceIconSize', 14)
     addon:RegisterSize('frame', 'raceIconGlowSize', 4)
 
     addon:InitModuleOptions(self)
