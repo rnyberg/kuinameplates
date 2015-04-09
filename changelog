@@ -1,7 +1,4 @@
-* add option to class colour friendly players' names (/knp > class colours)
-* add low health health bar recolouring (/knp > low health colour)
-* hostile player and pet levels are now replaced with their arena id in arenas
-* GUIDs are now matched to players' nameplates upon mousing over their unit frames and models in the 3d world (which allows the nameplates to display class colours, auras, etc)
-* reaction colour options moved under "Health display"
-
+* add nemesis helper module, which shows a race icon on nameplates if they are
+your active nemesis target. This is only enabled if you have a
+nemesis quest and are in draenor (open world).
 

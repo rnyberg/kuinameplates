@@ -52,6 +52,8 @@ local raceStore = {}
 local storeIndex = {}
 local activeNemesis = {}
 
+local iconSize, glowSize
+
 -- helper functions ############################################################
 local function GetGUIDInfo(guid)
     if not guid or guid == "" or not strmatch(guid, "^Player%-") then return end
@@ -82,41 +84,40 @@ end
 -- message listeners ###########################################################
 function mod:PostCreate(msg, frame)
     -- create race icon
+
     frame.raceIcon = CreateFrame('Frame')
     local ri = frame.raceIcon
 
-    frame.raceIcon.bg = ri:CreateTexture(nil, 'ARTWORK')
-    frame.raceIcon.icon = ri:CreateTexture(nil, 'ARTWORK')
-    frame.raceIcon.glow = ri:CreateTexture(nil, 'ARTWORK')
+    frame.raceIcon.bg = ri:CreateTexture(nil, 'ARTWORK', nil, 3)
+    frame.raceIcon.icon = ri:CreateTexture(nil, 'ARTWORK', nil, 4)
+    frame.raceIcon.glow = ri:CreateTexture(nil, 'ARTWORK', nil, 2)
 
     local ribg = frame.raceIcon.bg
     local rii = frame.raceIcon.icon
     local rig = frame.raceIcon.glow
 
-    ri:SetPoint('LEFT', frame.overlay, 'RIGHT', 2, 0)
-    ri:SetSize(18,18)
+    ri:SetPoint('LEFT', frame.health, 'RIGHT', 2, 0)
+    ri:SetSize(iconSize, iconSize)
     ri:Hide()
 
-    ribg:SetDrawLayer('ARTWORK', 2)
     ribg:SetTexture(kui.m.t.solid)
     ribg:SetAllPoints(ri)
     ribg:SetVertexColor(0,0,0)
 
-    rii:SetDrawLayer('ARTWORK', 3)
     rii:SetTexture(RACE_ICON_TEXTURE)
     rii:SetPoint('TOPLEFT', ribg, 1, -1)
     rii:SetPoint('BOTTOMRIGHT', ribg, -1, 1)
 
-    rig:SetDrawLayer('ARTWORK', 1)
     rig:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\combopoint-glow')
-    rig:SetPoint('TOPLEFT', ribg, -8, 8)
-    rig:SetPoint('BOTTOMRIGHT', ribg, 8, -8)
+    rig:SetPoint('TOPLEFT', ribg, -glowSize, glowSize)
+    rig:SetPoint('BOTTOMRIGHT', ribg, glowSize, -glowSize)
     rig:SetVertexColor(1,0,0)
 
     return
 end
 function mod:PostShow(msg, frame)
     -- show icon on frames we know the race for
+    if not frame.player or frame.friend then return end
     if not frame.name.text then return end
     local name = gsub(frame.name.text, ' %(%*%)', '')
 
@@ -182,11 +183,9 @@ function mod:QuestUpdate(event,...)
         -- only watch combat log/quest updates when a nemesis quest is active
         self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
         self:RegisterEvent('QUEST_LOG_UPDATE', 'QuestUpdate')
-        print('nemeses: '..nemeses)
     else
         self:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
         self:UnregisterEvent('QUEST_LOG_UPDATE')
-        print('no nemesis quests')
     end
 end
 
@@ -213,13 +212,46 @@ function mod:SoftEnable()
 end
 
 -- initialise ##################################################################
+function mod:GetOptions()
+    return {
+        enabled = {
+            name = 'Show race icons on nemesis targets',
+            desc = 'Show race icons besides the nameplates of your current nemesis targets. This is only active while in the open world of Draenor and while you have an active nemesis quest (kill 500...).',
+            width = 'double',
+            type = 'toggle',
+            order = 1,
+            disabled = false
+        }
+    }
+end
+
 function mod:OnInitialize()
-    self:SetEnabledState(true)
+    self.db = addon.db:RegisterNamespace(self.moduleName, {
+        profile = {
+            enabled = true,
+        }
+    })
+
+    addon:RegisterSize('frame', 'raceIconSize', 12)
+    addon:RegisterSize('frame', 'raceIconGlowSize', 4)
+
+    addon:InitModuleOptions(self)
+    self:SetEnabledState(self.db.profile.enabled)
 end
 
 function mod:OnEnable()
+    iconSize = addon.sizes.frame.raceIconSize
+    glowSize = addon.sizes.frame.raceIconGlowSize
+
     self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+	local _, frame
+	for _, frame in pairs(addon.frameList) do
+		if not frame.raceIcon then
+			self:PostCreate(nil, frame.kui)
+		end
+	end
 
     self:SoftEnable()
 end
@@ -228,4 +260,15 @@ function mod:OnDisable()
     self:UnregisterEvent('PLAYER_ENTERING_WORLD', 'QuestUpdate')
 
     self:SoftDisable()
+
+    wipe(raceStore)
+    wipe(storeIndex)
+    wipe(activeNemesis)
+
+	local _, frame
+	for _, frame in pairs(addon.frameList) do
+		if frame.raceIcon then
+			self:PostHide(nil, frame.kui)
+		end
+	end
 end
