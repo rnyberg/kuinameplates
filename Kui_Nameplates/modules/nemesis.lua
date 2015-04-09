@@ -84,7 +84,6 @@ end
 -- message listeners ###########################################################
 function mod:PostCreate(msg, frame)
     -- create race icon
-
     frame.raceIcon = CreateFrame('Frame')
     local ri = frame.raceIcon
 
@@ -112,8 +111,6 @@ function mod:PostCreate(msg, frame)
     rig:SetPoint('TOPLEFT', ribg, -glowSize, glowSize)
     rig:SetPoint('BOTTOMRIGHT', ribg, glowSize, -glowSize)
     rig:SetVertexColor(1,0,0)
-
-    return
 end
 function mod:PostShow(msg, frame)
     -- show icon on frames we know the race for
@@ -211,6 +208,16 @@ function mod:SoftEnable()
     self:QuestUpdate()
 end
 
+-- post db change functions ####################################################
+mod.configChangedFuncs = { runOnce = {} }
+mod.configChangedFuncs.runOnce.enabled = function(val)
+	if val then
+		mod:Enable()
+	else
+		mod:Disable()
+	end
+end
+
 -- initialise ##################################################################
 function mod:GetOptions()
     return {
@@ -248,7 +255,7 @@ function mod:OnEnable()
 
 	local _, frame
 	for _, frame in pairs(addon.frameList) do
-		if not frame.raceIcon then
+		if not frame.kui.raceIcon then
 			self:PostCreate(nil, frame.kui)
 		end
 	end
@@ -267,7 +274,7 @@ function mod:OnDisable()
 
 	local _, frame
 	for _, frame in pairs(addon.frameList) do
-		if frame.raceIcon then
+		if frame.kui.raceIcon then
 			self:PostHide(nil, frame.kui)
 		end
 	end
