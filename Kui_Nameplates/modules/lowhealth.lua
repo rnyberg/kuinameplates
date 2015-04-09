@@ -9,10 +9,19 @@ local mod = addon:NewModule('LowHealthColours', 'AceEvent-3.0')
 
 mod.uiName = 'Low health colour'
 
-local LOW_HEALTH_COLOR, PRIORITY
+local LOW_HEALTH_COLOR, PRIORITY, OVER_CLASSCOLOUR
 
 local function OnHealthValueChanged(oldHealth,current)
     local frame = oldHealth:GetParent():GetParent().kui
+
+    if  (frame.tapped) or
+        -- don't show on tapped units
+        (not OVER_CLASSCOLOUR and frame.player and not frame.friend)
+        -- don't show on enemy players
+    then
+        return
+    end
+
     local percent = frame.health.percent
 
     if percent <= addon.db.profile.general.lowhealthval then
@@ -35,8 +44,11 @@ end
 mod.configChangedFuncs.runOnce.colour = function(v)
     LOW_HEALTH_COLOR = v
 end
-mod.configChangedFuncs.runOnce.priority = function(v)
+mod.configChangedFuncs.runOnce.over_tankmode = function(v)
     PRIORITY = v and 15 or 5
+end
+mod.configChangedFuncs.runOnce.over_classcolour = function(v)
+    OVER_CLASSCOLOUR = v
 end
 
 function mod:GetOptions()
@@ -48,17 +60,23 @@ function mod:GetOptions()
             width = 'double',
             order = 10
         },
-        priority = {
+        over_tankmode = {
             name = 'Override tank mode',
             desc = 'When using tank mode, allow the low health colour to override tank mode colouring',
             type = 'toggle',
             order = 20
         },
+        over_classcolour = {
+            name = 'Show on enemy players',
+            desc = 'Show on enemy players - i.e. override class colours',
+            type = 'toggle',
+            order = 30
+        },
         colour = {
             name = 'Low health colour',
             desc = 'The colour to use',
             type = 'color',
-            order = 30
+            order = 40
         }
     }
 end
@@ -67,7 +85,8 @@ function mod:OnInitialize()
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
             enabled = true,
-            priority = false,
+            over_tankmode = false,
+            over_classcolour = true,
             colour = { 1, 1, .85 }
         }
     })
@@ -75,7 +94,8 @@ function mod:OnInitialize()
     addon:InitModuleOptions(self)
 
     LOW_HEALTH_COLOR = self.db.profile.colour
-    PRIORITY = self.db.profile.priority and 15 or 5
+    PRIORITY = self.db.profile.over_tankmode and 15 or 5
+    OVER_CLASSCOLOUR = self.db.profile.over_classcolour
 
     self:SetEnabledState(self.db.profile.enabled)
 end
