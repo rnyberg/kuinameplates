@@ -307,6 +307,7 @@ local function CreateFontString(self, parent, obj)
     local fs = kui.CreateFontString(parent, obj)
     fs.size = sizeKey
     fs.SetFontSize = SetFontSize
+    fs:SetWordWrap(false)
 
     tinsert(self.fontObjects, fs)
     return fs

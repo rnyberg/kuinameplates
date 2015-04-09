@@ -1,4 +1,5 @@
 * add nemesis helper module, which shows a race icon on nameplates if they are
 your active nemesis target. This is only enabled if you have a
 nemesis quest and are in draenor (open world).
+* fix some fontstrings would incorrectly wrap instead of truncate
 
