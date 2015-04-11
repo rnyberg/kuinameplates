@@ -696,8 +696,6 @@ function addon:InitFrame(frame)
     ------------------------------------------------------------------ Layout --
     if profile.general.fixaa and addon.uiscale then
         f:SetSize(frame:GetWidth()/addon.uiscale, frame:GetHeight()/addon.uiscale)
-        f:SetScale(addon.uiscale)
-
         f:Hide()
 
         --@debug@
@@ -711,6 +709,8 @@ function addon:InitFrame(frame)
     else
         f:SetAllPoints(frame)
     end
+
+    f:SetScale(addon.uiscale)
 
     f:SetFrameStrata(profile.general.strata)
     f:SetFrameLevel(0)

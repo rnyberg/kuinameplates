@@ -17,6 +17,8 @@ local function ResetFade(f)
 	f.castbar:SetAlpha(1)
 end
 
+local sizes = {}
+
 ------------------------------------------------------------- Script handlers --
 local function OnDefaultCastbarShow(self)
 	if not mod.enabledState then return end
@@ -111,7 +113,7 @@ function mod:CreateCastbar(msg, frame)
 	frame.castbar.bg:SetTexture(kui.m.t.solid)
 	frame.castbar.bg:SetVertexColor(0, 0, 0, .85)
 
-	frame.castbar.bg:SetHeight(addon.sizes.frame.cbheight)
+	frame.castbar.bg:SetHeight(sizes.cbheight)
 
 	frame.castbar.bg:SetPoint('TOPLEFT', frame.bg.fill, 'BOTTOMLEFT', 0, -1)
 	frame.castbar.bg:SetPoint('TOPRIGHT', frame.bg.fill, 'BOTTOMRIGHT', 0, 0)
@@ -133,14 +135,14 @@ function mod:CreateCastbar(msg, frame)
 	frame.castbar.spark:SetVertexColor(1,1,.8)
 	frame.castbar.spark:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\spark')
 	frame.castbar.spark:SetPoint('CENTER', frame.castbar.bar:GetRegions(), 'RIGHT', 1, 0)
-	frame.castbar.spark:SetSize(6, addon.sizes.frame.cbheight + 6)
+	frame.castbar.spark:SetSize(6, sizes.cbheight + 6)
 
 	-- uninterruptible cast shield -----------------------------------------
 	frame.castbar.shield = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
 	frame.castbar.shield:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\Shield')
 	frame.castbar.shield:SetTexCoord(0, .53125, 0, .625)
 
-	frame.castbar.shield:SetSize(addon.sizes.tex.shieldw, addon.sizes.tex.shieldh)
+	frame.castbar.shield:SetSize(sizes.shieldw, sizes.shieldh)
 	frame.castbar.shield:SetPoint('LEFT', frame.castbar.bg, -7, 0)
 
 	frame.castbar.shield:SetBlendMode('BLEND')
@@ -186,7 +188,7 @@ function mod:CreateCastbar(msg, frame)
 		frame.castbar.icon.bg = frame.castbar:CreateTexture(nil, 'ARTWORK')
 		frame.castbar.icon.bg:SetTexture(kui.m.t.solid)
 		frame.castbar.icon.bg:SetVertexColor(0,0,0)
-		frame.castbar.icon.bg:SetSize(addon.sizes.frame.icon, addon.sizes.frame.icon)
+		frame.castbar.icon.bg:SetSize(sizes.icon, sizes.icon)
 		frame.castbar.icon.bg:SetPoint(
 			'TOPRIGHT', frame.health, 'TOPLEFT', -2, 1)
 
@@ -295,18 +297,20 @@ function mod:OnInitialize()
 				casttime        = false,
 				spellname       = true,
 				spellicon       = true,
-				cbheight        = 4,
+				cbheight        = 5,
 				barcolour       = { .43, .47, .55, 1 },
 				shieldbarcolour = { .8,  .1,  .1,  1 },
 			}
 		}
 	})
 
-	addon:RegisterSize('frame', 'cbheight', self.db.profile.display.cbheight)
-	addon:RegisterSize('frame', 'icon',
-		addon.db.profile.general.hheight + addon.defaultSizes.frame.cbheight + 1)
-	addon:RegisterSize('tex', 'shieldw', 10)
-	addon:RegisterSize('tex', 'shieldh', 12)
+    sizes = {
+        cbheight = self.db.profile.display.cbheight,
+        shieldw = 10,
+        shieldh = 12
+    }
+
+    sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
 
 	addon:InitModuleOptions(self)
 	mod:SetEnabledState(self.db.profile.enabled)

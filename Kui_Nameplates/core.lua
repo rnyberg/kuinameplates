@@ -10,14 +10,12 @@ local LSM = LibStub('LibSharedMedia-3.0')
 addon.font = ''
 addon.uiscale = nil
 addon.sizes = { frame = {}, font = {}, tex = {} }
-addon.defaultSizes = { frame = {}, font = {}, tex = {} }
 
 addon.frameList = {}
 addon.numFrames = 0
 
 -- sizes of frame elements
--- TODO these should be set in create.lua
-addon.defaultSizes = {
+addon.sizes = {
     frame = {
         width    = 130,
         height   = 13,
@@ -25,19 +23,22 @@ addon.defaultSizes = {
         theight  = 9,  -- "            height
         bgOffset = 8   -- inset of the frame glow
     },
-    font = {
-        large     = 12,
-        spellname = 11,
-        name      = 11,
-        small     = 9
-    },
     tex = {
         raidicon = 23,
         targetGlowW = 139,
         ttargetGlowW = 66, -- target glow width on trivial units
         targetGlowH = 7,
         targetArrow = 33,
-    }
+    },
+    font = {}, -- populated by ScaleFontSizes
+}
+
+-- as these are scaled with the user option we need to store the default
+addon.defaultFontSizes = {
+    large     = 12,
+    spellname = 11,
+    name      = 11,
+    small     = 9
 }
 
 -- add latin-only fonts to LSM
@@ -69,7 +70,7 @@ local defaults = {
             hheight     = 13,
             thheight    = 9,
             width       = 130,
-            twidth      = 13,
+            twidth      = 72,
             leftie      = false,
             glowshadow  = true,
             strata      = 'BACKGROUND',
@@ -315,57 +316,36 @@ end
 
 addon.CreateFontString = CreateFontString
 ----------------------------------------------------------- scaling functions --
--- scale a frame/font size to keep it relatively the same with any uiscale
-local function ScaleFrameSize(key)
-    local size = addon.defaultSizes.frame[key]
-    addon.sizes.frame[key] = floor(size)
-end
-
-local function ScaleTextureSize(key)
-    -- texture sizes don't need to be rounded
-    local size = addon.defaultSizes.tex[key]
-    addon.sizes.tex[key] = size
-end
-
+-- scale font sizes with the fontscale option
 local function ScaleFontSize(key)
-    -- neither do fonts, but they need to be scaled with the fontscale option
-    local size = addon.defaultSizes.font[key]
+    local size = addon.defaultFontSizes[key]
     addon.sizes.font[key] = size * addon.db.profile.fonts.options.fontscale
 end
 
-local scaleFuncs = {
-    frame = ScaleFrameSize,
-    tex   = ScaleTextureSize,
-    font  = ScaleFontSize
-}
-
-function addon:ScaleSizes(type)
+function addon:ScaleFontSizes()
     local key,_
-    for key,_ in pairs(addon.defaultSizes[type]) do
-        scaleFuncs[type](key)
+    for key,_ in pairs(addon.defaultFontSizes) do
+        ScaleFontSize(key)
     end
 end
 
-function addon:ScaleAllSizes()
-    local type,_
-    for type,_ in pairs(addon.defaultSizes) do
-        self:ScaleSizes(type)
-    end
+-- modules should use this to add font sizes which scale correctly with the
+-- fontscale option
+-- keys must be unique
+function addon:RegisterFontSize(key, size)
+    addon.defaultFontSizes[key] = size
+    ScaleFontSize(key)
 end
 
--- modules must use this to add correctly scaled sizes
--- scaled sizes are stored in addon.sizes
--- font sizes can then be called as a key in addon.CreateFontString
+-- once upon a time, equivalent logic was necessary for all frame sizes
 function addon:RegisterSize(type, key, size)
-    if not addon.defaultSizes[type] then return end
-    addon.defaultSizes[type][key] = size
-    scaleFuncs[type](key)
+    error('deprecated function call: RegisterSize '..(type or 'nil')..' '..(key or 'nil')..' '..(size or 'nil'))
 end
 ---------------------------------------------------- Post db change functions --
 -- n.b. this is absolutely terrible and horrible and i hate it
 addon.configChangedFuncs = { runOnce = {} }
 addon.configChangedFuncs.runOnce.fontscale = function(val)
-    addon:ScaleSizes('font')
+    addon:ScaleFontSizes()
 end
 addon.configChangedFuncs.fontscale = function(frame, val)
     local _, fontObject
@@ -501,20 +481,18 @@ function addon:OnEnable()
         self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, DEFAULT_BAR)
     end
 
-    if self.db.profile.general.fixaa then
-        addon.uiscale = UIParent:GetEffectiveScale()
-    end
+    addon.uiscale = UIParent:GetEffectiveScale()
 
-    self.defaultSizes.frame.height = self.db.profile.general.hheight
-    self.defaultSizes.frame.theight = self.db.profile.general.thheight
-    self.defaultSizes.frame.width = self.db.profile.general.width
-    self.defaultSizes.frame.twidth = self.db.profile.general.twidth
+    self.sizes.frame.height = self.db.profile.general.hheight
+    self.sizes.frame.theight = self.db.profile.general.thheight
+    self.sizes.frame.width = self.db.profile.general.width
+    self.sizes.frame.twidth = self.db.profile.general.twidth
 
-    self.defaultSizes.tex.healthOffset = self.db.profile.text.healthoffset
-    self.defaultSizes.tex.targetGlowW = self.defaultSizes.frame.width - 5
-    self.defaultSizes.tex.ttargetGlowW = self.defaultSizes.frame.twidth - 5
+    self.sizes.tex.healthOffset = self.db.profile.text.healthoffset
+    self.sizes.tex.targetGlowW = self.sizes.frame.width - 5
+    self.sizes.tex.ttargetGlowW = self.sizes.frame.twidth - 5
 
-    self:ScaleAllSizes()
+    self:ScaleFontSizes()
 
     -------------------------------------- Health bar smooth update functions --
     -- (spoon-fed by oUF_Smooth)
