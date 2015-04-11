@@ -16,7 +16,7 @@ local UnitExists,UnitGUID=UnitExists,UnitGUID
 
 local PLAYER_GUID
 
-local = {}
+local sizes = {}
 
 -- store profiles to reduce lookup in OnAuraUpdate
 local db_display,db_behav
