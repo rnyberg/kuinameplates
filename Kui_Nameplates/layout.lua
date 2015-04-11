@@ -342,16 +342,12 @@ local function OnFrameUpdate(self, e)
 
     if f.fixaa then
         ------------------------------------------------------------ Position --
-        local x, y = select(4, f.firstChild:GetPoint())
-        local scale = f.firstChild:GetScale()
-        x = (x / addon.uiscale) * scale
-        y = (y / addon.uiscale) * scale
-
         local x,y = f.firstChild:GetCenter()
+        local scale = f.firstChild:GetScale()
 
         f:SetPoint('CENTER', WorldFrame, 'BOTTOMLEFT',
-            floor(x / addon.uiscale),
-            floor(y / addon.uiscale))
+            floor((x / addon.uiscale) * scale),
+            floor((y / addon.uiscale) * scale))
     end
 
     -- show the frame after it's been moved so it doesn't flash

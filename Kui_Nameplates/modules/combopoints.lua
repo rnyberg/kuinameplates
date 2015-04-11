@@ -225,7 +225,7 @@ function mod:OnInitialize()
 	-- fetch the localised name of anticipation
 	ANTICIPATION_NAME = GetSpellInfo(ANTICIPATION_ID) or 'Anticipation'
 
-    defaultSizes.combopoints = 4.5
+    defaultSizes.combopoints = 6.5
 
     -- scale size with user option
     self.configChangedFuncs.runOnce.scale(self.db.profile.scale)
