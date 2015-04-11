@@ -347,9 +347,11 @@ local function OnFrameUpdate(self, e)
         x = (x / addon.uiscale) * scale
         y = (y / addon.uiscale) * scale
 
-        f:SetPoint('BOTTOMLEFT', WorldFrame, 'BOTTOMLEFT',
-            floor(x - (f:GetWidth() / 2)),
-            floor(y))
+        local x,y = f.firstChild:GetCenter()
+
+        f:SetPoint('CENTER', WorldFrame, 'BOTTOMLEFT',
+            floor(x / addon.uiscale),
+            floor(y / addon.uiscale))
     end
 
     -- show the frame after it's been moved so it doesn't flash
@@ -696,7 +698,6 @@ function addon:InitFrame(frame)
         f:SetSize(frame:GetWidth()/addon.uiscale, frame:GetHeight()/addon.uiscale)
         f:SetScale(addon.uiscale)
 
-        f:SetPoint('BOTTOMLEFT', UIParent)
         f:Hide()
 
         --@debug@

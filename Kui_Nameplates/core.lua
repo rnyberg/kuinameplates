@@ -19,24 +19,24 @@ addon.numFrames = 0
 -- TODO these should be set in create.lua
 addon.defaultSizes = {
     frame = {
-        width    = 100,
-        height   = 10,
-        twidth   = 55, -- trivial unit width
-        theight  = 7,  -- "            height
-        bgOffset = 6   -- inset of the frame glow
+        width    = 130,
+        height   = 13,
+        twidth   = 72, -- trivial unit width
+        theight  = 9,  -- "            height
+        bgOffset = 8   -- inset of the frame glow
     },
     font = {
-        large     = 9,
-        spellname = 8,
-        name      = 8,
-        small     = 7
+        large     = 12,
+        spellname = 11,
+        name      = 11,
+        small     = 9
     },
     tex = {
-        raidicon = 18,
-        targetGlowW = 106,
-        ttargetGlowW = 50, -- target glow width on trivial units
-        targetGlowH = 5,
-        targetArrow = 25,
+        raidicon = 23,
+        targetGlowW = 139,
+        ttargetGlowW = 66, -- target glow width on trivial units
+        targetGlowH = 7,
+        targetArrow = 33,
     }
 }
 
@@ -66,10 +66,10 @@ local defaults = {
             targetglow  = true,
             targetglowcolour = { .3, .7, 1, 1 },
             targetarrows = false,
-            hheight     = 10,
-            thheight    = 7,
-            width       = 100,
-            twidth      = 55,
+            hheight     = 13,
+            thheight    = 9,
+            width       = 130,
+            twidth      = 13,
             leftie      = false,
             glowshadow  = true,
             strata      = 'BACKGROUND',
@@ -318,23 +318,19 @@ addon.CreateFontString = CreateFontString
 -- scale a frame/font size to keep it relatively the same with any uiscale
 local function ScaleFrameSize(key)
     local size = addon.defaultSizes.frame[key]
-    addon.sizes.frame[key] = (addon.uiscale and floor(size/addon.uiscale) or size)
+    addon.sizes.frame[key] = floor(size)
 end
 
 local function ScaleTextureSize(key)
     -- texture sizes don't need to be rounded
     local size = addon.defaultSizes.tex[key]
-    addon.sizes.tex[key] = (addon.uiscale and size/addon.uiscale or size)
+    addon.sizes.tex[key] = size
 end
 
 local function ScaleFontSize(key)
     -- neither do fonts, but they need to be scaled with the fontscale option
     local size = addon.defaultSizes.font[key]
     addon.sizes.font[key] = size * addon.db.profile.fonts.options.fontscale
-
-    if addon.uiscale then
-        addon.sizes.font[key] = addon.sizes.font[key] / addon.uiscale
-    end
 end
 
 local scaleFuncs = {
