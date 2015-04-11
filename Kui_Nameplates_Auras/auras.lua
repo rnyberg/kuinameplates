@@ -16,6 +16,8 @@ local UnitExists,UnitGUID=UnitExists,UnitGUID
 
 local PLAYER_GUID
 
+local = {}
+
 -- store profiles to reduce lookup in OnAuraUpdate
 local db_display,db_behav
 
@@ -255,14 +257,14 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
 
 	if self.frame.trivial then
 		-- shrink icons for trivial frames!
-		button:SetHeight(addon.sizes.frame.tauraHeight)
-		button:SetWidth(addon.sizes.frame.tauraWidth)
+		button:SetHeight(sizes.tauraHeight)
+		button:SetWidth(sizes.tauraWidth)
 		button.time = self.frame:CreateFontString(button.time, {
 			reset = true, size = 'small' })
 	else
 		-- normal size!
-		button:SetHeight(addon.sizes.frame.auraHeight)
-		button:SetWidth(addon.sizes.frame.auraWidth)
+		button:SetHeight(sizes.auraHeight)
+		button:SetWidth(sizes.auraWidth)
 		button.time = self.frame:CreateFontString(button.time, {
 			reset = true, size = 'large' })
 	end
@@ -352,10 +354,10 @@ function mod:Show(msg, frame)
 	-- set vertical position of the container frame
 	if frame.trivial then
 		frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
-			3, addon.sizes.frame.taurasOffset)
+			3, sizes.taurasOffset)
 	else
 		frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
-			3, addon.sizes.frame.aurasOffset)
+			3, sizes.aurasOffset)
 	end
 
 	-- TODO calculate size of auras & num per column here
@@ -601,13 +603,13 @@ function mod:OnInitialize()
 		}
 	})
 
-	addon:RegisterSize('frame', 'auraHeight',  14)
-	addon:RegisterSize('frame', 'auraWidth',   20)
-	addon:RegisterSize('frame', 'tauraHeight',  9)
-	addon:RegisterSize('frame', 'tauraWidth',  15)
+    sizes.auraHeight = 18
+    sizes.auraWidth = 26
+    sizes.tauraHeight = 12
+    sizes.tauraWidth = 20
 
-	addon:RegisterSize('frame', 'aurasOffset', 20)
-	addon:RegisterSize('frame', 'taurasOffset', 13)
+    sizes.aurasOffset = 26
+    sizes.taurasOffset = 17
 
 	addon:InitModuleOptions(self)
 	mod:SetEnabledState(self.db.profile.enabled)
