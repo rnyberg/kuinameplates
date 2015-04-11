@@ -51,8 +51,7 @@ local DRAENOR_CONTINENT_ID = 7
 local raceStore = {}
 local storeIndex = {}
 local activeNemesis = {}
-
-local iconSize, glowSize
+local sizes = {}
 
 -- helper functions ############################################################
 local function GetGUIDInfo(guid)
@@ -96,7 +95,7 @@ function mod:PostCreate(msg, frame)
     local rig = frame.raceIcon.glow
 
     ri:SetPoint('LEFT', frame.health, 'RIGHT', 3, 0)
-    ri:SetSize(iconSize, iconSize)
+    ri:SetSize(sizes.icon, sizes.icon)
     ri:Hide()
 
     rii:SetTexture(RACE_ICON_TEXTURE)
@@ -109,8 +108,8 @@ function mod:PostCreate(msg, frame)
     ribg:SetVertexColor(0,0,0)
 
 	rig:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\combopoint-glow')
-    rig:SetPoint('TOPLEFT', ri, -glowSize, glowSize)
-    rig:SetPoint('BOTTOMRIGHT', ri, glowSize+1, -glowSize-1)
+    rig:SetPoint('TOPLEFT', ri, -sizes.glow, sizes.glow)
+    rig:SetPoint('BOTTOMRIGHT', ri, sizes.glow+1, -sizes.glow-1)
     rig:SetVertexColor(1,0,0)
 end
 function mod:PostShow(msg, frame)
@@ -240,17 +239,14 @@ function mod:OnInitialize()
         }
     })
 
-    addon:RegisterSize('frame', 'raceIconSize', 14)
-    addon:RegisterSize('frame', 'raceIconGlowSize', 4)
+    sizes.icon = 18
+    sizes.glow = 5
 
     addon:InitModuleOptions(self)
     self:SetEnabledState(self.db.profile.enabled)
 end
 
 function mod:OnEnable()
-    iconSize = addon.sizes.frame.raceIconSize
-    glowSize = addon.sizes.frame.raceIconGlowSize
-
     self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
 
