@@ -488,6 +488,12 @@ function addon:OnEnable()
 
     self:ScaleFontSizes()
 
+    -- FIXME frame size warning (just for this version)
+    if not KuiNameplatesGDB.ReadSizeWarning then
+        print('Kui|cff9966ffNameplates|r: Due to changes in version 251, any customised frame sizes will need to be updated to remain consistent with their pre-update size. This message will go away next release but you can remove it now by running:')
+        print('/run KuiNameplatesGDB.ReadSizeWarning = true')
+    end
+
     -------------------------------------- Health bar smooth update functions --
     -- (spoon-fed by oUF_Smooth)
     if self.db.profile.hp.smooth then
