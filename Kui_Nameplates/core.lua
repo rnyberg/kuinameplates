@@ -14,7 +14,7 @@ addon.frameList = {}
 addon.numFrames = 0
 
 -- sizes of frame elements
--- some populated by OnInitialize / ScaleFontSizes
+-- some populated by UpdateSizesTable & ScaleFontSizes
 addon.sizes = {
     frame = {
         bgOffset = 8   -- inset of the frame glow
@@ -316,7 +316,7 @@ local function ScaleFontSize(key)
     addon.sizes.font[key] = size * addon.db.profile.fonts.options.fontscale
 end
 
-function addon:ScaleFontSizes()
+local function ScaleFontSizes()
     local key,_
     for key,_ in pairs(addon.defaultFontSizes) do
         ScaleFontSize(key)
@@ -334,6 +334,18 @@ end
 -- once upon a time, equivalent logic was necessary for all frame sizes
 function addon:RegisterSize(type, key, size)
     error('deprecated function call: RegisterSize '..(type or 'nil')..' '..(key or 'nil')..' '..(size or 'nil'))
+end
+
+local function UpdateSizesTable()
+    -- populate sizes table with profile values
+    addon.sizes.frame.height = addon.db.profile.general.hheight
+    addon.sizes.frame.theight = addon.db.profile.general.thheight
+    addon.sizes.frame.width = addon.db.profile.general.width
+    addon.sizes.frame.twidth = addon.db.profile.general.twidth
+
+    addon.sizes.tex.healthOffset = addon.db.profile.text.healthoffset
+    addon.sizes.tex.targetGlowW = addon.sizes.frame.width - 5
+    addon.sizes.tex.ttargetGlowW = addon.sizes.frame.twidth - 5
 end
 ---------------------------------------------------- Post db change functions --
 -- n.b. this is absolutely terrible and horrible and i hate it
@@ -417,6 +429,25 @@ end
 addon.configChangedFuncs.strata = function(frame,val)
     frame:SetFrameStrata(val)
 end
+
+do
+    local function UpdateFrameSize(frame)
+        addon:UpdateBackground(frame, frame.trivial)
+        addon:UpdateHealthBar(frame, frame.trivial)
+        addon:UpdateName(frame, frame.trivial)
+        frame:SetCentre()
+    end
+
+    addon.configChangedFuncs.runOnce.width    = UpdateSizesTable
+    addon.configChangedFuncs.runOnce.twidth   = UpdateSizesTable
+    addon.configChangedFuncs.runOnce.hheight  = UpdateSizesTable
+    addon.configChangedFuncs.runOnce.thheight = UpdateSizesTable
+
+    addon.configChangedFuncs.width    = UpdateFrameSize
+    addon.configChangedFuncs.twidth   = UpdateFrameSize
+    addon.configChangedFuncs.hheight  = UpdateFrameSize
+    addon.configChangedFuncs.thheight = UpdateFrameSize
+end
 ------------------------------------------- Listen for LibSharedMedia changes --
 function addon:LSMMediaRegistered(msg, mediatype, key)
     if mediatype == LSM.MediaType.FONT then
@@ -477,16 +508,8 @@ function addon:OnEnable()
 
     addon.uiscale = UIParent:GetEffectiveScale()
 
-    self.sizes.frame.height = self.db.profile.general.hheight
-    self.sizes.frame.theight = self.db.profile.general.thheight
-    self.sizes.frame.width = self.db.profile.general.width
-    self.sizes.frame.twidth = self.db.profile.general.twidth
-
-    self.sizes.tex.healthOffset = self.db.profile.text.healthoffset
-    self.sizes.tex.targetGlowW = self.sizes.frame.width - 5
-    self.sizes.tex.ttargetGlowW = self.sizes.frame.twidth - 5
-
-    self:ScaleFontSizes()
+    UpdateSizesTable()
+    ScaleFontSizes()
 
     -- FIXME frame size warning (just for this version)
     if not KuiNameplatesGDB.ReadSizeWarning then

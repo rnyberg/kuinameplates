@@ -102,6 +102,15 @@ local function OnDefaultCastbarUpdate(self, elapsed)
 	f.castbar:Show()
 end
 ---------------------------------------------------------------------- create --
+-- update castbar height and icon size
+local function UpdateCastbar(frame)
+	frame.castbar.bg:SetHeight(sizes.cbheight)
+
+    if frame.castbar.icon then
+        frame.castbar.icon.bg:SetSize(sizes.icon, sizes.icon)
+    end
+end
+
 function mod:CreateCastbar(msg, frame)
 	if frame.castbar then return end
 	-- container ---------------------------------------------------------------
@@ -112,8 +121,6 @@ function mod:CreateCastbar(msg, frame)
 	frame.castbar.bg = frame.castbar:CreateTexture(nil, 'BACKGROUND')
 	frame.castbar.bg:SetTexture(kui.m.t.solid)
 	frame.castbar.bg:SetVertexColor(0, 0, 0, .85)
-
-	frame.castbar.bg:SetHeight(sizes.cbheight)
 
 	frame.castbar.bg:SetPoint('TOPLEFT', frame.bg.fill, 'BOTTOMLEFT', 0, -1)
 	frame.castbar.bg:SetPoint('TOPRIGHT', frame.bg.fill, 'BOTTOMRIGHT', 0, 0)
@@ -188,7 +195,6 @@ function mod:CreateCastbar(msg, frame)
 		frame.castbar.icon.bg = frame.castbar:CreateTexture(nil, 'ARTWORK')
 		frame.castbar.icon.bg:SetTexture(kui.m.t.solid)
 		frame.castbar.icon.bg:SetVertexColor(0,0,0)
-		frame.castbar.icon.bg:SetSize(sizes.icon, sizes.icon)
 		frame.castbar.icon.bg:SetPoint(
 			'TOPRIGHT', frame.health, 'TOPLEFT', -2, 1)
 
@@ -200,6 +206,8 @@ function mod:CreateCastbar(msg, frame)
 		frame.castbar.icon.bg:SetDrawLayer('ARTWORK', 1)
 		frame.castbar.icon:SetDrawLayer('ARTWORK', 2)
 	end
+
+    UpdateCastbar(frame)
 
 	-- scripts -------------------------------------------------------------
 	frame.oldCastbar:HookScript('OnShow', OnDefaultCastbarShow)
@@ -226,6 +234,17 @@ end
 mod.configChangedFuncs.shieldbarcolour = function(frame, val)
 	frame.castbar.shield:SetVertexColor(unpack(val))
 end
+
+mod.configChangedFuncs.runOnce.cbheight = function(val)
+    sizes.cbheight = mod.db.profile.display.cbheight
+    sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
+end
+
+mod.configChangedFuncs.cbheight = UpdateCastbar
+
+mod.configChangedFuncs.global = { runOnce = {} }
+mod.configChangedFuncs.global.runOnce.hheight = mod.configChangedFuncs.runOnce.cbheight
+mod.configChangedFuncs.global.hheight = UpdateCastbar
 
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
@@ -280,9 +299,9 @@ function mod:GetOptions()
 					order = 25,
 					type = 'range',
 					step = 1,
-					min = 1,
+					min = 3,
 					softMax = 10,
-					max = 50
+					max = 100
 				},
 			}
 		}
@@ -310,10 +329,14 @@ function mod:OnInitialize()
         shieldh = 12
     }
 
-    sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
+    self.configChangedFuncs.runOnce.cbheight(sizes.cbheight)
 
 	addon:InitModuleOptions(self)
-	mod:SetEnabledState(self.db.profile.enabled)
+
+    -- listen for health bar height being changed to resize the spell icon
+    self:RegisterForConfigChanged('addon', 'hheight')
+
+	self:SetEnabledState(self.db.profile.enabled)
 end
 
 function mod:OnEnable()

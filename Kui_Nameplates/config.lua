@@ -20,6 +20,8 @@ do
         ['TOOLTIP'] = '6. TOOLTIP',
     }
 
+    local globalConfigChangedListeners = {}
+
     local handlers = {}
     local handlerProto = {}
     local handlerMeta = { __index = handlerProto }
@@ -39,12 +41,36 @@ do
             mod.configChangedFuncs.runOnce[key](profile[key])
         end
 
+        -- find and call global config changed listeners
+        local voyeurs = {}
+        if  globalConfigChangedListeners[mod:GetName()] and
+            globalConfigChangedListeners[mod:GetName()][key]
+        then
+            for _,voyeur in ipairs(globalConfigChangedListeners[mod:GetName()][key]) do
+                voyeur = addon:GetModule(voyeur)
+
+                if voyeur.configChangedFuncs.global.runOnce[key] then
+                    voyeur.configChangedFuncs.global.runOnce[key](profile[key])
+                end
+
+                if voyeur.configChangedFuncs.global[key] then
+                    -- also call when iterating frames
+                    tinsert(voyeurs, voyeur)
+                end
+            end
+        end
+
         if mod.configChangedFuncs[key] then
             -- iterate frames and call
             for _, frame in pairs(addon.frameList) do
                 mod.configChangedFuncs[key](frame.kui, profile[key])
+
+                for _,voyeur in ipairs(voyeurs) do
+                    voyeur.configChangedFuncs.global[key](frame.kui, profile[key])
+                end
             end
         end
+
     end
 
     function handlerProto:ResolveInfo(info)
@@ -486,6 +512,26 @@ do
         }
     }
 
+    local function RegisterForConfigChanged(module, target_module, key)
+        -- this module wants to listen for another module's (or the addon's)
+        -- configChanged calls
+        local mod_name = module:GetName()
+
+        if not target_module or target_module == 'addon' then
+            target_module = 'KuiNameplates'
+        end
+
+        if not globalConfigChangedListeners[target_module] then
+            globalConfigChangedListeners[target_module] = {}
+        end
+
+        if not globalConfigChangedListeners[target_module][key] then
+            globalConfigChangedListeners[target_module][key] = {}
+        end
+
+        tinsert(globalConfigChangedListeners[target_module][key], mod_name)
+    end
+
     -- create module.ConfigChanged function
     -- TODO cycle these when changing profiles (or something)
     function addon:CreateConfigChangedListener(module)
@@ -506,6 +552,7 @@ do
         local name = module.uiName or module.moduleName
 
         self:CreateConfigChangedListener(module)
+        module.RegisterForConfigChanged = RegisterForConfigChanged
 
         options.args[name] = {
             name = name,
