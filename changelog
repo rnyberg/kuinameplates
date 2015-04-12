@@ -1,3 +1,5 @@
+* Customised frame sizes will need to be updated to remain consistent with
+their pre-update size!
 * improved graphical fidelity when fix aliasing is disabled, by removing some
 outdated frame scaling functions. External modifications which use the
 [addon]:RegisterSize function will need to be updated to remove that call as
