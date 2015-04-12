@@ -9,28 +9,22 @@ local LSM = LibStub('LibSharedMedia-3.0')
 
 addon.font = ''
 addon.uiscale = nil
-addon.sizes = { frame = {}, font = {}, tex = {} }
 
 addon.frameList = {}
 addon.numFrames = 0
 
 -- sizes of frame elements
+-- some populated by OnInitialize / ScaleFontSizes
 addon.sizes = {
     frame = {
-        width    = 130,
-        height   = 13,
-        twidth   = 72, -- trivial unit width
-        theight  = 9,  -- "            height
         bgOffset = 8   -- inset of the frame glow
     },
     tex = {
         raidicon = 23,
-        targetGlowW = 139,
-        ttargetGlowW = 66, -- target glow width on trivial units
         targetGlowH = 7,
         targetArrow = 33,
     },
-    font = {}, -- populated by ScaleFontSizes
+    font = {}
 }
 
 -- as these are scaled with the user option we need to store the default
