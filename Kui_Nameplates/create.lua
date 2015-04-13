@@ -36,21 +36,21 @@ function addon:CreateBackground(frame, f)
 
     local of = self.sizes.frame.bgOffset
 
-    f.bg.sides.left:SetPoint('TOPRIGHT', f.bg.fill, 'TOPLEFT', 0, of)
-    f.bg.sides.left:SetPoint('BOTTOMRIGHT', f.bg.fill, 'BOTTOMLEFT', 0, -of)
-    f.bg.sides.left:SetWidth(of)
-
-    f.bg.sides.right:SetPoint('TOPLEFT', f.bg.fill, 'TOPRIGHT', -0, of)
-    f.bg.sides.right:SetPoint('BOTTOMLEFT', f.bg.fill, 'BOTTOMRIGHT', -0, -of)
-    f.bg.sides.right:SetWidth(of)
-
-    f.bg.sides.top:SetPoint('BOTTOMLEFT', f.bg.fill, 'TOPLEFT', 0, -0)
-    f.bg.sides.top:SetPoint('BOTTOMRIGHT', f.bg.fill, 'TOPRIGHT', -0, -0)
+    f.bg.sides.top:SetPoint('BOTTOMLEFT', f.bg.fill, 'TOPLEFT')
+    f.bg.sides.top:SetPoint('BOTTOMRIGHT', f.bg.fill, 'TOPRIGHT')
     f.bg.sides.top:SetHeight(of)
 
-    f.bg.sides.bottom:SetPoint('TOPLEFT', f.bg.fill, 'BOTTOMLEFT', 0, 0)
-    f.bg.sides.bottom:SetPoint('TOPRIGHT', f.bg.fill, 'BOTTOMRIGHT', -0, 0)
+    f.bg.sides.bottom:SetPoint('TOPLEFT', f.bg.fill, 'BOTTOMLEFT')
+    f.bg.sides.bottom:SetPoint('TOPRIGHT', f.bg.fill, 'BOTTOMRIGHT')
     f.bg.sides.bottom:SetHeight(of)
+
+    f.bg.sides.left:SetPoint('TOPRIGHT', f.bg.sides.top, 'TOPLEFT')
+    f.bg.sides.left:SetPoint('BOTTOMRIGHT', f.bg.sides.bottom, 'BOTTOMLEFT')
+    f.bg.sides.left:SetWidth(of)
+
+    f.bg.sides.right:SetPoint('TOPLEFT', f.bg.sides.top, 'TOPRIGHT')
+    f.bg.sides.right:SetPoint('BOTTOMLEFT', f.bg.sides.bottom, 'BOTTOMRIGHT')
+    f.bg.sides.right:SetWidth(of)
 
     function f.bg:SetVertexColor(r,g,b,a)
         for _,side in pairs(self.sides) do
