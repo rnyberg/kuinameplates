@@ -5,4 +5,6 @@ outdated frame scaling functions. External modifications which use the
 [addon]:RegisterSize function will need to be updated to remove that call as
 it is no longer needed. :RegisterFontSize should still be used to scale fonts
 with the user option.
-* (unrelated) frame sizes can now be changed without reloading the UI
+
+* frame sizes can now be changed without reloading the UI
+* fix frame glow showing through faded frames
