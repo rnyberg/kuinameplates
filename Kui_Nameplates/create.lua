@@ -34,14 +34,14 @@ function addon:CreateBackground(frame, f)
         side:SetTexCoord(unpack(coords))
     end
 
-    local of = self.sizes.frame.bgOffset
+    local of = self.sizes.frame.bgOffset + 1
 
-    f.bg.sides.top:SetPoint('BOTTOMLEFT', f.bg.fill, 'TOPLEFT')
-    f.bg.sides.top:SetPoint('BOTTOMRIGHT', f.bg.fill, 'TOPRIGHT')
+    f.bg.sides.top:SetPoint('BOTTOMLEFT', f.bg.fill, 'TOPLEFT', 1, -1)
+    f.bg.sides.top:SetPoint('BOTTOMRIGHT', f.bg.fill, 'TOPRIGHT', -1, -1)
     f.bg.sides.top:SetHeight(of)
 
-    f.bg.sides.bottom:SetPoint('TOPLEFT', f.bg.fill, 'BOTTOMLEFT')
-    f.bg.sides.bottom:SetPoint('TOPRIGHT', f.bg.fill, 'BOTTOMRIGHT')
+    f.bg.sides.bottom:SetPoint('TOPLEFT', f.bg.fill, 'BOTTOMLEFT', 1, 1)
+    f.bg.sides.bottom:SetPoint('TOPRIGHT', f.bg.fill, 'BOTTOMRIGHT', -1, 1)
     f.bg.sides.bottom:SetHeight(of)
 
     f.bg.sides.left:SetPoint('TOPRIGHT', f.bg.sides.top, 'TOPLEFT')

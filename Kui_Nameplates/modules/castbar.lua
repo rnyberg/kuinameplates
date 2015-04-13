@@ -120,7 +120,7 @@ function mod:CreateCastbar(msg, frame)
     -- background --------------------------------------------------------------
     frame.castbar.bg = frame.castbar:CreateTexture(nil, 'BACKGROUND')
     frame.castbar.bg:SetTexture(kui.m.t.solid)
-    frame.castbar.bg:SetVertexColor(0, 0, 0, .85)
+    frame.castbar.bg:SetVertexColor(0, 0, 0, .8)
 
     frame.castbar.bg:SetPoint('TOPLEFT', frame.bg.fill, 'BOTTOMLEFT', 0, -1)
     frame.castbar.bg:SetPoint('TOPRIGHT', frame.bg.fill, 'BOTTOMRIGHT', 0, 0)
