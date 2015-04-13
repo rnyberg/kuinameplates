@@ -21,7 +21,7 @@ function addon:CreateBackground(frame, f)
     -- solid background
     f.bg.fill = f:CreateTexture(nil, 'ARTWORK', nil, 1)
     f.bg.fill:SetTexture(kui.m.t.solid)
-    f.bg.fill:SetVertexColor(0, 0, 0, 1)
+    f.bg.fill:SetVertexColor(0, 0, 0, .8)
 
     -- create frame glow sides
     -- not using frame backdrop as it seems to cause a lot of lag on frames
@@ -57,8 +57,6 @@ function addon:CreateBackground(frame, f)
             side:SetVertexColor(r,g,b,a)
         end
     end
-
-    f.bg:SetVertexColor(0, 0, 0, .8)
 end
 function addon:UpdateBackground(f, trivial)
     f.bg.fill:ClearAllPoints()

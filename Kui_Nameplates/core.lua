@@ -387,7 +387,7 @@ end
 addon.configChangedFuncs.onesize = addon.configChangedFuncs.fontscale
 
 addon.configChangedFuncs.runOnce.healthoffset = function(val)
-    addon:RegisterSize('tex', 'healthOffset', val)
+    addon.sizes.tex.healthOffset = addon.db.profile.text.healthoffset
 end
 addon.configChangedFuncs.healthoffset = function(frame, val)
     addon:UpdateHealthText(frame, frame.trivial)
