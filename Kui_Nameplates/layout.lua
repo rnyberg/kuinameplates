@@ -2,15 +2,6 @@
 -- Kui_Nameplates
 -- By Kesava at curse.com
 -- All rights reserved
-
-   Things to do when I get the time
-   ===
-   * customisation for sizes/positions of auras & width of container frame, etc
-   * make auras respect nameplate frame width
-   * customisation for raid target icons
-   * ability to make certain auras bigger
-   * add upper limit to number of auras
-   * improve target highlighting
 ]]
 
 local kui = LibStub('Kui-1.0')
@@ -234,9 +225,9 @@ local function OnFrameShow(self)
     ---------------------------------------------- Trivial sizing/positioning --
     if addon.uiscale then
         -- change our parent frame size if we're using fixaa..
+        -- (size is changed by SetAllPoints otherwise)
         f:SetSize(self:GetWidth()/addon.uiscale, self:GetHeight()/addon.uiscale)
     end
-    -- otherwise, size is changed automatically thanks to using SetAllPoints
 
     if trivial and not f.trivial or
        not trivial and f.trivial or
@@ -345,7 +336,7 @@ local function OnFrameUpdate(self, e)
         local x,y = f.firstChild:GetCenter()
         local scale = f.firstChild:GetScale()
 
-        f:SetPoint('CENTER', WorldFrame, 'BOTTOMLEFT',
+        f:SetPoint('CENTER', UIParent, 'BOTTOMLEFT',
             floor((x / addon.uiscale) * scale),
             floor((y / addon.uiscale) * scale))
     end
