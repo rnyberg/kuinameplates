@@ -351,7 +351,7 @@ end
 -- n.b. this is absolutely terrible and horrible and i hate it
 addon.configChangedFuncs = { runOnce = {} }
 addon.configChangedFuncs.runOnce.fontscale = function(val)
-    addon:ScaleFontSizes()
+    ScaleFontSizes()
 end
 addon.configChangedFuncs.fontscale = function(frame, val)
     local _, fontObject
