@@ -332,7 +332,8 @@ local function OnFrameUpdate(self, e)
     f.critElap  = f.critElap - e
 
     if f.fixaa then
-        ------------------------------------------------------------ Position --
+        -- Set position manually
+        -- Otherwise, position is set by SetAllPoints
         local x,y = f.firstChild:GetCenter()
         local scale = f.firstChild:GetScale()
 
