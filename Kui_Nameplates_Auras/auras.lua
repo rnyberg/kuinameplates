@@ -11,7 +11,7 @@ local kui = LibStub('Kui-1.0')
 local mod = addon:NewModule('Auras', 'AceEvent-3.0')
 local whitelist, _
 
-local GetTime, floor, ceil = GetTime, floor, ceil
+local GetTime, floor, ceil, format = GetTime, floor, ceil, format
 local UnitExists,UnitGUID=UnitExists,UnitGUID
 
 local PLAYER_GUID
@@ -148,7 +148,7 @@ local function OnAuraUpdate(self, elapsed)
                 timeLeft <= 1 and timeLeft > 0
             then
                 -- decimal places for the last second
-                timeLeftS = string.format("%.1f", timeLeft)
+                timeLeftS = format("%.1f", timeLeft)
             else
                 timeLeftS = (timeLeft > 60 and ceil(timeLeft/60)..'m' or floor(timeLeft))
             end
@@ -190,6 +190,8 @@ end
 local function OnAuraShow(self)
     local parent = self:GetParent()
     parent:ArrangeButtons()
+
+    addon:SendMessage('KuiNameplates_PostAuraShow', parent.frame, self.spellid)
 end
 local function OnAuraHide(self)
     local parent = self:GetParent()
@@ -205,6 +207,8 @@ local function OnAuraHide(self)
     StopPulsatingAura(self)
 
     parent:ArrangeButtons()
+
+    addon:SendMessage('KuiNameplates_PostAuraHide', parent.frame, self.spellid)
 end
 local function GetAuraButton(self, spellId, icon, count, duration, expirationTime)
     local button
@@ -372,7 +376,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     -- used to hide expired auras on previously known frames
     -- to detect aura updates on the mouseover, if it exists
     -- (since UNIT_AURA doesn't fire for mouseover)
-    -- and place auras on frames for which GUIDs are know, if possible
+    -- and place auras on frames for which GUIDs are known, if possible
     local guid = select(4,...)
     if not guid then return end
     if guid ~= PLAYER_GUID then return end
