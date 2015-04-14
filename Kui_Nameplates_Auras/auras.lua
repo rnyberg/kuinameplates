@@ -197,11 +197,11 @@ local function OnAuraHide(self)
     local parent = self:GetParent()
 
     if parent.spellIds[self.spellId] == self then
+        -- remove spell id from parent list
         parent.spellIds[self.spellId] = nil
     end
 
     self.time:Hide()
-    self.spellId = nil
 
     -- reset button pulsating
     StopPulsatingAura(self)
@@ -209,6 +209,7 @@ local function OnAuraHide(self)
     parent:ArrangeButtons()
 
     addon:SendMessage('KuiNameplates_PostAuraHide', parent.frame, self.spellid)
+    self.spellId = nil
 end
 local function GetAuraButton(self, spellId, icon, count, duration, expirationTime)
     local button
