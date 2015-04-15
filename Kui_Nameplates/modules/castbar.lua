@@ -325,8 +325,8 @@ function mod:OnInitialize()
 
     sizes = {
         cbheight = self.db.profile.display.cbheight,
-        shieldw = 10,
-        shieldh = 12
+        shieldw = 13,
+        shieldh = 15
     }
 
     self.configChangedFuncs.runOnce.cbheight(sizes.cbheight)
