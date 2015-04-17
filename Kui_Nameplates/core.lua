@@ -513,7 +513,7 @@ function addon:OnEnable()
 
     -- FIXME frame size warning (just for this version)
     if not KuiNameplatesGDB.ReadSizeWarning then
-        print('Kui|cff9966ffNameplates|r: Due to changes in version 251, any customised frame sizes will need to be updated to remain consistent with their pre-update size. This message will go away next release but you can remove it now by running:')
+        print('Kui|cff9966ffNameplates|r: Due to changes in version 251, any customised frame sizes and the font scale option will need to be updated to remain consistent with their pre-update size. This message will go away next release but you can remove it now by running:')
         print('/run KuiNameplatesGDB.ReadSizeWarning = true')
     end
 

@@ -471,7 +471,7 @@ do
                                 desc = 'The scale of all fonts displayed on nameplates',
                                 type = 'range',
                                 min = 0.01,
-                                softMax = 2,
+                                softMax = 3,
                                 order = 1
                             },
                             outline = {
