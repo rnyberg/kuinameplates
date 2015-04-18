@@ -462,9 +462,6 @@ function addon:LSMMediaRegistered(msg, mediatype, key)
         end
     end
 end
--------------------------------------------------- Listen for profile changes --
-function addon:ProfileChanged()
-end
 ------------------------------------------------------------------------ init --
 function addon:OnInitialize()
     self.db = LibStub('AceDB-3.0'):New('KuiNameplatesGDB', defaults)

@@ -104,7 +104,11 @@ end
 ---------------------------------------------------------------------- create --
 -- update castbar height and icon size
 local function UpdateCastbar(frame)
-    frame.castbar.bg:SetHeight(sizes.cbheight)
+    if not frame.castbar then return end
+
+    if frame.castbar.bg then
+        frame.castbar.bg:SetHeight(sizes.cbheight)
+    end
 
     if frame.castbar.icon then
         frame.castbar.icon.bg:SetSize(sizes.icon, sizes.icon)

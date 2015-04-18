@@ -532,8 +532,20 @@ do
         tinsert(globalConfigChangedListeners[target_module][key], mod_name)
     end
 
+    function addon:ProfileChanged()
+        -- call all configChangedListeners
+        if addon.configChangedListener then
+            addon:configChangedListener()
+        end
+
+        for _,module in addon:IterateModules() do
+            if module.configChangedListener then
+                module:configChangedListener()
+            end
+        end
+    end
+
     -- create module.ConfigChanged function
-    -- TODO cycle these when changing profiles (or something)
     function addon:CreateConfigChangedListener(module)
         if module.configChangedFuncs and not module.ConfigChanged then
             module.ConfigChanged = ConfigChangedSkeleton
@@ -558,7 +570,7 @@ do
             name = name,
             handler = self:GetOptionHandler(module),
             type = 'group',
-            order = 50+#handlers,
+            order = 50+(#handlers*10),
             get = 'Get',
             set = 'Set',
             args = opts
