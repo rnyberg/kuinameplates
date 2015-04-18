@@ -218,8 +218,8 @@ do
                         type = 'range',
                         step = 1,
                         min = 1,
-                        softMin = 7,
-                        softMax = 20
+                        softMin = 3,
+                        softMax = 30
                     },
                     thheight = {
                         name = 'Trivial health bar height',
@@ -228,8 +228,8 @@ do
                         type = 'range',
                         step = 1,
                         min = 1,
-                        softMin = 6,
-                        softMax = 15
+                        softMin = 3,
+                        softMax = 30
                     },
                     width = {
                         name = 'Frame width',
@@ -237,8 +237,8 @@ do
                         type = 'range',
                         step = 1,
                         min = 1,
-                        softMin = 55,
-                        softMax = 165
+                        softMin = 25,
+                        softMax = 220
                     },
                     twidth = {
                         name = 'Trivial frame width',
@@ -247,7 +247,7 @@ do
                         step = 1,
                         min = 1,
                         softMin = 25,
-                        softMax = 85
+                        softMax = 220
                     },
                     bartexture = {
                         name = 'Status bar texture',
