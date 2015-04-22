@@ -12,6 +12,7 @@ Kui_Nameplates/lib/Ace3/AceTimer-3.0
 Kui_Nameplates/lib/Ace3/CallbackHandler-1.0
 dev/
 Kui_Nameplates_Absorbs
+Kui_Nameplates_Custom
 *.swp
 *~
 kui_nameplates_showoff.png
