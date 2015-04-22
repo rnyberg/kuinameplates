@@ -191,7 +191,7 @@ local function OnAuraShow(self)
     local parent = self:GetParent()
     parent:ArrangeButtons()
 
-    addon:SendMessage('KuiNameplates_PostAuraShow', parent.frame, self.spellid)
+    addon:SendMessage('KuiNameplates_PostAuraShow', parent.frame, self.spellId)
 end
 local function OnAuraHide(self)
     local parent = self:GetParent()
@@ -208,7 +208,7 @@ local function OnAuraHide(self)
 
     parent:ArrangeButtons()
 
-    addon:SendMessage('KuiNameplates_PostAuraHide', parent.frame, self.spellid)
+    addon:SendMessage('KuiNameplates_PostAuraHide', parent.frame, self.spellId)
     self.spellId = nil
 end
 local function GetAuraButton(self, spellId, icon, count, duration, expirationTime)
