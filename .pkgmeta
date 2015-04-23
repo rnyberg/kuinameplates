@@ -33,3 +33,4 @@ move-folders:
 ignore:
     - .gitignore
 	- changelog
+	- README.md
