@@ -1,11 +1,10 @@
-# Customised frame sizes will need to be updated to remain consistent with
-their pre-update size!
-# External modifications which use the [addon]:RegisterSize function will need
-to be updated to remove that call as it is no longer needed. :RegisterFontSize
-should still be used to scale fonts with the user option.
-
-* improved graphical fidelity when fix aliasing is disabled
-* frame sizes can now be changed without reloading the UI
-* fix frame glow showing through faded frames
-
+* fix lua error when resizing frames and castbar is disabled
+* fix lua error when using a blank profile
+* increase minimum/maximum values for frame sizes (you can still bypass the
+limits by typing values in the text field below the sliders)
+* fix PostAuraUpdate message
+* custom.lua is no longer used. Download Kui_Nameplates_Custom from the addon
+description instead and copy your own custom.lua into it. This will stop it
+being overwritten if you use the Curse client.
+* update mage + death knight spell whitelists
 
