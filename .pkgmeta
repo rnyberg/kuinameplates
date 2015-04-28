@@ -34,3 +34,4 @@ ignore:
     - .gitignore
 	- changelog
 	- README.md
+	- EXTERNAL.md
