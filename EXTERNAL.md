@@ -14,7 +14,7 @@ This version of KNP relies on Ace3 for module hooking, events and messages. A si
         -- do stuff!
     end
 
-To add function which modifies the castbar, we could add the following code in the mod:OnEable function:
+To add a function which modifies the castbar, we could add the following code in the mod:OnEnable function:
 
     self:RegisterMessage('KuiNameplates_PostCreate', 'ModifyCastbar')
 
