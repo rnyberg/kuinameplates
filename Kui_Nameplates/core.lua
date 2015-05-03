@@ -503,7 +503,7 @@ function addon:OnEnable()
         self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, DEFAULT_BAR)
     end
 
-    addon.uiscale = UIParent:GetEffectiveScale()
+    self.uiscale = UIParent:GetEffectiveScale()
 
     UpdateSizesTable()
     ScaleFontSizes()
@@ -514,7 +514,7 @@ function addon:OnEnable()
         local f, smoothing, GetFramerate, min, max, abs
             = CreateFrame('Frame'), {}, GetFramerate, math.min, math.max, math.abs
 
-        function addon.SetValueSmooth(self, value)
+        function self.SetValueSmooth(self, value)
             local _, maxv = self:GetMinMaxValues()
 
             if value == self:GetValue() or (self.prevMax and self.prevMax ~= maxv) then
@@ -549,8 +549,11 @@ function addon:OnEnable()
         end)
     end
 
-    addon:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
+    -- FIXME this may/may not fix #34
+    self:configChangedListener()
+
+    self:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
 
     self:ToggleCombatEvents(self.db.profile.general.combat)
-    addon:ScheduleRepeatingTimer('OnUpdate', .1)
+    self:ScheduleRepeatingTimer('OnUpdate', .1)
 end
