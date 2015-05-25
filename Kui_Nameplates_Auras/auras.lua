@@ -232,7 +232,7 @@ local function UpdateButtonDuration(button, duration)
         -- sort by expiration time
         table.sort(button:GetParent().buttons, function(a,b)
             if a.expirationTime and b.expirationTime then
-                return a.expirationTime < b.expirationTime
+                return a.expirationTime > b.expirationTime
             else
                 return a.expirationTime and not b.expirationTime
             end
