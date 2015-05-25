@@ -32,11 +32,9 @@ local REMOVAL_EVENTS = {
 }
 local ADDITION_EVENTS = {
     ['SPELL_AURA_APPLIED'] = true,
-}
-local MOUSEOVER_EVENTS = {
+    ['SPELL_AURA_REFRESH'] = true,
     ['SPELL_AURA_REMOVED_DOSE'] = true,
     ['SPELL_AURA_APPLIED_DOSE'] = true,
-    ['SPELL_AURA_REFRESH'] = true,
 }
 
 local function debug_print(msg)
@@ -385,8 +383,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     local event = select(2,...)
 
     if  REMOVAL_EVENTS[event] or
-        ADDITION_EVENTS[event] or
-        MOUSEOVER_EVENTS[event]
+        ADDITION_EVENTS[event]
     then
         local destGUID = select(8,...)
 
@@ -394,14 +391,11 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
         -- some other units will fire twice too, but this catches the majority
         if destGUID == UnitGUID('target') then return end
 
-        if UnitGUID('mouseover') == destGUID then
+        if destGUID == UnitGUID('mouseover') then
             -- event on the mouseover unit - update directly
             self:UNIT_AURA('UNIT_AURA','mouseover')
             return
         end
-
-        -- only want dose applications/removals for mouseover
-        if MOUSEOVER_EVENTS[event] then return end
 
         local castTime,_,_,_,name,_,_,_,destName = ...
 
@@ -421,8 +415,12 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
                 f.auras.spellIds[spId]:Hide()
             end
         elseif ADDITION_EVENTS[event] then
-            -- show a placeholder button with no timer when possible
-            if not f.auras.spellIds[spId] then
+            if f.auras.spellIds[spId] then
+                -- reset timer to original duration
+                local b = f.auras.spellIds[spId]
+                b.expirationTime = GetTime() + b.duration
+            else
+                -- show a placeholder button with no timer when possible
                 local spellName,_,icon = GetSpellInfo(spId)
                 f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
             end
