@@ -37,6 +37,10 @@ local ADDITION_EVENTS = {
     ['SPELL_AURA_APPLIED_DOSE'] = true,
 }
 
+-- stored spell id durations
+-- used for giving timers to aura icons when they're added by the combat log
+local stored_spells = {}
+
 local function debug_print(msg)
     print(GetTime()..': '..msg)
 end
@@ -294,6 +298,9 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
     button.spellId = spellId
     button.elapsed = 0
 
+    -- store this spell's max duration
+    stored_spells[spellId] = duration or 0
+
     self.spellIds[spellId] = button
 
     return button
@@ -320,6 +327,12 @@ function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
     then
         -- duration above maximum or timeless and a maximum duration is set
         return
+    end
+
+    if not duration then
+        -- assume duration from spell store
+        duration = stored_spells[spellid]
+        expirationTime = GetTime() + duration
     end
 
     local button = self:GetAuraButton(spellid, icon, count, duration, expirationTime)
@@ -417,12 +430,11 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
         elseif ADDITION_EVENTS[event] then
             if f.auras.spellIds[spId] then
                 -- reset timer to original duration
-                local b = f.auras.spellIds[spId]
-                b.expirationTime = GetTime() + b.duration
+                f.auras.spellIds[spId].expirationTime = GetTime() + stored_spells[spId]
             else
                 -- show a placeholder button with no timer when possible
                 local spellName,_,icon = GetSpellInfo(spId)
-                f.auras:DisplayAura(spId, spellName, icon, 1,0,0)
+                f.auras:DisplayAura(spId, spellName, icon, 1)
             end
         end
     end
