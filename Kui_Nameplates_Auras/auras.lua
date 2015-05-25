@@ -130,7 +130,7 @@ local function OnAuraUpdate(self, elapsed)
     self.elapsed = self.elapsed - elapsed
 
     if self.elapsed <= 0 then
-        local timeLeft = self.expirationTime - GetTime()
+        local timeLeft = (self.expirationTime or 0) - GetTime()
 
         if db_display.pulsate then
             if self.doPulsate and timeLeft > FADE_THRESHOLD then
@@ -309,10 +309,10 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
     button.spellId = spellId
     button.elapsed = 0
 
+    UpdateButtonDuration(button)
+
     -- store this spell's original duration
     stored_spells[spellId] = duration or 0
-
-    UpdateButtonDuration(button)
 
     self.spellIds[spellId] = button
 
