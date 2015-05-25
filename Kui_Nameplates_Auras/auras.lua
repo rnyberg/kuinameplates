@@ -24,6 +24,10 @@ local db_display,db_behav
 -- auras pulsate when they have less than this many seconds remaining
 local FADE_THRESHOLD = 5
 
+-- whether or not to show and refresh aura timers on targets for which
+-- UNIT_AURA does not fire
+local WATCH_ADDITIONS_ON_SECONDARY_TARGETS = true
+
 -- combat log events to listen to for fading auras
 local REMOVAL_EVENTS = {
     ['SPELL_AURA_REMOVED'] = true,
@@ -396,7 +400,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     local event = select(2,...)
 
     if  REMOVAL_EVENTS[event] or
-        ADDITION_EVENTS[event]
+        (WATCH_ADDITIONS_ON_SECONDARY_TARGETS and ADDITION_EVENTS[event])
     then
         local destGUID = select(8,...)
 
