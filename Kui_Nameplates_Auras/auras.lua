@@ -24,10 +24,6 @@ local db_display,db_behav
 -- auras pulsate when they have less than this many seconds remaining
 local FADE_THRESHOLD = 5
 
--- whether or not to show and refresh aura timers on targets for which
--- UNIT_AURA does not fire
-local WATCH_ADDITIONS_ON_SECONDARY_TARGETS = true
-
 -- combat log events to listen to for fading auras
 local REMOVAL_EVENTS = {
     ['SPELL_AURA_REMOVED'] = true,
@@ -231,6 +227,19 @@ local function UpdateButtonDuration(button, duration)
     else
         button:SetScript('OnUpdate', OnAuraUpdate)
     end
+
+    if db_display.sort then
+        -- sort by expiration time
+        table.sort(button:GetParent().buttons, function(a,b)
+            if a.expirationTime and b.expirationTime then
+                return a.expirationTime < b.expirationTime
+            else
+                return a.expirationTime and not b.expirationTime
+            end
+        end)
+
+        button:GetParent():ArrangeButtons()
+    end
 end
 local function GetAuraButton(self, spellId, icon, count, duration, expirationTime)
     local button
@@ -413,7 +422,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     local event = select(2,...)
 
     if  REMOVAL_EVENTS[event] or
-        (WATCH_ADDITIONS_ON_SECONDARY_TARGETS and ADDITION_EVENTS[event])
+        (db_behav.showSecondary and ADDITION_EVENTS[event])
     then
         local destGUID = select(8,...)
 
@@ -568,11 +577,18 @@ function mod:GetOptions()
                     type = 'toggle',
                     order = 8,
                 },
+                sort = {
+                    name = 'Sort auras by time remaining',
+                    desc = 'Increases memory usage.',
+                    type = 'toggle',
+                    order = 10,
+                    width = 'double',
+                },
                 timerThreshold = {
                     name = 'Timer threshold (s)',
                     desc = 'Timer text will be displayed on auras when their remaining length is less than or equal to this value. -1 to always display timer.',
                     type = 'range',
-                    order = 10,
+                    order = 15,
                     min = -1,
                     softMax = 180,
                     step = 1
@@ -613,6 +629,12 @@ function mod:GetOptions()
                     type = 'toggle',
                     order = 0,
                 },
+                showSecondary = {
+                    name = 'Show on secondary targets',
+                    desc = 'Attempt to show and refresh auras on secondary targets - i.e. nameplates which do not have a visible unit frame on the default UI. Particularly useful when tanking.',
+                    type = 'toggle',
+                    order = 10
+                }
             }
         }
     }
@@ -625,12 +647,14 @@ function mod:OnInitialize()
             display = {
                 pulsate = true,
                 decimal = true,
+                sort = false,
                 timerThreshold = 60,
                 lengthMin = 0,
                 lengthMax = -1,
             },
             behav = {
                 useWhitelist = true,
+                showSecondary = true,
             }
         }
     })
