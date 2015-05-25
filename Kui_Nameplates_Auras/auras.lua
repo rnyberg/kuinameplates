@@ -217,6 +217,21 @@ local function OnAuraHide(self)
     addon:SendMessage('KuiNameplates_PostAuraHide', parent.frame, self.spellId)
     self.spellId = nil
 end
+local function UpdateButtonDuration(button, duration)
+    if duration then
+        -- set duration & expire time to given value
+        button.duration = duration
+        button.expirationTime = GetTime() + duration
+    end
+
+    if not button.expirationTime or not button.duration or button.duration == 0 then
+        -- hide time on timeless auras
+        button:SetScript('OnUpdate', nil)
+        button.time:Hide()
+    else
+        button:SetScript('OnUpdate', OnAuraUpdate)
+    end
+end
 local function GetAuraButton(self, spellId, icon, count, duration, expirationTime)
     local button
 
@@ -289,27 +304,21 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
         button.count:Hide()
     end
 
-    if duration == 0 then
-        -- hide time on timeless auras
-        button:SetScript('OnUpdate', nil)
-        button.time:Hide()
-    else
-        button:SetScript('OnUpdate', OnAuraUpdate)
-    end
-
     button.duration = duration
     button.expirationTime = expirationTime
     button.spellId = spellId
     button.elapsed = 0
 
-    -- store this spell's max duration
+    -- store this spell's original duration
     stored_spells[spellId] = duration or 0
+
+    UpdateButtonDuration(button)
 
     self.spellIds[spellId] = button
 
     return button
 end
-function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
+local function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
     --debug_print('aura application of '..name)
     name = strlower(name) or nil
     if not name then return end
@@ -319,6 +328,16 @@ function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
     then
         -- not in whitelist
         return
+    end
+
+    -- apply duration from spell store
+    if not duration then
+        duration = stored_spells[spellid]
+
+        if duration then
+            expirationTime = GetTime() + duration
+        end
+        -- otherwise, this is a timeless aura
     end
 
     if duration and duration > 0 and duration < db_display.lengthMin then
@@ -331,12 +350,6 @@ function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
     then
         -- duration above maximum or timeless and a maximum duration is set
         return
-    end
-
-    if not duration then
-        -- assume duration from spell store
-        duration = stored_spells[spellid]
-        expirationTime = GetTime() + duration
     end
 
     local button = self:GetAuraButton(spellid, icon, count, duration, expirationTime)
@@ -434,7 +447,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
         elseif ADDITION_EVENTS[event] then
             if f.auras.spellIds[spId] then
                 -- reset timer to original duration
-                f.auras.spellIds[spId].expirationTime = GetTime() + stored_spells[spId]
+                UpdateButtonDuration(f.auras.spellIds[spId], stored_spells[spId])
             else
                 -- show a placeholder button with no timer when possible
                 local spellName,_,icon = GetSpellInfo(spId)
