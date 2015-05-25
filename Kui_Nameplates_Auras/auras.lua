@@ -661,6 +661,9 @@ function mod:OnEnable()
     self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
 
+    -- get guid immediately if enabled while in game
+    self:PLAYER_ENTERING_WORLD()
+
     local _, frame
     for _, frame in pairs(addon.frameList) do
         if not frame.auras then
