@@ -1,10 +1,2 @@
-* fix lua error when resizing frames and castbar is disabled
-* fix lua error when using a blank profile
-* increase minimum/maximum values for frame sizes (you can still bypass the
-limits by typing values in the text field below the sliders)
-* fix PostAuraUpdate message
-* custom.lua is no longer used. Download Kui_Nameplates_Custom from the addon
-description instead and copy your own custom.lua into it. This will stop it
-being overwritten if you use the Curse client.
-* update mage + death knight spell whitelists
-
+* update KuiSpellList - will be incompatible with KuiSpellListConfig until both are updated
+* aura timers will be displayed in more situations - i.e. when auras are applied or refreshed by AOE
