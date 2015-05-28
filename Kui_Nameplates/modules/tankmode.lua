@@ -26,8 +26,6 @@ function mod:Update()
             role = spec and GetSpecializationRole(spec) or nil
         end
 
-        print(role == 'TANK' and 'in tank mode!' or 'NO tank mode!')
-
 		if role == 'TANK' then
 			addon.TankMode = true
 		else
