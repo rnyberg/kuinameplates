@@ -31,6 +31,7 @@ move-folders:
 	Kui_Nameplates/Kui_Nameplates: Kui_Nameplates
 
 ignore:
+    - Kui_Nameplates_Absorbs
     - .gitignore
 	- changelog
 	- README.md
