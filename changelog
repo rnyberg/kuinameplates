@@ -1,5 +1,2 @@
-* update KuiSpellList - will be incompatible with KuiSpellListConfig until both are updated
-* aura timers will be displayed in more situations - i.e. when auras are applied or refreshed by AOE
-* added option to sort auras by their time remaining (disabled by default)
-* added option to show and update auras on secondary targets (standard behaviour in previous versions - enabled by default)
-* fix warriors in gladiator stance are treated as tanks by smart mode
+* fix auras are shown on trivial secondary targets when showing on trivial
+frames is disabled
