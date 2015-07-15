@@ -1,3 +1,2 @@
-* bump TOC
-* fix auras are shown on trivial secondary targets when showing on trivial
-frames is disabled
+* fix low health colour isn't applied to newly displayed plates
+* level text is now disabled by default
