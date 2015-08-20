@@ -1,2 +1,3 @@
+* fix low health colour is not applied when frames are shown
 * level text is now disabled by default
 * update spell whitelist
