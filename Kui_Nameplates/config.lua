@@ -434,18 +434,20 @@ do
                         order = 30
                     },
                     friendly = {
-                        name = 'Friendly health format',
-                        desc = 'The health display pattern for friendly units',
+                        name = 'Precluded: Friendly health format',
+                        desc = '|cffff4444Currently disabled due to limitations introduced in 6.2.2.|r',
                         type = 'input',
                         pattern = '([<=]:[dmcpb];)',
-                        order = 40
+                        order = 40,
+                        disabled = true
                     },
                     hostile = {
-                        name = 'Hostile health format',
-                        desc = 'The health display pattern for hostile or neutral units',
+                        name = 'Precluded: Hostile health format',
+                        desc = '|cffff4444Currently disabled due to limitations introduced in 6.2.2.|r',
                         type = 'input',
                         pattern = '([<=]:[dmcpb];)',
-                        order = 50
+                        order = 50,
+                        disabled = true
                     },
                 }
             },
