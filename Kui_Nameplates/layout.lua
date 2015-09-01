@@ -137,7 +137,11 @@ local OnHealthValueChanged = function(oldBar, curr)
     frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
     frame.health:SetValue(frame.health.curr)
 
-    frame.health.p:SetText(frame.health.percent or '')
+    if frame.health.percent and frame.health.percent > 0 and frame.health.percent < 100 then
+        frame.health.p:SetText(frame.health.percent)
+    else
+        frame.health.p:SetText('')
+    end
 
     if frame.health.mo then
         frame.health.mo:SetText('')
