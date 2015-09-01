@@ -1,3 +1,2 @@
-* fix low health colour is not applied when frames are shown
-* level text is now disabled by default
-* update spell whitelist
+* fix compatibility with 6.2.2 (transitional version - should work on both)
+* disable health display pattern options - they have been precluded by API changes introduced in 6.2.2

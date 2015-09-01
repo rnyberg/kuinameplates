@@ -415,10 +415,11 @@ do
                         }
                     },
                     showalt = {
-                        name = 'Show contextual health',
+                        name = 'Precluded: Show contextual health',
                         desc = 'Show alternate (contextual) health values as well as main values',
                         type = 'toggle',
-                        order = 10
+                        order = 10,
+                        disabled = true
                     },
                     mouseover = {
                         name = 'Show on mouse over',
