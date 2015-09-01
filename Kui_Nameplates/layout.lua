@@ -120,73 +120,27 @@ local function SetGlowColour(self, r, g, b, a)
     self.bg:SetVertexColor(r, g, b, a)
 end
 ---------------------------------------------------- Update health bar & text --
-local OnHealthValueChanged
-do
-    local rules,rule,big,sml,condition,display,pattern
-    OnHealthValueChanged = function(oldBar, curr)
-        if oldBar.oldHealth then
-            -- allow calling this as a function of the frame
-            oldBar = oldBar.oldHealth
-            curr = oldBar:GetValue()
-        end
+local OnHealthValueChanged = function(oldBar, curr)
+    if oldBar.oldHealth then
+        -- allow calling this as a function of the frame
+        oldBar = oldBar.oldHealth
+        curr = oldBar:GetValue()
+    end
 
-        local frame = oldBar:GetParent():GetParent().kui
-        big,sml = nil,nil
+    local frame = oldBar:GetParent():GetParent().kui
 
-        -- store values for external access
-        frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
-        frame.health.curr = curr
-        frame.health.percent = floor(frame.health.curr / frame.health.max * 100)
+    -- store values for external access
+    frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
+    frame.health.curr = curr
+    frame.health.percent = floor(frame.health.curr / frame.health.max * 100)
 
-        frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
-        frame.health:SetValue(frame.health.curr)
+    frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
+    frame.health:SetValue(frame.health.curr)
 
-        -- select correct health display pattern
-        if frame.friend then
-            pattern = profile.hp.friendly
-        else
-            pattern = profile.hp.hostile
-        end
+    frame.health.p:SetText(frame.health.percent or '')
 
-        -- parse pattern into big/sml
-        rules = { strsplit(';', pattern) }
-
-        for _, rule in ipairs(rules) do
-            condition, display = strsplit(':', rule)
-
-            if condition == '<' then
-                condition = frame.health.curr < frame.health.max
-            elseif condition == '=' then
-                condition = frame.health.curr == frame.health.max
-            elseif condition == '<=' or condition == '=<' then
-                condition = frame.health.curr <= frame.health.max
-            else
-                condition = nil
-            end
-
-            if condition then
-                if display == 'd' then
-                    big = '-'..kui.num(frame.health.max - frame.health.curr)
-                    sml = kui.num(frame.health.curr)
-                elseif display == 'm' then
-                    big = kui.num(frame.health.max)
-                elseif display == 'c' then
-                    big = kui.num(frame.health.curr)
-                    sml = frame.health.curr ~= frame.health.max and kui.num(frame.health.max)
-                elseif display == 'p' then
-                    big = frame.health.percent
-                    sml = kui.num(frame.health.curr)
-                end
-
-                break
-            end
-        end
-
-        frame.health.p:SetText(big or '')
-
-        if frame.health.mo then
-            frame.health.mo:SetText(sml or '')
-        end
+    if frame.health.mo then
+        frame.health.mo:SetText('')
     end
 end
 ------------------------------------------------------- Frame script handlers --
