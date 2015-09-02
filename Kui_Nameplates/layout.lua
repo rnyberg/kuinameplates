@@ -461,7 +461,7 @@ local function UpdateFrameCritical(self)
                 addon:StoreGUID(self, 'target')
 
                 -- move this frame above others
-                self:SetFrameLevel(10)
+                self:SetFrameLevel(3)
 
                 if profile.hp.mouseover then
                     self.health.p:Show()
