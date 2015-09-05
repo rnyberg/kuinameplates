@@ -179,7 +179,7 @@ end
 local function OnFrameShow(self)
     self = self.kuiParent
     local f = self.kui
-    local trivial = self:IsTrivial()
+    local trivial = f:IsTrivial()
 
     ---------------------------------------------- Trivial sizing/positioning --
     if addon.uiscale then
@@ -557,17 +557,14 @@ local function UpdateFrameCritical(self)
     end
     --@end-debug@
 end
-
 local function SetName(self)
     -- get name from default frame and update our values
     self.name.text = self.oldName:GetText()
     self.name:SetText(self.name.text)
 end
-
 local function IsTrivial(self)
     return self.firstChild:GetScale() < 1 and not addon.notrivial
 end
-
 --------------------------------------------------------------- KNP functions --
 function addon:IsNameplate(frame)
     if frame:GetName() and strfind(frame:GetName(), '^NamePlate%d') then
