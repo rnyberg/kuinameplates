@@ -179,7 +179,7 @@ end
 local function OnFrameShow(self)
     self = self.kuiParent
     local f = self.kui
-    local trivial = f.firstChild:GetScale() < 1 and not addon.notrivial
+    local trivial = self:IsTrivial()
 
     ---------------------------------------------- Trivial sizing/positioning --
     if addon.uiscale then
@@ -564,18 +564,14 @@ local function SetName(self)
     self.name:SetText(self.name.text)
 end
 
+local function IsTrivial(self)
+    return self.firstChild:GetScale() < 1 and not addon.notrivial
+end
+
 --------------------------------------------------------------- KNP functions --
 function addon:IsNameplate(frame)
     if frame:GetName() and strfind(frame:GetName(), '^NamePlate%d') then
-        if frame.ArtContainer then
-            return frame.ArtContainer and true
-        else
-            local nameTextChild = select(2, frame:GetChildren())
-            if nameTextChild then
-                local nameTextRegion = nameTextChild:GetRegions()
-                return (nameTextRegion and nameTextRegion:GetObjectType() == 'FontString')
-            end
-        end
+        return frame.ArtContainer and true
     end
 end
 
@@ -588,59 +584,33 @@ function addon:InitFrame(frame)
     f.fontObjects = {}
 
     -- fetch default ui's objects
-    local overlayChild, nameTextChild, nameTextRegion
-    local healthBar, castBar, absorbBar, absorbBarOverlay
+    local overlayChild = frame.ArtContainer
+    local healthBar, castBar = overlayChild.HealthBar, overlayChild.CastBar
+    local nameTextRegion = frame.NameContainer.NameText
+
     local castbarOverlay, shieldedRegion, spellIconRegion, spellNameRegion,
           spellNameShadow
+        = overlayChild.CastBarBorder,
+          overlayChild.CastBarFrameShield,
+          overlayChild.CastBarSpellIcon,
+          overlayChild.CastBarText,
+          overlayChild.CastBarTextBG
+
     local glowRegion, overlayRegion, highlightRegion, levelTextRegion,
           bossIconRegion, raidIconRegion, stateIconRegion
+        = overlayChild.AggroWarningTexture,
+          overlayChild.Border,
+          overlayChild.Highlight,
+          overlayChild.LevelText,
+          overlayChild.HighLevelIcon,
+          overlayChild.RaidTargetIcon,
+          overlayChild.EliteIcon
 
-    if frame.ArtContainer then
-        -- 6.2.2
-        overlayChild = frame.ArtContainer
-        healthBar, castBar = overlayChild.HealthBar, overlayChild.CastBar
-        nameTextRegion = frame.NameContainer.NameText
+    local absorbBar, absorbBarOverlay
+        = overlayChild.AbsorbBar,
+          overlayChild.AbsorbBar.Overlay
 
-        castbarOverlay, shieldedRegion, spellIconRegion, spellNameRegion,
-        spellNameShadow
-            = overlayChild.CastBarBorder,
-              overlayChild.CastBarFrameShield,
-              overlayChild.CastBarSpellIcon,
-              overlayChild.CastBarText,
-              overlayChild.CastBarTextBG
-
-        glowRegion, overlayRegion, highlightRegion, levelTextRegion,
-        bossIconRegion, raidIconRegion, stateIconRegion
-            = overlayChild.AggroWarningTexture,
-              overlayChild.Border,
-              overlayChild.Highlight,
-              overlayChild.LevelText,
-              overlayChild.HighLevelIcon,
-              overlayChild.RaidTargetIcon,
-              overlayChild.EliteIcon
-
-        absorbBar, absorbBarOverlay
-            = overlayChild.AbsorbBar,
-              overlayChild.AbsorbBar.Overlay
-
-        absorbBar:SetStatusBarTexture(kui.m.t.empty)
-        absorbBarOverlay:SetTexture(nil)
-    else
-        -- 6.2.0
-        overlayChild, nameTextChild = frame:GetChildren()
-        healthBar, castBar = overlayChild:GetChildren()
-
-        _, castbarOverlay, shieldedRegion, spellIconRegion,
-        spellNameRegion, spellNameShadow
-            = castBar:GetRegions()
-
-        nameTextRegion = nameTextChild:GetRegions()
-
-        glowRegion, overlayRegion, highlightRegion, levelTextRegion,
-        bossIconRegion, raidIconRegion, stateIconRegion
-            = overlayChild:GetRegions()
-    end
-
+    absorbBarOverlay:SetTexture(nil)
     overlayRegion:SetTexture(nil)
     highlightRegion:SetTexture(nil)
     bossIconRegion:SetTexture(nil)
@@ -652,8 +622,9 @@ function addon:InitFrame(frame)
     spellNameRegion:Hide()
 
     -- make default healthbar & castbar transparent
-    healthBar:SetStatusBarTexture(kui.m.t.empty)
+    absorbBar:SetStatusBarTexture(kui.m.t.empty)
     castBar:SetStatusBarTexture(kui.m.t.empty)
+    healthBar:SetStatusBarTexture(kui.m.t.empty)
 
     f.firstChild = overlayChild
 
@@ -674,15 +645,16 @@ function addon:InitFrame(frame)
     f.oldHighlight = highlightRegion
 
     --------------------------------------------------------- Frame functions --
-    f.CreateFontString    = addon.CreateFontString
-    f.UpdateFrame         = UpdateFrame
-    f.UpdateFrameCritical = UpdateFrameCritical
-    f.SetName             = SetName
-    f.SetHealthColour     = SetHealthColour
-    f.SetNameColour       = SetNameColour
-    f.SetGlowColour       = SetGlowColour
-    f.SetCentre           = SetFrameCentre
+    f.CreateFontString     = addon.CreateFontString
+    f.UpdateFrame          = UpdateFrame
+    f.UpdateFrameCritical  = UpdateFrameCritical
+    f.SetName              = SetName
+    f.SetHealthColour      = SetHealthColour
+    f.SetNameColour        = SetNameColour
+    f.SetGlowColour        = SetGlowColour
+    f.SetCentre            = SetFrameCentre
     f.OnHealthValueChanged = OnHealthValueChanged
+    f.IsTrivial            = IsTrivial
 
     ------------------------------------------------------------------ Layout --
     if profile.general.fixaa and addon.uiscale then

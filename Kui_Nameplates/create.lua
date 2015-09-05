@@ -2,6 +2,7 @@
 -- Kui_Nameplates
 -- By Kesava at curse.com
 -- All rights reserved
+-- Frame element creation/update functions
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local kui = LibStub('Kui-1.0')
