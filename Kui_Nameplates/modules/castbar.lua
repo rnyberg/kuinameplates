@@ -230,7 +230,6 @@ mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(val)
     if val then
         mod:Enable()
-        SetCVar('showVKeyCastbarOnlyOnTarget',false)
     else
         mod:Disable()
     end
@@ -261,11 +260,21 @@ function mod:GetOptions()
             order = 0,
             disabled = false
         },
+        onlyontarget = {
+            name = 'Only on target',
+            desc = 'On show the castbar on your current target',
+            type = 'toggle',
+            order = 5,
+            disabled = function()
+                return not self.db.profile.enabled
+            end
+        },
         display = {
             name = 'Display',
             type = 'group',
             inline = true,
-            disabled = function(info)
+            order = 10,
+            disabled = function()
                 return not self.db.profile.enabled
             end,
             args = {
@@ -312,11 +321,11 @@ function mod:GetOptions()
         }
     }
 end
-
 function mod:OnInitialize()
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
-            enabled   = true,
+            enabled = true,
+            onlyontarget = false,
             display = {
                 casttime        = false,
                 spellname       = true,
@@ -342,12 +351,19 @@ function mod:OnInitialize()
     self:RegisterForConfigChanged('addon', 'hheight')
 
     self:SetEnabledState(self.db.profile.enabled)
-end
 
-function mod:OnEnable()
+    -- TODO
+    -- when options frame is closed:
+    -- and when first loaded i guess
+    --[[
+    InterfaceOptionsCombatPanelEnemyCastbarsOnNameplates:SetChecked(true)
+    InterfaceOptionsCombatPanelEnemyCastbarsOnNameplates:Disable()
     SetCVar('showVKeyCastbar',true)
+    SetCVar('showVKeyCastbarOnlyOnTarget',false)
     SetCVar('showVKeyCastbarSpellName',true)
-
+    ]]
+end
+function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostCreate', 'CreateCastbar')
     self:RegisterMessage('KuiNameplates_PostHide', 'HideCastbar')
 
@@ -358,7 +374,6 @@ function mod:OnEnable()
         end
     end
 end
-
 function mod:OnDisable()
     local _,frame
     for _, frame in pairs(addon.frameList) do
