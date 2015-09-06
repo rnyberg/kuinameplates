@@ -23,7 +23,6 @@ local profile_fade, profile_fade_rules, profile_lowhealthval
 local select, strfind, strsplit, pairs, ipairs, unpack, tinsert, type, floor
     = select, strfind, strsplit, pairs, ipairs, unpack, tinsert, type, floor
 local UnitExists=UnitExists
-
 ------------------------------------------------------------- Frame functions --
 local function SetFrameCentre(f)
     -- using CENTER breaks pixel-perfectness with oddly sized frames
@@ -554,6 +553,10 @@ local function UpdateFrameCritical(self)
         else
             self.isfriend:SetText('not friendly')
         end
+
+        if self.affecting_combat then
+            self.isfriend:SetText(self.isfriend:GetText()..' : affecting_combat')
+        end
     end
     --@end-debug@
 end
@@ -752,14 +755,16 @@ function addon:InitFrame(frame)
 end
 
 ---------------------------------------------------------------------- Events --
--- automatic toggling of enemy frames
-function addon:PLAYER_REGEN_ENABLED()
-    SetCVar('nameplateShowEnemies', 0)
-end
 function addon:PLAYER_REGEN_DISABLED()
-    SetCVar('nameplateShowEnemies', 1)
+    if profile.general.combat then
+        SetCVar('nameplateShowEnemies', 1)
+    end
 end
-
+function addon:PLAYER_REGEN_ENABLED()
+    if profile.general.combat then
+        SetCVar('nameplateShowEnemies', 0)
+    end
+end
 ------------------------------------------------------------- Script handlers --
 do
     local WorldFrame = WorldFrame
@@ -781,17 +786,6 @@ do
         end
     end
 end
-
-function addon:ToggleCombatEvents(io)
-    if io then
-        self:RegisterEvent('PLAYER_REGEN_ENABLED')
-        self:RegisterEvent('PLAYER_REGEN_DISABLED')
-    else
-        self:UnregisterEvent('PLAYER_REGEN_ENABLED')
-        self:UnregisterEvent('PLAYER_REGEN_DISABLED')
-    end
-end
-
 function addon:configChangedListener()
     -- cache values used often to reduce table lookup
     profile = addon.db.profile

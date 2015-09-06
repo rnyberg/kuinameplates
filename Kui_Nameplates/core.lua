@@ -549,11 +549,11 @@ function addon:OnEnable()
         end)
     end
 
-    -- FIXME this may/may not fix #34
     self:configChangedListener()
 
     self:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
+    self:RegisterEvent('PLAYER_REGEN_ENABLED')
+    self:RegisterEvent('PLAYER_REGEN_DISABLED')
 
-    self:ToggleCombatEvents(self.db.profile.general.combat)
     self:ScheduleRepeatingTimer('OnUpdate', .1)
 end
