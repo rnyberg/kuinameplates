@@ -553,10 +553,6 @@ local function UpdateFrameCritical(self)
         else
             self.isfriend:SetText('not friendly')
         end
-
-        if self.affecting_combat then
-            self.isfriend:SetText(self.isfriend:GetText()..' : affecting_combat')
-        end
     end
     --@end-debug@
 end
