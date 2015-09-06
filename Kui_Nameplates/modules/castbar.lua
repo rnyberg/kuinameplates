@@ -230,6 +230,7 @@ mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(val)
     if val then
         mod:Enable()
+        SetCVar('showVKeyCastbarOnlyOnTarget',false)
     else
         mod:Disable()
     end
@@ -344,6 +345,9 @@ function mod:OnInitialize()
 end
 
 function mod:OnEnable()
+    SetCVar('showVKeyCastbar',true)
+    SetCVar('showVKeyCastbarSpellName',true)
+
     self:RegisterMessage('KuiNameplates_PostCreate', 'CreateCastbar')
     self:RegisterMessage('KuiNameplates_PostHide', 'HideCastbar')
 
