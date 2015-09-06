@@ -19,7 +19,6 @@ function mod:SetClassColour(frame, cc)
     frame.name.class_coloured = true
     frame.name:SetTextColor(cc.r,cc.g,cc.b)
 end
-
 -- message handlers ############################################################
 function mod:GUIDStored(msg, f, unit)
     -- get colour from unit definition and override cache
@@ -38,7 +37,6 @@ function mod:GUIDStored(msg, f, unit)
         end
     end
 end
-
 function mod:PostShow(msg, f)
     if not (f.friend and f.player) then return end
     if cache[f.name.text] then
@@ -50,12 +48,10 @@ function mod:PostShow(msg, f)
         f.name:SetTextColor(.7,.7,.7)
     end
 end
-
 function mod:PostHide(msg, f)
     f.name.class_coloured = nil
     f.name:SetTextColor(1,1,1,1)
 end
-
 -- config changed hooks ########################################################
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.friendly = function(v)
@@ -65,7 +61,6 @@ mod.configChangedFuncs.runOnce.friendly = function(v)
         mod:Disable()
     end
 end
-
 mod.configChangedFuncs.friendly = function(f,v)
     if v then
         mod:PostShow(nil, f)
@@ -73,7 +68,6 @@ mod.configChangedFuncs.friendly = function(f,v)
         mod:PostHide(nil, f)
     end
 end
-
 -- config hooks ################################################################
 function mod:GetOptions()
     return {
@@ -91,7 +85,6 @@ function mod:GetOptions()
         }
     }
 end
-
 function mod:OnInitialize()
     cc_table = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 
@@ -104,13 +97,11 @@ function mod:OnInitialize()
     addon:InitModuleOptions(self)
     self:SetEnabledState(self.db.profile.friendly)
 end
-
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
     self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
     self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
 end
-
 function mod:OnDisable()
     self:UnregisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
     self:UnregisterMessage('KuiNameplates_PostShow', 'PostShow')

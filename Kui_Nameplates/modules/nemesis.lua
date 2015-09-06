@@ -107,7 +107,7 @@ function mod:PostCreate(msg, frame)
     ribg:SetPoint('BOTTOMRIGHT', ri)
     ribg:SetVertexColor(0,0,0)
 
-	rig:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\combopoint-glow')
+    rig:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\combopoint-glow')
     rig:SetPoint('TOPLEFT', ri, -sizes.glow, sizes.glow)
     rig:SetPoint('BOTTOMRIGHT', ri, sizes.glow+1, -sizes.glow-1)
     rig:SetVertexColor(1,0,0)
@@ -211,11 +211,11 @@ end
 -- post db change functions ####################################################
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(val)
-	if val then
-		mod:Enable()
-	else
-		mod:Disable()
-	end
+    if val then
+        mod:Enable()
+    else
+        mod:Disable()
+    end
 end
 
 -- initialise ##################################################################
@@ -250,12 +250,12 @@ function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
 
-	local _, frame
-	for _, frame in pairs(addon.frameList) do
-		if not frame.kui.raceIcon then
-			self:PostCreate(nil, frame.kui)
-		end
-	end
+    local _, frame
+    for _, frame in pairs(addon.frameList) do
+        if not frame.kui.raceIcon then
+            self:PostCreate(nil, frame.kui)
+        end
+    end
 
     self:SoftEnable()
 end
@@ -269,10 +269,10 @@ function mod:OnDisable()
     wipe(storeIndex)
     wipe(activeNemesis)
 
-	local _, frame
-	for _, frame in pairs(addon.frameList) do
-		if frame.kui.raceIcon then
-			self:PostHide(nil, frame.kui)
-		end
-	end
+    local _, frame
+    for _, frame in pairs(addon.frameList) do
+        if frame.kui.raceIcon then
+            self:PostHide(nil, frame.kui)
+        end
+    end
 end
