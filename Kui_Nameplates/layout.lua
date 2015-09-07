@@ -212,7 +212,6 @@ local function OnFrameLeave(self)
     end
 end
 local function OnFrameShow(self)
-    self = self.kuiParent
     local f = self.kui
     local trivial = f:IsTrivial()
 
@@ -282,7 +281,6 @@ local function OnFrameShow(self)
     f.DispatchPostShow = true
 end
 local function OnFrameHide(self)
-    self = self.kuiParent
     local f = self.kui
     f:Hide()
 
@@ -323,7 +321,6 @@ local function OnFrameHide(self)
 end
 -- stuff that needs to be updated every frame
 local function OnFrameUpdate(self, e)
-    self = self.kuiParent
     local f = self.kui
 
     f.elapsed   = f.elapsed - e
@@ -347,9 +344,8 @@ local function OnFrameUpdate(self, e)
         f.DoShow = nil
     end
 
-    f.defaultAlpha = self:GetAlpha()
-
     ------------------------------------------------------------------- Alpha --
+    f.defaultAlpha = self:GetAlpha()
     f.currentAlpha = GetDesiredAlpha(f)
     ------------------------------------------------------------------ Fading --
     if profile_fade.smooth then
@@ -641,6 +637,7 @@ function addon:InitFrame(frame)
     spellIconRegion:SetSize(.01,.01)
     spellNameShadow:SetTexture(nil)
 
+    overlayChild:Hide()
     overlayRegion:Hide()
     castbarOverlay:Hide()
     spellNameShadow:Hide()
@@ -659,6 +656,7 @@ function addon:InitFrame(frame)
     healthBar:SetStatusBarTexture(kui.m.t.empty)
 
     -- this bar doesn't work, so just get rid of it
+    absorbBarOverlay:Hide()
     absorbBar:SetStatusBarTexture(nil)
     absorbBar:Hide()
 
@@ -766,26 +764,19 @@ function addon:InitFrame(frame)
         f.nametext:SetPoint('TOP', f.guidtext, 'BOTTOM')
     end
     --@end-debug@
-
     ----------------------------------------------------------------- Scripts --
-    -- used by these scripts
-    f.firstChild.kuiParent = frame
+    frame:HookScript('OnShow', OnFrameShow)
+    frame:HookScript('OnHide', OnFrameHide)
+    frame:HookScript('OnUpdate', OnFrameUpdate)
+
     f.oldHealth.kuiParent = frame
-
-    -- Don't hook these directly to the frame; workaround for issue caused by
-    -- current curse.com version of VialCooldowns.
-    f.firstChild:HookScript('OnShow', OnFrameShow)
-    f.firstChild:HookScript('OnHide', OnFrameHide)
-    f.firstChild:HookScript('OnUpdate', OnFrameUpdate)
-
     f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
-
     ------------------------------------------------------------ Finishing up --
     addon:SendMessage('KuiNameplates_PostCreate', f)
 
     if frame:IsShown() then
         -- force OnShow
-        OnFrameShow(f.firstChild)
+        OnFrameShow(frame)
     else
         f:Hide()
     end
