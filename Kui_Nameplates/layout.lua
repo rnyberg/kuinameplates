@@ -422,24 +422,9 @@ local function UpdateFrameCritical(self)
         self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
 
         if not self.friend and addon.TankModule and addon.TankMode then
-            local profile_tankmodule = addon.TankModule.db.profile
-
-            -- in tank mode
             self.hasThreat = true
-            -- we are holding threat if the default glow is red
-            self.holdingThreat = self.glow.r > .9 and (self.glow.g + self.glow.b) < .1
-
-            if not self.targetGlow or not self.target then
-                -- set glow to tank colour unless this is the current target
-                self:SetGlowColour(unpack(profile_tankmodule.glowcolour))
-            end
-
-            if self.holdingThreat then
-                self:SetHealthColour(10, unpack(profile_tankmodule.barcolour))
-            else
-                -- losing/gaining threat
-                self:SetHealthColour(10, unpack(profile_tankmodule.midcolour))
-            end
+            -- in tank mode; handoff to tank module
+            addon.TankModule:ThreatUpdate(self)
         elseif not self.targetGlow or not self.target then
             -- not in tank mode, so set glow to default ui's current colour
             -- only when this isn't the current target
@@ -456,7 +441,10 @@ local function UpdateFrameCritical(self)
         if self.hasThreat then
             -- lost threat
             self.hasThreat = nil
-            self:SetHealthColour(false)
+
+            if addon.TankModule then
+                addon.TankModule:ThreatClear(self)
+            end
         end
     end
     ------------------------------------------------------------ Target stuff --

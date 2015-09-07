@@ -9,8 +9,54 @@ local class
 
 mod.uiName = 'Threat'
 
-function mod:OnEnable()
-	self:Toggle()
+-------------------------------------------------------- threat bracket stuff --
+local function ShowThreatBrackets(frame,...)
+    if not frame.threatBrackets then return end
+    if ... == false then
+        frame.threatBrackets:Hide()
+    else
+        frame.threatBrackets:SetVertexColor(...)
+        frame.threatBrackets:Show()
+    end
+end
+do
+    local brackets = {
+        { 'BOTTOMLEFT', nil, 'TOPLEFT', -7, 0 },
+        { 'BOTTOMRIGHT', nil, 'TOPRIGHT', 6, 0 },
+        { 'TOPLEFT', nil, 'BOTTOMLEFT', -7, -1 },
+        { 'TOPRIGHT', nil, 'BOTTOMRIGHT', 6, -1 }
+    }
+    function mod:PostCreate(msg,f)
+        local tb = CreateFrame('Frame',nil,f.health)
+        tb:Hide()
+
+        for k,v in ipairs(brackets) do
+            local b = tb:CreateTexture(nil,'ARTWORK',nil,1)
+            b:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\threat-bracket')
+            b:SetSize(13*4,13)
+
+            if k == 2 then
+                b:SetTexCoord(1,0,0,1)
+            elseif k == 3 then
+                b:SetTexCoord(0,1,1,0)
+            elseif k == 4 then
+                b:SetTexCoord(1,0,1,0)
+            end
+
+            v[2] = f.health
+            b:SetPoint(unpack(v))
+
+            tb[k] = b
+        end
+
+        tb.SetVertexColor = function(self,...)
+            for k,b in ipairs(self) do
+                b:SetVertexColor(...)
+            end
+        end
+
+        f.threatBrackets = tb
+    end
 end
 --------------------------------------------------------- tank mode functions --
 function mod:Update()
@@ -53,6 +99,30 @@ function mod:Toggle()
 	end
 
 	self:Update()
+end
+
+function mod:ThreatUpdate(frame)
+    frame.hasThreat = true
+    -- we are holding threat if the default glow is red
+    frame.holdingThreat = frame.glow.r > .9 and (frame.glow.g + frame.glow.b) < .1
+
+    if not frame.targetGlow or not frame.target then
+        -- set glow to tank colour unless this is the current target
+        frame:SetGlowColour(unpack(self.db.profile.glowcolour))
+    end
+
+    if frame.holdingThreat then
+        frame:SetHealthColour(10, unpack(self.db.profile.barcolour))
+        ShowThreatBrackets(frame, unpack(self.db.profile.barcolour))
+    else
+        -- losing/gaining threat
+        frame:SetHealthColour(10, unpack(self.db.profile.midcolour))
+        ShowThreatBrackets(frame, unpack(self.db.profile.midcolour))
+    end
+end
+function mod:ThreatClear(frame)
+    frame:SetHealthColour(false)
+    ShowThreatBrackets(frame,false)
 end
 
 ---------------------------------------------------- Post db change functions --
@@ -108,6 +178,8 @@ end
 
 function mod:OnEnable()
     class = select(2,UnitClass('player'))
+
+    self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
 
 	addon.TankModule = self
 	self:Toggle()
