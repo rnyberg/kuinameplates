@@ -222,8 +222,8 @@ local function OnFrameShow(self)
         f:SetSize(self:GetWidth()/addon.uiscale, self:GetHeight()/addon.uiscale)
     end
 
-    if trivial and not f.trivial or
-       not trivial and f.trivial or
+    if (trivial and not f.trivial) or
+       (not trivial and f.trivial) or
        not f.doneFirstShow
     then
         f.trivial = trivial
