@@ -126,7 +126,7 @@ local OnHealthValueChanged = function(oldBar, curr)
         curr = oldBar:GetValue()
     end
 
-    local frame = oldBar:GetParent():GetParent().kui
+    local frame = oldBar.kuiParent.kui
 
     -- store values for external access
     frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
@@ -210,12 +210,16 @@ local function OnFrameShow(self)
         if f.boss:IsVisible() then
             f.level:SetText('Boss')
             f.level:SetTextColor(1,.2,.2)
+
+            f.boss:Hide()
         elseif f.state:IsVisible() then
             if f.state:GetTexture() == "Interface\\Tooltips\\EliteNameplateIcon" then
                 f.level:SetText(f.level:GetText()..'+')
             else
                 f.level:SetText(f.level:GetText()..'r')
             end
+
+            f.state:Hide()
         end
 
         f.level:SetWidth(0)
@@ -615,12 +619,27 @@ function addon:InitFrame(frame)
     glowRegion:SetTexture(nil)
     spellIconRegion:SetSize(.01,.01)
     spellNameShadow:SetTexture(nil)
+
+    overlayRegion:Hide()
+    castbarOverlay:Hide()
+    spellNameShadow:Hide()
     spellNameRegion:Hide()
 
+    healthBar:Hide()
+    frame.NameContainer:Hide()
+    nameTextRegion:Hide()
+
+    -- re-hidden OnFrameShow
+    bossIconRegion:Hide()
+    stateIconRegion:Hide()
+
     -- make default healthbar & castbar transparent
-    absorbBar:SetStatusBarTexture(kui.m.t.empty)
     castBar:SetStatusBarTexture(kui.m.t.empty)
     healthBar:SetStatusBarTexture(kui.m.t.empty)
+
+    -- this bar doesn't work, so just get rid of it
+    absorbBar:SetStatusBarTexture(nil)
+    absorbBar:Hide()
 
     f.firstChild = overlayChild
 
@@ -729,13 +748,14 @@ function addon:InitFrame(frame)
 
     ----------------------------------------------------------------- Scripts --
     -- used by these scripts
+    f.firstChild.kuiParent = frame
     f.oldHealth.kuiParent = frame
 
     -- Don't hook these directly to the frame; workaround for issue caused by
     -- current curse.com version of VialCooldowns.
-    f.oldHealth:HookScript('OnShow', OnFrameShow)
-    f.oldHealth:HookScript('OnHide', OnFrameHide)
-    f.oldHealth:HookScript('OnUpdate', OnFrameUpdate)
+    f.firstChild:HookScript('OnShow', OnFrameShow)
+    f.firstChild:HookScript('OnHide', OnFrameHide)
+    f.firstChild:HookScript('OnUpdate', OnFrameUpdate)
 
     f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
 
@@ -744,7 +764,7 @@ function addon:InitFrame(frame)
 
     if frame:IsShown() then
         -- force OnShow
-        OnFrameShow(healthBar)
+        OnFrameShow(f.firstChild)
     else
         f:Hide()
     end
