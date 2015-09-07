@@ -118,6 +118,42 @@ local function SetGlowColour(self, r, g, b, a)
 
     self.bg:SetVertexColor(r, g, b, a)
 end
+
+local function GetDesiredAlpha(frame)
+    if profile_fade_rules.avoidhostilehp or
+       profile_fade_rules.avoidfriendhp
+    then
+        if ((frame.friend    and profile_fade_rules.avoidfriendhp) or
+           (not frame.friend and profile_fade_rules.avoidhostilehp)) and
+           frame.health.percent and frame.health.percent <= profile_lowhealthval
+        then
+            -- avoid fading low health frames
+            return 1
+        end
+    end
+
+    if profile_fade_rules.avoidcast and frame.castbar and frame.castbar:IsShown() then
+        -- avoid fading when castbar is visible
+        return 1
+    end
+
+    if profile_fade_rules.avoidraidicon and frame.icon:IsVisible() then
+        -- avoid fading frames with a raid icon
+        return 1
+    end
+
+    if profile_fade.fademouse and frame.highlighted then
+        -- fade in with mouse
+        return 1
+    end
+
+    if UnitExists('target') then
+        return frame.defaultAlpha == 1 and 1 or profile_fade.fadedalpha
+    else
+        -- default when there is no target
+        return profile_fade.fadeall and profile_fade.fadedalpha or 1
+    end
+end
 ---------------------------------------------------- Update health bar & text --
 local OnHealthValueChanged = function(oldBar, curr)
     if oldBar.oldHealth then
@@ -314,22 +350,7 @@ local function OnFrameUpdate(self, e)
     f.defaultAlpha = self:GetAlpha()
 
     ------------------------------------------------------------------- Alpha --
-    -- determine alpha value!
-    if (f.defaultAlpha == 1 and UnitExists('target')) or
-       (profile_fade_rules.avoidraidicon and f.icon:IsVisible()) or
-       (f.friend and profile_fade_rules.avoidfriendhp and f.health.percent <= profile_lowhealthval) or
-       (not f.friend and profile_fade_rules.avoidhostilehp and f.health.percent <= profile_lowhealthval) or
-       (f.castbar and f.castbar:IsShown() and profile_fade_rules.avoidcast) or
-       (profile_fade.fademouse and f.highlighted)
-    then
-        f.currentAlpha = 1
-    elseif UnitExists('target') or profile_fade.fadeall then
-        -- if a target exists or fadeall is enabled...
-        f.currentAlpha = profile_fade.fadedalpha or .3
-    else
-        -- default when nothing is targeted
-        f.currentAlpha = 1
-    end
+    f.currentAlpha = GetDesiredAlpha(f)
     ------------------------------------------------------------------ Fading --
     if profile_fade.smooth then
         -- track changes in the alpha level and intercept them
