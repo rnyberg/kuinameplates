@@ -637,7 +637,6 @@ function addon:InitFrame(frame)
     spellIconRegion:SetSize(.01,.01)
     spellNameShadow:SetTexture(nil)
 
-    overlayChild:Hide()
     overlayRegion:Hide()
     castbarOverlay:Hide()
     spellNameShadow:Hide()
