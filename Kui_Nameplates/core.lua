@@ -52,7 +52,8 @@ local latin  = (locale ~= 'zhCN' and locale ~= 'zhTW' and locale ~= 'koKR' and l
 local defaults = {
     profile = {
         general = {
-            combat      = false, -- automatically show hostile plates upon entering combat
+            combataction_hostile = 1,
+            combataction_friendly = 1,
             highlight   = true, -- highlight plates on mouse-over
             highlight_target = false,
             fixaa       = true, -- attempt to make plates appear sharper

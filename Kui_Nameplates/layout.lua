@@ -771,13 +771,23 @@ end
 
 ---------------------------------------------------------------------- Events --
 function addon:PLAYER_REGEN_DISABLED()
-    if profile.general.combat then
-        SetCVar('nameplateShowEnemies', 1)
+    if profile.general.combataction_hostile > 1 then
+        SetCVar('nameplateShowEnemies',
+            profile.general.combataction_hostile == 3 and 1 or 0)
+    end
+    if profile.general.combataction_friendly > 1 then
+        SetCVar('nameplateShowFriends',
+            profile.general.combataction_friendly == 3 and 1 or 0)
     end
 end
 function addon:PLAYER_REGEN_ENABLED()
-    if profile.general.combat then
-        SetCVar('nameplateShowEnemies', 0)
+    if profile.general.combataction_hostile > 1 then
+        SetCVar('nameplateShowEnemies',
+            profile.general.combataction_hostile == 2 and 1 or 0)
+    end
+    if profile.general.combataction_friendly > 1 then
+        SetCVar('nameplateShowFriends',
+            profile.general.combataction_friendly == 2 and 1 or 0)
     end
 end
 ------------------------------------------------------------- Script handlers --

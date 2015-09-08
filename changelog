@@ -1,3 +1,4 @@
 * improve performance when many nameplates are visible
 * lower frameLevel of the target nameplate
+* add option to toggle friendly nameplates when entering/leaving combat
 * update spell whitelist

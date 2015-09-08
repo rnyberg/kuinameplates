@@ -143,41 +143,53 @@ do
                 type = 'group',
                 order = 1,
                 args = {
-                    combat = {
-                        name = 'Auto toggle in combat',
-                        desc = 'Automatically toggle on/off hostile nameplates upon entering/leaving combat',
-                        type = 'toggle',
+                    combataction_hostile = {
+                        name = 'Combat action: hostile',
+                        desc = 'Automatically toggle hostile nameplates when entering/leaving combat. Setting will be inverted upon leaving combat.',
+                        type = 'select',
+                        values = {
+                            'Do nothing', 'Hide enemies', 'Show enemies'
+                        },
                         order = 0
+                    },
+                    combataction_friendly = {
+                        name = 'Combat action: friendly',
+                        desc = 'Automatically toggle friendly nameplates when entering/leaving combat. Setting will be inverted upon leaving combat.',
+                        type = 'select',
+                        values = {
+                            'Do nothing', 'Hide friendlies', 'Show friendlies'
+                        },
+                        order = 1
                     },
                     fixaa = {
                         name = 'Fix aliasing',
                         desc = 'Attempt to make plates appear sharper. Has a positive effect on FPS, but will make plates appear a bit "loose", especially at low frame rates. Works best when uiscale is disabled and at larger resolutions (lower resolutions automatically downscale the interface regardless of uiscale setting).'..RELOAD_HINT,
                         type = 'toggle',
-                        order = 1
+                        order = 10
                     },
                     compatibility = {
                         name = 'Stereo compatibility',
                         desc = 'Fix compatibility with stereo video. This has a negative effect on performance when many nameplates are visible.'..RELOAD_HINT,
                         type = 'toggle',
-                        order = 2
+                        order = 20
                     },
                     leftie = {
                         name = 'Use leftie layout',
                         desc = 'Use left-aligned text layout (similar to the pre-223 layout). Note that this layout truncates long names. But maybe you prefer that.'..RELOAD_HINT,
                         type = 'toggle',
-                        order = 3,
+                        order = 30
                     },
                     highlight = {
                         name = 'Highlight',
                         desc = 'Highlight plates on mouse over.',
                         type = 'toggle',
-                        order = 4
+                        order = 40
                     },
                     highlight_target = {
                         name = 'Highlight target',
                         desc = 'Also highlight the current target.',
                         type = 'toggle',
-                        order = 5,
+                        order = 50,
                         disabled = function(info)
                             return not addon.db.profile.general.highlight
                         end
@@ -186,19 +198,19 @@ do
                         name = 'Use glow as shadow',
                         desc = 'The frame glow is used to indicate threat. It becomes black when a unit has no threat status. Disabling this option will make it transparent instead.',
                         type = 'toggle',
-                        order = 7,
+                        order = 70,
                         width = 'double'
                     },
                     targetglow = {
                         name = 'Show target glow',
                         desc = 'Make your target\'s nameplate glow',
                         type = 'toggle',
-                        order = 8
+                        order = 80
                     },
                     targetglowcolour = {
                         name = 'Target glow colour',
                         type = 'color',
-                        order = 9,
+                        order = 90,
                         hasAlpha = true,
                         disabled = function(info)
                             return not addon.db.profile.general.targetglow and not addon.db.profile.general.targetarrows
@@ -208,13 +220,13 @@ do
                         name = 'Show target arrows',
                         desc = 'Show arrows around your target\'s nameplate. They will inherit the colour of the target glow, set above.',
                         type = 'toggle',
-                        order = 10,
+                        order = 100,
                         width = 'double'
                     },
                     hheight = {
                         name = 'Health bar height',
                         desc = 'Note that these values do not affect the size or shape of the click-box, which cannot be changed.',
-                        order = 20,
+                        order = 110,
                         type = 'range',
                         step = 1,
                         min = 1,
@@ -224,7 +236,7 @@ do
                     thheight = {
                         name = 'Trivial health bar height',
                         desc = 'Height of the health bar of trivial (small, low maximum health) units.',
-                        order = 21,
+                        order = 120,
                         type = 'range',
                         step = 1,
                         min = 1,
@@ -233,7 +245,7 @@ do
                     },
                     width = {
                         name = 'Frame width',
-                        order = 22,
+                        order = 130,
                         type = 'range',
                         step = 1,
                         min = 1,
@@ -242,7 +254,7 @@ do
                     },
                     twidth = {
                         name = 'Trivial frame width',
-                        order = 24,
+                        order = 140,
                         type = 'range',
                         step = 1,
                         min = 1,
@@ -255,14 +267,14 @@ do
                         type = 'select',
                         dialogControl = 'LSM30_Statusbar',
                         values = AceGUIWidgetLSMlists.statusbar,
-                        order = 25,
+                        order = 150,
                     },
                     strata = {
                         name = 'Frame strata',
                         desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 10.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
                         type = 'select',
                         values = StrataSelectList,
-                        order = 27
+                        order = 160
                     },
                     lowhealthval = {
                         name = 'Low health value',
@@ -271,7 +283,7 @@ do
                         min = 1,
                         max = 100,
                         bigStep = 1,
-                        order = 50
+                        order = 170
                     },
                 }
             },
