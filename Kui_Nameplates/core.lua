@@ -510,7 +510,6 @@ function addon:OnEnable()
     ScaleFontSizes()
 
     -------------------------------------- Health bar smooth update functions --
-    -- (spoon-fed by oUF_Smooth)
     if self.db.profile.hp.smooth then
         local f, smoothing, GetFramerate, min, max, abs
             = CreateFrame('Frame'), {}, GetFramerate, math.min, math.max, math.abs
@@ -542,7 +541,7 @@ function addon:OnEnable()
 
                 bar:OrigSetValue(new)
 
-                if cur == value or abs(new - value) < 2 then
+                if cur == value or abs(new - value) < .005 then
                     bar:OrigSetValue(value)
                     smoothing[bar] = nil
                 end
