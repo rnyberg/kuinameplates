@@ -234,7 +234,7 @@ function mod:OnInitialize()
             barcolour = { .2, .9, .1 },
             midcolour = { 1, .5, 0 },
             glowcolour = { 1, 0, 0, 1 },
-            enable_brackets = true,
+            enable_brackets = false,
             scale = 1,
         }
     })

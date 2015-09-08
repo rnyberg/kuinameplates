@@ -1,4 +1,5 @@
 * improve performance when many nameplates are visible
 * lower frameLevel of the target nameplate
 * add option to toggle friendly nameplates when entering/leaving combat
+* add option to show "threat brackets" - like the target arrows, but for threat
 * update spell whitelist
