@@ -21,31 +21,33 @@ local function ShowThreatBrackets(frame,...)
 end
 do
     local brackets = {
-        { 'BOTTOMLEFT', nil, 'TOPLEFT', -7, 0 },
-        { 'BOTTOMRIGHT', nil, 'TOPRIGHT', 6, 0 },
-        { 'TOPLEFT', nil, 'BOTTOMLEFT', -7, -1 },
-        { 'TOPRIGHT', nil, 'BOTTOMRIGHT', 6, -1 }
+        { 'BOTTOMLEFT',  nil, 'TOPLEFT' },
+        { 'BOTTOMRIGHT', nil, 'TOPRIGHT' },
+        { 'TOPLEFT',     nil, 'BOTTOMLEFT' },
+        { 'TOPRIGHT',    nil, 'BOTTOMRIGHT' }
     }
-    function mod:PostCreate(msg,f)
-        local tb = CreateFrame('Frame',nil,f.health)
+
+    -- pixel positions
+    local leftmost = 0.28125
+    local bottommost = 0
+    local default_size = 18
+    local ratio = 64/32
+
+    local size, x_offset, y_offset
+
+    function mod:UpdateThreatBracketScaling()
+        size = default_size * self.db.profile.scale
+        x_offset = (size*ratio) * leftmost
+        y_offset = (size * bottommost) - 2
+    end
+
+    function mod:CreateThreatBrackets(frame)
+        local tb = CreateFrame('Frame',nil,frame.health)
         tb:Hide()
 
         for k,v in ipairs(brackets) do
             local b = tb:CreateTexture(nil,'ARTWORK',nil,1)
             b:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\threat-bracket')
-            b:SetSize(13*4,13)
-
-            if k == 2 then
-                b:SetTexCoord(1,0,0,1)
-            elseif k == 3 then
-                b:SetTexCoord(0,1,1,0)
-            elseif k == 4 then
-                b:SetTexCoord(1,0,1,0)
-            end
-
-            v[2] = f.health
-            b:SetPoint(unpack(v))
-
             tb[k] = b
         end
 
@@ -55,7 +57,40 @@ do
             end
         end
 
-        f.threatBrackets = tb
+        frame.threatBrackets = tb
+
+        self:UpdateThreatBrackets(frame)
+    end
+    function mod:UpdateThreatBrackets(frame)
+        -- apply scaling + positions to threat brackets on given frame
+        if not frame.threatBrackets then return end
+        for k,v in ipairs(brackets) do
+            local b = frame.threatBrackets[k]
+            b:SetSize(size*ratio,size)
+
+            if k % 2 == 0 then
+                v[4] = x_offset - 1
+            else
+                v[4] = -x_offset
+            end
+
+            if k <= 2 then
+                v[5] = -y_offset
+            else
+                v[5] = y_offset - .6
+            end
+
+            if k == 2 then
+                b:SetTexCoord(1,0,0,1)
+            elseif k == 3 then
+                b:SetTexCoord(0,1,1,0)
+            elseif k == 4 then
+                b:SetTexCoord(1,0,1,0)
+            end
+
+            v[2] = frame.health
+            b:SetPoint(unpack(v))
+        end
     end
 end
 --------------------------------------------------------- tank mode functions --
@@ -124,11 +159,23 @@ function mod:ThreatClear(frame)
     frame:SetHealthColour(false)
     ShowThreatBrackets(frame,false)
 end
-
+-------------------------------------------------------------------- messages --
+function mod:PostCreate(msg,f)
+    self:CreateThreatBrackets(f)
+end
+function mod:PostHide(msg,f)
+    ShowThreatBrackets(f,false)
+end
 ---------------------------------------------------- Post db change functions --
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function()
     mod:Toggle()
+end
+mod.configChangedFuncs.runOnce.scale = function(val)
+    mod:UpdateThreatBracketScaling()
+end
+mod.configChangedFuncs.scale = function(frame, val)
+    mod:UpdateThreatBrackets(frame)
 end
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
@@ -159,6 +206,24 @@ function mod:GetOptions()
             hasAlpha = true,
             order = 2
         },
+        enable_brackets = {
+            name = 'Show threat brackets',
+            desc = 'Also show threat brackets when in tank mode. Kind of like target arrows, but for threat. They will inherit the bar colour.',
+            type = 'toggle',
+            order = 10
+        },
+        scale = {
+            name = 'Threat bracket scale',
+            desc = 'The scale of the threat bracket textures',
+            type = 'range',
+            order = 20,
+            min = 0.1,
+            softMin = 0.5,
+            softMax = 2,
+            disabled = function(info)
+                return not mod.db.profile.enable_brackets
+            end
+        }
     }
 end
 
@@ -168,18 +233,24 @@ function mod:OnInitialize()
             enabled = 1,
             barcolour = { .2, .9, .1 },
             midcolour = { 1, .5, 0 },
-            glowcolour = { 1, 0, 0, 1 }
+            glowcolour = { 1, 0, 0, 1 },
+            enable_brackets = true,
+            scale = 1,
         }
     })
 
     addon:InitModuleOptions(self)
-    mod:SetEnabledState(true)
+    self:UpdateThreatBracketScaling()
+    self:SetEnabledState(true)
 end
 
 function mod:OnEnable()
     class = select(2,UnitClass('player'))
 
-    self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
+    if self.db.profile.enable_brackets then
+        self:RegisterMessage('KuiNameplates_PostCreate', 'PostCreate')
+        self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
+    end
 
     addon.TankModule = self
     self:Toggle()
