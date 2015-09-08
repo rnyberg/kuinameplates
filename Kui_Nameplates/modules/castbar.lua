@@ -237,7 +237,6 @@ end
 
 mod.configChangedFuncs.runOnce.onlyontarget = function(val)
     SetCVar('showVKeyCastbarOnlyOnTarget',val)
-    InterfaceOptionsCombatPanelEnemyCastBarsOnOnlyTargetNameplates:SetChecked(val)
 end
 
 mod.configChangedFuncs.shieldbarcolour = function(frame, val)
@@ -358,6 +357,13 @@ function mod:OnInitialize()
     self:SetEnabledState(self.db.profile.enabled)
 
     -- handle default interface cvars & checkboxes
+    local function SetCVars()
+        -- force these to true as the module hides them anyway
+        SetCVar('showVKeyCastbar',true)
+        SetCVar('showVKeyCastbarSpellName',true)
+
+        mod.configChangedFuncs.runOnce.onlyontarget(self.db.profile.onlyontarget)
+    end
     InterfaceOptionsCombatPanel:HookScript('OnShow', function()
         InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:SetChecked(true)
         InterfaceOptionsCombatPanelEnemyCastBarsNameplateSpellNames:SetChecked(true)
@@ -365,13 +371,12 @@ function mod:OnInitialize()
         InterfaceOptionsCombatPanelEnemyCastBarsOnOnlyTargetNameplates:Disable()
         InterfaceOptionsCombatPanelEnemyCastBarsNameplateSpellNames:Disable()
     end)
+    InterfaceOptionsFrame:HookScript('OnHide', function()
+        -- ensure our options stay applied
+        SetCVars()
+    end)
 
-    -- force these to true as the module hides them anyway
-    SetCVar('showVKeyCastbar',true)
-    SetCVar('showVKeyCastbarSpellName',true)
-
-    -- obviously running this will break if the panel hasn't loaded.
-    self.configChangedFuncs.runOnce.onlyontarget(self.db.profile.onlyontarget)
+    SetCVars()
 end
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostCreate', 'CreateCastbar')
