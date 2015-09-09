@@ -77,7 +77,7 @@ do
             if k <= 2 then
                 v[5] = -y_offset
             else
-                v[5] = y_offset
+                v[5] = y_offset - .5
             end
 
             if k == 2 then
