@@ -4,5 +4,5 @@
 * add an auto-combat-toggle option for friendly nameplates
 * add option to show "threat brackets" - like the target arrows, but for threat
 * fix smooth health bar setting has no effect in 6.2.2
-* handle default CVars for nameplate castbars
+* handle default CVars for nameplate castbars and class colours
 * update spell whitelist
