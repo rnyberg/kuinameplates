@@ -31,14 +31,14 @@ do
     local leftmost = 0.28125
     local bottommost = 0
     local default_size = 18
-    local ratio = 64/32
+    local ratio = 2
 
     local size, x_offset, y_offset
 
     function mod:UpdateThreatBracketScaling()
         size = default_size * self.db.profile.scale
         x_offset = (size*ratio) * leftmost
-        y_offset = (size * bottommost) - 2
+        y_offset = floor((size * bottommost) - 2)
     end
 
     function mod:CreateThreatBrackets(frame)
@@ -77,7 +77,7 @@ do
             if k <= 2 then
                 v[5] = -y_offset
             else
-                v[5] = y_offset - .6
+                v[5] = y_offset
             end
 
             if k == 2 then

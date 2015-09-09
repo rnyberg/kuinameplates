@@ -19,6 +19,12 @@ end
 
 local sizes = {}
 
+local function SetCVars()
+    -- force these to true as the module hides them anyway
+    SetCVar('showVKeyCastbar',true)
+    SetCVar('showVKeyCastbarSpellName',true)
+    SetCVar('showVKeyCastbarOnlyOnTarget',mod.db.profile.onlyontarget)
+end
 ------------------------------------------------------------- Script handlers --
 local function OnDefaultCastbarShow(self)
     if not mod.enabledState then return end
@@ -236,7 +242,7 @@ mod.configChangedFuncs.runOnce.enabled = function(val)
 end
 
 mod.configChangedFuncs.runOnce.onlyontarget = function(val)
-    SetCVar('showVKeyCastbarOnlyOnTarget',val)
+    SetCVars()
 end
 
 mod.configChangedFuncs.shieldbarcolour = function(frame, val)
@@ -357,16 +363,10 @@ function mod:OnInitialize()
     self:SetEnabledState(self.db.profile.enabled)
 
     -- handle default interface cvars & checkboxes
-    local function SetCVars()
-        -- force these to true as the module hides them anyway
-        SetCVar('showVKeyCastbar',true)
-        SetCVar('showVKeyCastbarSpellName',true)
-
-        mod.configChangedFuncs.runOnce.onlyontarget(self.db.profile.onlyontarget)
-    end
     InterfaceOptionsCombatPanel:HookScript('OnShow', function()
         InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:SetChecked(true)
         InterfaceOptionsCombatPanelEnemyCastBarsNameplateSpellNames:SetChecked(true)
+        InterfaceOptionsCombatPanelEnemyCastBarsOnOnlyTargetNameplates:SetChecked(mod.db.profile.onlyontarget)
         InterfaceOptionsCombatPanelEnemyCastBarsOnNameplates:Disable()
         InterfaceOptionsCombatPanelEnemyCastBarsOnOnlyTargetNameplates:Disable()
         InterfaceOptionsCombatPanelEnemyCastBarsNameplateSpellNames:Disable()

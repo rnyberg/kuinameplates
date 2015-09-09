@@ -14,6 +14,9 @@ local cache_index = {}
 
 mod.uiName = "Class colours"
 
+local function SetCVars()
+    SetCVar('ShowClassColorInNameplate',mod.db.profile.enemy)
+end
 -- functions ###################################################################
 function mod:SetClassColour(frame, cc)
     frame.name.class_coloured = true
@@ -68,6 +71,9 @@ mod.configChangedFuncs.friendly = function(f,v)
         mod:PostHide(nil, f)
     end
 end
+mod.configChangedFuncs.runOnce.enemy = function(v)
+    SetCVars()
+end
 -- config hooks ################################################################
 function mod:GetOptions()
     return {
@@ -79,9 +85,11 @@ function mod:GetOptions()
             order = 10
         },
         enemy = {
-            name = "The option to toggle class colours on enemy players' health bars can be found in the default interface options. Click the 'Game' tab at the top left of this window, click 'Names' in the list on the left and check or uncheck the 'Class Colors in Nameplates' option at the bottom right.",
-            type = 'description',
-            fontSize = 'medium'
+            name = 'Class colour hostile players\' health bars',
+            desc = 'Class colour the health bars of hostile players, where they are attackable. This is a default interface option.',
+            type = 'toggle',
+            width = 'double',
+            order = 20
         }
     }
 end
@@ -90,12 +98,25 @@ function mod:OnInitialize()
 
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
-            friendly = true
+            friendly = true,
+            enemy = true,
         }
     })
 
     addon:InitModuleOptions(self)
     self:SetEnabledState(self.db.profile.friendly)
+
+    -- handle default interface cvars & checkboxes
+    InterfaceOptionsNamesPanel:HookScript('OnShow', function()
+        InterfaceOptionsNamesPanelUnitNameplatesNameplateClassColors:Disable()
+        InterfaceOptionsNamesPanelUnitNameplatesNameplateClassColors:SetChecked(mod.db.profile.enemy)
+    end)
+    InterfaceOptionsFrame:HookScript('OnHide', function()
+        -- ensure our options stay applied
+        SetCVars()
+    end)
+
+    SetCVars()
 end
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
