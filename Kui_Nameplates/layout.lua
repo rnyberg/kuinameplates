@@ -213,7 +213,7 @@ do
             -- 6.2.2 workaround values
             frame.health.min = 0
             frame.health.max = frame.health.health_max_snapshot
-            frame.health.curr = frame.health.health_max_snapshot * oldBar:GetValue()
+            frame.health.curr = floor(frame.health.health_max_snapshot * oldBar:GetValue())
         else
             -- fallback logic
             frame.health.min, frame.health.max = 0,1
