@@ -20,6 +20,10 @@ do
         ['TOOLTIP'] = '6. TOOLTIP',
     }
 
+    local HealthTextSelectList = {
+        'Current', 'Maximum', 'Percent', 'Deficit', 'Blank'
+    }
+
     local globalConfigChangedListeners = {}
 
     local handlers = {}
@@ -426,18 +430,56 @@ do
                             }
                         }
                     },
-                    showalt = {
-                        name = 'Precluded: Show contextual health',
-                        desc = 'Show alternate (contextual) health values as well as main values',
-                        type = 'toggle',
+                    text = {
+                        name = 'Health text',
+                        type = 'group',
+                        inline = true,
                         order = 10,
-                        disabled = true
-                    },
-                    mouseover = {
-                        name = 'Show on mouse over',
-                        desc = 'Show health only on mouse over or on the targeted plate',
-                        type = 'toggle',
-                        order = 20
+                        disabled = function(info)
+                            return addon.db.profile.hp.text.hp_text_disabled
+                        end,
+                        args = {
+                            hp_text_disabled = {
+                                name = 'Never show health text',
+                                type = 'toggle',
+                                order = 0,
+                                disabled = false
+                            },
+                            mouseover = {
+                                name = 'Mouseover & target only',
+                                desc = 'Show health only on mouseover or on the targeted plate',
+                                type = 'toggle',
+                                order = 10
+                            },
+                            hp_friend_max = {
+                                name = 'Max. health friend',
+                                desc = 'Health text to show on maximum health friendly units',
+                                type = 'select',
+                                values = HealthTextSelectList,
+                                order = 20
+                            },
+                            hp_friend_low = {
+                                name = 'Damaged friend',
+                                desc = 'Health text to show on damaged friendly units',
+                                type = 'select',
+                                values = HealthTextSelectList,
+                                order = 30
+                            },
+                            hp_hostile_max = {
+                                name = 'Max. health hostile',
+                                desc = 'Health text to show on maximum health hostile units',
+                                type = 'select',
+                                values = HealthTextSelectList,
+                                order = 40
+                            },
+                            hp_hostile_low = {
+                                name = 'Damaged hostile',
+                                desc = 'Health text to show on damaged hostile units',
+                                type = 'select',
+                                values = HealthTextSelectList,
+                                order = 50
+                            },
+                        }
                     },
                     smooth = {
                         name = 'Smooth health bar',
@@ -445,22 +487,6 @@ do
                         type = 'toggle',
                         width = 'full',
                         order = 30
-                    },
-                    friendly = {
-                        name = 'Precluded: Friendly health format',
-                        desc = '|cffff4444Currently disabled due to limitations introduced in 6.2.2.|r',
-                        type = 'input',
-                        pattern = '([<=]:[dmcpb];)',
-                        order = 40,
-                        disabled = true
-                    },
-                    hostile = {
-                        name = 'Precluded: Hostile health format',
-                        desc = '|cffff4444Currently disabled due to limitations introduced in 6.2.2.|r',
-                        type = 'input',
-                        pattern = '([<=]:[dmcpb];)',
-                        order = 50,
-                        disabled = true
                     },
                 }
             },

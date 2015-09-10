@@ -96,11 +96,15 @@ local defaults = {
                 tappedcol   = { .5, .5, .5 },
                 playercol   = { .2, .5, .9 }
             },
-            friendly  = '<:d;', -- health display pattern for friendly units
-            hostile   = '<:p;', -- health display pattern for enemy units
-            showalt   = false, -- show alternate health values
-            mouseover = false, -- hide health values until mouseover/target
-            smooth    = true -- smoothly animate health bar changes
+            text = {
+                hp_text_disabled = false,
+                mouseover = false,
+                hp_friend_max = 2,
+                hp_friend_low = 4,
+                hp_hostile_max = 3,
+                hp_hostile_low = 3
+            },
+            smooth = true
         },
         fonts = {
             options = {
