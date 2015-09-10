@@ -157,20 +157,15 @@ end
 ---------------------------------------------------- Update health bar & text --
 local OnHealthValueChanged
 do
-    local function GetHealthValueFromPatternID(id,frame)
-        -- ids specified in config.lua, HealthTextSelectList
-        if id == 1 then
-            return kui.num(frame.health.curr)
-        elseif id == 2 then
-            return kui.num(frame.health.max)
-        elseif id == 3 then
-            return floor(frame.health.percent)
-        elseif id == 4 then
-            return '-'..(kui.num(frame.health.max - frame.health.curr))
-        elseif id == 5 then
-            return ''
-        end
-    end
+    -- possible ids specified in config.lua, HealthTextSelectList
+    local HealthValues = {
+        function(f) return kui.num(f.health.curr) end,
+        function(f) return kui.num(f.health.max) end,
+        function(f) return floor(f.health.percent) end,
+        function(f) return '-'..(kui.num(f.health.max - f.health.curr)) end,
+        function(f) return '' end
+    }
+
     local function SetHealthText(frame)
         if profile_hp.text.hp_text_disabled then
             frame.health.p:SetText('')
@@ -181,15 +176,15 @@ do
             -- workaround logic
             if frame.friend then
                 if frame.health.curr == frame.health.max then
-                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_friend_max,frame))
+                    frame.health.p:SetText(HealthValues[profile_hp.text.hp_friend_max](frame))
                 else
-                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_friend_low,frame))
+                    frame.health.p:SetText(HealthValues[profile_hp.text.hp_friend_low](frame))
                 end
             else
                 if frame.health.curr == frame.health.max then
-                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_hostile_max,frame))
+                    frame.health.p:SetText(HealthValues[profile_hp.text.hp_hostile_max](frame))
                 else
-                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_hostile_low,frame))
+                    frame.health.p:SetText(HealthValues[profile_hp.text.hp_hostile_low](frame))
                 end
             end
         else
@@ -245,7 +240,7 @@ local function OnFrameEnter(self)
     end
 end
 local function OnFrameLeave(self)
-    self.highlighted = false
+    self.highlighted = nil
 
     if self.highlight and
         (profile.general.highlight_target and not self.target or
