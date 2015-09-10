@@ -21,11 +21,7 @@ do
     }
 
     local HealthTextSelectList = {
-        'Current |cff888888(145k)',
-        'Maximum |cff888888(156k)',
-        'Percent |cff888888(93)',
-        'Deficit |cff888888(-10.9k)',
-        'Blank |cff888888(  )'
+        'Current |cff888888(145k)', 'Maximum |cff888888(156k)', 'Percent |cff888888(93)', 'Deficit |cff888888(-10.9k)', 'Blank |cff888888(  )'
     }
 
     local globalConfigChangedListeners = {}
@@ -484,10 +480,7 @@ do
                                 order = 50
                             },
                             hp_warning = {
-                                name = '\n|cffff8888Due to limitations introduced in patch 6.2.2, the precise health values of nameplates is not known until the first mouseover/target of that frame. This value is cached, but it may not be entirely accurate.\n\nPercentage will be used as a fallback where health is not yet known.',
-                                type = 'description',
-                                fontSize = 'medium',
-                                order = 60
+                                name = 'Due to limitations introduced in patch 6.2.2, health text on nameplates is not known until the first mouseover/target of that frame. This value can be cached and restored for players, where names are reasonably unique, but not for NPCs.'
                             }
                         }
                     },
