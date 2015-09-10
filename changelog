@@ -2,6 +2,8 @@
 * lower frameLevel of the target nameplate (to 3, from 10)
 * improve auto-combat-toggle option and;
 * add an auto-combat-toggle option for friendly nameplates
+* improve health text display options
+* implement a workaround for health text issues introduced in 6.2.2
 * add option to show "threat brackets" - like the target arrows, but for threat
 * fix smooth health bar setting has no effect in 6.2.2
 * handle default CVars for nameplate castbars and class colours
