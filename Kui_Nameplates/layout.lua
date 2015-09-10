@@ -189,12 +189,22 @@ do
             end
         else
             -- fallback
-            if frame.health.curr == 1 and profile_hp.text.hp_hostile_max ~= 5 then
-                frame.health.p:SetText('100')
-            elseif frame.health.curr < 1 and profile_hp.text.hp_hostile_low ~= 5 then
-                frame.health.p:SetText(floor(frame.health.percent))
+            if frame.friend then
+                if frame.health.curr == 1 and profile_hp.text.hp_friend_max ~= 5 then
+                    frame.health.p:SetText('100')
+                elseif frame.health.curr < 1 and profile_hp.text.hp_friend_low ~= 5 then
+                    frame.health.p:SetText(floor(frame.health.percent))
+                else
+                    frame.health.p:SetText('')
+                end
             else
-                frame.health.p:SetText('')
+                if frame.health.curr == 1 and profile_hp.text.hp_hostile_max ~= 5 then
+                    frame.health.p:SetText('100')
+                elseif frame.health.curr < 1 and profile_hp.text.hp_hostile_low ~= 5 then
+                    frame.health.p:SetText(floor(frame.health.percent))
+                else
+                    frame.health.p:SetText('')
+                end
             end
         end
     end
@@ -215,7 +225,7 @@ do
             frame.health.max = frame.health.health_max_snapshot
             frame.health.curr = floor(frame.health.health_max_snapshot * oldBar:GetValue())
         else
-            -- fallback logic
+            -- fallback values
             frame.health.min, frame.health.max = 0,1
             frame.health.curr = curr
         end

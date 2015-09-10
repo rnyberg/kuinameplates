@@ -99,9 +99,9 @@ local defaults = {
             text = {
                 hp_text_disabled = false,
                 mouseover = false,
-                hp_friend_max = 2,
+                hp_friend_max = 5,
                 hp_friend_low = 4,
-                hp_hostile_max = 3,
+                hp_hostile_max = 5,
                 hp_hostile_low = 3
             },
             smooth = true
