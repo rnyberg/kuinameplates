@@ -275,7 +275,7 @@ do
                     },
                     strata = {
                         name = 'Frame strata',
-                        desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 10.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
+                        desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 3.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
                         type = 'select',
                         values = StrataSelectList,
                         order = 160
@@ -479,6 +479,9 @@ do
                                 values = HealthTextSelectList,
                                 order = 50
                             },
+                            hp_warning = {
+                                name = 'Due to limitations introduced in patch 6.2.2, health text on nameplates is not known until the first mouseover/target of that frame. This value can be cached and restored for players, where names are reasonably unique, but not for NPCs.'
+                            }
                         }
                     },
                     smooth = {

@@ -16,12 +16,18 @@ function mod:GUIDStored(msg,f,unit)
     f:OnHealthValueChanged()
 
     if UnitIsPlayer(unit) then
+        -- store health with GUID
         health_cache[f.guid] = f.health.health_max_snapshot
         tinsert(cache_index, f.guid)
+    else
+        -- store health with name
+        -- since most NPCs with the same name have equal-ish health
+        health_cache[f.name.text] = f.health.health_max_snapshot
+        tinsert(cache_index, f.name.text)
+    end
 
-        if #cache_index > 100 then
-            health_cache[tremove(cache_index, 1)] = nil
-        end
+    if #cache_index > 100 then
+        health_cache[tremove(cache_index, 1)] = nil
     end
 end
 function mod:PostHide(msg,f)
@@ -30,8 +36,13 @@ end
 function mod:PostShow(msg,f)
     if f.guid and health_cache[f.guid] then
         f.health.health_max_snapshot = health_cache[f.guid]
-        f:OnHealthValueChanged()
+    elseif f.name.text and health_cache[f.name.text] then
+        f.health.health_max_snapshot = health_cache[f.name.text]
+    else
+        return
     end
+
+    f:OnHealthValueChanged()
 end
 function mod:OnInitialize()
     self:SetEnabledState(true)
