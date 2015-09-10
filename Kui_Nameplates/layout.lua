@@ -240,7 +240,7 @@ local function OnFrameEnter(self)
         self.highlight:Show()
     end
 
-    if profile_hp.text.mouseover then
+    if profile_hp.text.mouseover and not self.trivial then
         self.health.p:Show()
     end
 end
@@ -517,7 +517,7 @@ local function UpdateFrameCritical(self)
                 -- move this frame above others
                 self:SetFrameLevel(3)
 
-                if profile_hp.text.mouseover then
+                if profile_hp.text.mouseover and not self.trivial then
                     self.health.p:Show()
                 end
 
