@@ -165,22 +165,22 @@ local OnHealthValueChanged = function(oldBar, curr)
     local frame = oldBar.kuiParent.kui
 
     -- store values for external access
-    frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
-    frame.health.curr = curr
-    frame.health.percent = floor(frame.health.curr / frame.health.max * 100)
+    if frame.health.health_max_snapshot then
+        -- 6.2.2 workaround values
+        frame.health.min = 0
+        frame.health.max = frame.health.health_max_snapshot
+        frame.health.curr = frame.health.health_max_snapshot * oldBar:GetValue()
+        frame.health.percent = oldBar:GetValue() * 100
+    else
+        frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
+        frame.health.curr = curr
+        frame.health.percent = floor(frame.health.curr / frame.health.max * 100)
+    end
 
     frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
     frame.health:SetValue(frame.health.curr)
 
-    if frame.health.percent and frame.health.percent < 100 then
-        frame.health.p:SetText(frame.health.percent)
-    else
-        frame.health.p:SetText('')
-    end
-
-    if frame.health.mo then
-        frame.health.mo:SetText('')
-    end
+    frame.health.p:SetText(frame.health.curr)
 end
 ------------------------------------------------------- Frame script handlers --
 local function OnFrameEnter(self)

@@ -19,3 +19,4 @@ modules\combopoints.lua
 modules\tankmode.lua
 modules\lowhealth.lua
 modules\nemesis.lua
+modules\healthpatch.lua
