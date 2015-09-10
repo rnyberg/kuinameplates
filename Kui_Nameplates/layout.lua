@@ -254,7 +254,7 @@ local function OnFrameLeave(self)
         self.highlight:Hide()
     end
 
-    if profile_hp.text.mouseover and self.health and not self.target then
+    if profile_hp.text.mouseover and not self.target then
         self.health.p:Hide()
     end
 end
@@ -354,7 +354,7 @@ local function OnFrameHide(self)
     f.healthColourPriority = nil
 
     -- force un-highlight
-    OnFrameLeave(self)
+    OnFrameLeave(f)
     if f.highlight then
         f.highlight:Hide()
     end
