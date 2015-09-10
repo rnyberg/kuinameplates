@@ -141,36 +141,6 @@ function addon:UpdateHealthText(f, trivial)
         end
     end
 end
-------------------------------------------------------------- Alt health text --
-function addon:CreateAltHealthText(frame, f)
-    f.health.mo = f:CreateFontString(f.overlay, {
-        font = self.font, size = 'small', alpha = .6, outline = "OUTLINE" })
-
-    f.health.mo:SetHeight(10)
-    f.health.mo:SetJustifyH('RIGHT')
-    f.health.mo:SetJustifyV('BOTTOM')
-
-    if self.db.profile.hp.mouseover then
-        f.health.mo:Hide()
-    end
-end
-function addon:UpdateAltHealthText(f, trivial)
-    if not f.health.mo then return end
-    if trivial then
-        f.health.mo:Hide()
-    else
-        if not self.db.profile.hp.mouseover then
-            f.health.mo:Show()
-        end
-
-        if self.db.profile.general.leftie then
-            f.health.mo:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
-                                 -2.5, self.db.profile.text.healthoffset + 3)
-        else
-            f.health.mo:SetPoint('BOTTOMRIGHT', f.health.p, 'BOTTOMLEFT',0, 0)
-        end
-    end
-end
 ------------------------------------------------------------------ Level text --
 function addon:CreateLevel(frame, f)
     if not f.level then return end

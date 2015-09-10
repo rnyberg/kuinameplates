@@ -396,7 +396,6 @@ addon.configChangedFuncs.runOnce.healthoffset = function(val)
 end
 addon.configChangedFuncs.healthoffset = function(frame, val)
     addon:UpdateHealthText(frame, frame.trivial)
-    addon:UpdateAltHealthText(frame, frame.trivial)
     addon:UpdateLevel(frame, frame.trivial)
     addon:UpdateName(frame, frame.trivial)
 end
