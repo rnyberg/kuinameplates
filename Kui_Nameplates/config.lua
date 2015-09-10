@@ -21,7 +21,7 @@ do
     }
 
     local HealthTextSelectList = {
-        'Current', 'Maximum', 'Percent', 'Deficit', 'Blank'
+        'Current |cff888888(145k)', 'Maximum |cff888888(156k)', 'Percent |cff888888(93)', 'Deficit |cff888888(-10.9k)', 'Blank |cff888888(  )'
     }
 
     local globalConfigChangedListeners = {}
