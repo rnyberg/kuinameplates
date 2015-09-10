@@ -242,7 +242,6 @@ local function OnFrameEnter(self)
 
     if profile_hp.text.mouseover then
         self.health.p:Show()
-        if self.health.mo then self.health.mo:Show() end
     end
 end
 local function OnFrameLeave(self)
@@ -257,7 +256,6 @@ local function OnFrameLeave(self)
 
     if profile_hp.text.mouseover and self.health and not self.target then
         self.health.p:Hide()
-        if self.health.mo then self.health.mo:Hide() end
     end
 end
 local function OnFrameShow(self)
@@ -521,7 +519,6 @@ local function UpdateFrameCritical(self)
 
                 if profile_hp.text.mouseover then
                     self.health.p:Show()
-                    if self.health.mo then self.health.mo:Show() end
                 end
 
                 if self.targetGlow then
@@ -567,7 +564,6 @@ local function UpdateFrameCritical(self)
 
             if not self.highlighted and profile_hp.text.mouseover then
                 self.health.p:Hide()
-                if self.health.mo then self.health.mo:Hide() end
             end
         end
     end

@@ -120,7 +120,8 @@ function addon:CreateHealthText(frame, f)
     f.health.p:SetJustifyH('RIGHT')
     f.health.p:SetJustifyV('BOTTOM')
 
-    if self.db.profile.hp.mouseover then
+    if self.db.profile.hp.text.mouseover then
+        -- hide initially
         f.health.p:Hide()
     end
 end
@@ -128,7 +129,7 @@ function addon:UpdateHealthText(f, trivial)
     if trivial then
         f.health.p:Hide()
     else
-        if not self.db.profile.hp.mouseover then
+        if not self.db.profile.hp.text.mouseover then
             f.health.p:Show()
         end
 

@@ -451,7 +451,7 @@ do
                             },
                             mouseover = {
                                 name = 'Mouseover & target only',
-                                desc = 'Show health only on mouseover or on the targeted plate',
+                                desc = 'Only show health text upon mouseover or on the current target',
                                 type = 'toggle',
                                 order = 10
                             },
