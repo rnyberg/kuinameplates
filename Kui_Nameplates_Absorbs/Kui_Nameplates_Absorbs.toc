@@ -1,0 +1,7 @@
+## Interface: 60200
+## Author: Kesava
+## Title: Kui |cff9966ffNameplates|r Absorbs
+## Notes: Absorb watcher module for Kui Nameplates
+## Dependencies: Kui_Nameplates
+
+absorbs.lua
