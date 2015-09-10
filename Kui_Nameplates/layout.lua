@@ -11,8 +11,8 @@ local slowUpdateTime, critUpdateTime = 1, .1
 local _
 
 local profile
--- profile keys used OnUpdate
-local profile_fade, profile_fade_rules, profile_lowhealthval
+-- profile keys used often
+local profile_fade, profile_fade_rules, profile_lowhealthval, profile_hp
 
 --@debug@
 --KuiNameplatesDebug=true
@@ -75,22 +75,22 @@ local function SetHealthColour(self,sticky,r,g,b)
         if g > .9 and r == 0 and b == 0 then
             -- friendly NPC
             self.friend = true
-            r, g, b = unpack(profile.hp.reactioncolours.friendlycol)
+            r, g, b = unpack(profile_hp.reactioncolours.friendlycol)
         elseif b > .9 and r == 0 and g == 0 then
             -- friendly player
             self.friend = true
             self.player = true
-            r, g, b = unpack(profile.hp.reactioncolours.playercol)
+            r, g, b = unpack(profile_hp.reactioncolours.playercol)
         elseif r > .9 and g == 0 and b == 0 then
             -- enemy NPC
-            r, g, b = unpack(profile.hp.reactioncolours.hatedcol)
+            r, g, b = unpack(profile_hp.reactioncolours.hatedcol)
         elseif (r + g) > 1.8 and b == 0 then
             -- neutral NPC
-            r, g, b = unpack(profile.hp.reactioncolours.neutralcol)
+            r, g, b = unpack(profile_hp.reactioncolours.neutralcol)
         elseif r < .6 and (r+g) == (r+b) then
             -- tapped NPC
             self.tapped = true
-            r, g, b = unpack(profile.hp.reactioncolours.tappedcol)
+            r, g, b = unpack(profile_hp.reactioncolours.tappedcol)
         else
             -- enemy player, use default UI colour
             self.player = true
@@ -155,32 +155,81 @@ local function GetDesiredAlpha(frame)
     end
 end
 ---------------------------------------------------- Update health bar & text --
-local OnHealthValueChanged = function(oldBar, curr)
-    if oldBar.oldHealth then
-        -- allow calling this as a function of the frame
-        oldBar = oldBar.oldHealth
-        curr = oldBar:GetValue()
+local OnHealthValueChanged
+do
+    local function GetHealthValueFromPatternID(id,frame)
+        -- ids specified in config.lua, HealthTextSelectList
+        if id == 1 then
+            return kui.num(frame.health.curr)
+        elseif id == 2 then
+            return kui.num(frame.health.max)
+        elseif id == 3 then
+            return floor(frame.health.percent)
+        elseif id == 4 then
+            return '-'..(kui.num(frame.health.max - frame.health.curr))
+        elseif id == 5 then
+            return ''
+        end
     end
+    local function SetHealthText(frame)
+        if profile_hp.text.hp_text_disabled then
+            frame.health.p:SetText('')
+            return
+        end
 
-    local frame = oldBar.kuiParent.kui
+        if frame.health.health_max_snapshot then
+            -- workaround logic
+            if frame.friend then
+                if frame.health.curr == frame.health.max then
+                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_friend_max,frame))
+                else
+                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_friend_low,frame))
+                end
+            else
+                if frame.health.curr == frame.health.max then
+                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_hostile_max,frame))
+                else
+                    frame.health.p:SetText(GetHealthValueFromPatternID(profile_hp.text.hp_hostile_low,frame))
+                end
+            end
+        else
+            -- fallback
+            if frame.health.curr == 1 and profile_hp.text.hp_hostile_max ~= 5 then
+                frame.health.p:SetText('100')
+            elseif frame.health.curr < 1 and profile_hp.text.hp_hostile_low ~= 5 then
+                frame.health.p:SetText(floor(frame.health.percent))
+            else
+                frame.health.p:SetText('')
+            end
+        end
+    end
+    OnHealthValueChanged = function(oldBar, curr)
+        if oldBar.oldHealth then
+            -- allow calling this as a function of the frame
+            oldBar = oldBar.oldHealth
+            curr = oldBar:GetValue()
+        end
 
-    -- store values for external access
-    if frame.health.health_max_snapshot then
-        -- 6.2.2 workaround values
-        frame.health.min = 0
-        frame.health.max = frame.health.health_max_snapshot
-        frame.health.curr = frame.health.health_max_snapshot * oldBar:GetValue()
+        local frame = oldBar.kuiParent.kui
         frame.health.percent = oldBar:GetValue() * 100
-    else
-        frame.health.min, frame.health.max = oldBar:GetMinMaxValues()
-        frame.health.curr = curr
-        frame.health.percent = floor(frame.health.curr / frame.health.max * 100)
+
+        -- store values for external access
+        if frame.health.health_max_snapshot then
+            -- 6.2.2 workaround values
+            frame.health.min = 0
+            frame.health.max = frame.health.health_max_snapshot
+            frame.health.curr = frame.health.health_max_snapshot * oldBar:GetValue()
+        else
+            -- fallback logic
+            frame.health.min, frame.health.max = 0,1
+            frame.health.curr = curr
+        end
+
+        frame.health:SetMinMaxValues(0,1)
+        frame.health:SetValue(curr)
+
+        SetHealthText(frame)
     end
-
-    frame.health:SetMinMaxValues(frame.health.min, frame.health.max)
-    frame.health:SetValue(frame.health.curr)
-
-    frame.health.p:SetText(frame.health.curr)
 end
 ------------------------------------------------------- Frame script handlers --
 local function OnFrameEnter(self)
@@ -191,7 +240,7 @@ local function OnFrameEnter(self)
         self.highlight:Show()
     end
 
-    if profile.hp.mouseover then
+    if profile_hp.text.mouseover then
         self.health.p:Show()
         if self.health.mo then self.health.mo:Show() end
     end
@@ -206,7 +255,7 @@ local function OnFrameLeave(self)
         self.highlight:Hide()
     end
 
-    if profile.hp.mouseover and self.health and not self.target then
+    if profile_hp.text.mouseover and self.health and not self.target then
         self.health.p:Hide()
         if self.health.mo then self.health.mo:Hide() end
     end
@@ -471,7 +520,7 @@ local function UpdateFrameCritical(self)
                 -- move this frame above others
                 self:SetFrameLevel(3)
 
-                if profile.hp.mouseover then
+                if profile_hp.text.mouseover then
                     self.health.p:Show()
                     if self.health.mo then self.health.mo:Show() end
                 end
@@ -517,7 +566,7 @@ local function UpdateFrameCritical(self)
                 self.highlight:Hide()
             end
 
-            if not self.highlighted and profile.hp.mouseover then
+            if not self.highlighted and profile_hp.text.mouseover then
                 self.health.p:Hide()
                 if self.health.mo then self.health.mo:Hide() end
             end
@@ -712,10 +761,6 @@ function addon:InitFrame(frame)
     self:CreateHighlight(frame, f)
     self:CreateHealthText(frame, f)
 
-    if profile.hp.showalt then
-        self:CreateAltHealthText(frame, f)
-    end
-
     self:CreateLevel(frame, f)
     self:CreateName(frame, f)
 
@@ -814,6 +859,7 @@ end
 function addon:configChangedListener()
     -- cache values used often to reduce table lookup
     profile = addon.db.profile
+    profile_hp = profile.hp
     profile_fade = profile.fade
     profile_fade_rules = profile_fade.rules
     profile_lowhealthval = profile.general.lowhealthval
