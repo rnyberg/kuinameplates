@@ -17,6 +17,7 @@ modules\castwarnings.lua
 modules\classcolours.lua
 modules\combopoints.lua
 modules\tankmode.lua
+modules\targetarrows.lua
 modules\lowhealth.lua
 modules\nemesis.lua
 modules\healthpatch.lua

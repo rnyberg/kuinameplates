@@ -341,10 +341,6 @@ local function OnFrameHide(self)
         f.targetGlow:Hide()
     end
 
-    if f.targetArrows then
-        f.targetArrows:Hide()
-    end
-
     addon:ClearGUID(f)
 
     -- remove name from store
@@ -531,15 +527,11 @@ local function UpdateFrameCritical(self)
                     self:SetGlowColour(unpack(profile.general.targetglowcolour))
                 end
 
-                if self.targetArrows then
-                    self.targetArrows:Show()
-                end
-
                 if self.highlight and profile.general.highlight_target then
                     self.highlight:Show()
                 end
 
-                addon:SendMessage('KuiNameplates_PostTarget', self)
+                addon:SendMessage('KuiNameplates_PostTarget', self, true)
             end
         end
     else
@@ -559,10 +551,6 @@ local function UpdateFrameCritical(self)
                 self:SetGlowColour()
             end
 
-            if self.targetArrows then
-                self.targetArrows:Hide()
-            end
-
             if self.highlight and profile.general.highlight_target then
                 self.highlight:Hide()
             end
@@ -570,6 +558,8 @@ local function UpdateFrameCritical(self)
             if not self.highlighted and profile_hp.text.mouseover then
                 self.health.p:Hide()
             end
+
+            addon:SendMessage('KuiNameplates_PostTarget', self, nil)
         end
     end
 
@@ -765,10 +755,6 @@ function addon:InitFrame(frame)
     self:CreateName(frame, f)
 
     -- target highlight --------------------------------------------------------
-    if profile.general.targetarrows then
-        self:CreateTargetArrows(f)
-    end
-
     if profile.general.targetglow then
         self:CreateTargetGlow(f)
     end
