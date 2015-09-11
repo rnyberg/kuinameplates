@@ -44,6 +44,7 @@ do
     function mod:CreateThreatBrackets(frame)
         local tb = CreateFrame('Frame',nil,frame.health)
         tb:SetFrameLevel(5) -- one level beneath castbar
+        tb:Hide()
 
         for k,v in ipairs(brackets) do
             local b = tb:CreateTexture(nil,'ARTWORK',nil,-1)
