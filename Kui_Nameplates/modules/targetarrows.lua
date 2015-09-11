@@ -10,14 +10,15 @@ local arrowSize
 
 -- messages ####################################################################
 function mod:PostCreate(msg,f)
-    local ta = CreateFrame('Frame',nil,f.overlay)
+    local ta = CreateFrame('Frame',nil,f)
+    ta:SetFrameLevel(6) -- same as castbar
 
-    ta.left = ta:CreateTexture(nil,'ARTWORK',nil,1)
+    ta.left = ta:CreateTexture(nil,'ARTWORK',nil,-1)
     ta.left:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-arrow')
     ta.left:SetPoint('RIGHT',f.overlay,'LEFT',14,-1)
     ta.left:SetSize(arrowSize,arrowSize)
 
-    ta.right = ta:CreateTexture(nil,'ARTWORK',nil,1)
+    ta.right = ta:CreateTexture(nil,'ARTWORK',nil,-1)
     ta.right:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-arrow')
     ta.right:SetPoint('LEFT',f.overlay,'RIGHT',-14,-1)
     ta.right:SetTexCoord(1,0,0,1)

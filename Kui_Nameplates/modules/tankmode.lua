@@ -43,10 +43,10 @@ do
 
     function mod:CreateThreatBrackets(frame)
         local tb = CreateFrame('Frame',nil,frame.health)
-        tb:Hide()
+        tb:SetFrameLevel(5) -- one level beneath castbar
 
         for k,v in ipairs(brackets) do
-            local b = tb:CreateTexture(nil,'ARTWORK',nil,1)
+            local b = tb:CreateTexture(nil,'ARTWORK',nil,-1)
             b:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\threat-bracket')
             tb[k] = b
         end
