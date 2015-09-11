@@ -6,5 +6,7 @@
 * implement a workaround for health text issues introduced in 6.2.2
 * add option to show "threat brackets" - like the target arrows, but for threat
 * fix smooth health bar setting has no effect in 6.2.2
+* fix target arrows and threat brackets display above the cast bar/spell icon
+* fix health text mouseover option shows text on trivial frames
 * handle default CVars for nameplate castbars and class colours
 * update spell whitelist
