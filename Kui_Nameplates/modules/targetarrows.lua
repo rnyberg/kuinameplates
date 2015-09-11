@@ -11,7 +11,7 @@ local arrowSize
 -- messages ####################################################################
 function mod:PostCreate(msg,f)
     local ta = CreateFrame('Frame',nil,f)
-    ta:SetFrameLevel(6) -- same as castbar
+    ta:SetFrameLevel(1) -- same as castbar/healthbar
 
     ta.left = ta:CreateTexture(nil,'ARTWORK',nil,-1)
     ta.left:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\target-arrow')

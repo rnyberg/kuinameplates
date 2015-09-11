@@ -125,11 +125,11 @@ function mod:CreateCastbar(msg, frame)
     if frame.castbar then return end
     -- container ---------------------------------------------------------------
     frame.castbar = CreateFrame('Frame', nil, frame)
-    frame.castbar:SetFrameLevel(6)
+    frame.castbar:SetFrameLevel(1)
     frame.castbar:Hide()
 
     -- background --------------------------------------------------------------
-    frame.castbar.bg = frame.castbar:CreateTexture(nil, 'BACKGROUND')
+    frame.castbar.bg = frame.castbar:CreateTexture(nil,'ARTWORK',nil,1)
     frame.castbar.bg:SetTexture(kui.m.t.solid)
     frame.castbar.bg:SetVertexColor(0, 0, 0, .8)
 
@@ -139,12 +139,12 @@ function mod:CreateCastbar(msg, frame)
     -- cast bar ------------------------------------------------------------
     frame.castbar.bar = CreateFrame("StatusBar", nil, frame.castbar)
     frame.castbar.bar:SetStatusBarTexture(addon.bartexture)
+    frame.castbar.bar:GetStatusBarTexture():SetDrawLayer('ARTWORK',2)
 
     frame.castbar.bar:SetPoint('TOPLEFT', frame.castbar.bg, 'TOPLEFT', 1, -1)
     frame.castbar.bar:SetPoint('BOTTOMLEFT', frame.castbar.bg, 'BOTTOMLEFT', 1, 1)
     frame.castbar.bar:SetPoint('RIGHT', frame.castbar.bg, 'RIGHT', -1, 0)
 
-    frame.castbar.bar:SetFrameLevel(frame.castbar:GetFrameLevel() + 1)
     frame.castbar.bar:SetMinMaxValues(0, 1)
 
     -- spark

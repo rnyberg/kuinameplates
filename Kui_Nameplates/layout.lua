@@ -743,10 +743,10 @@ function addon:InitFrame(frame)
     self:CreateBackground(frame, f)
     self:CreateHealthBar(frame, f)
 
-    -- overlay (text is parented to this) --------------------------------------
+    -- overlay - frame level above health bar, used for text -------------------
     f.overlay = CreateFrame('Frame', nil, f)
     f.overlay:SetAllPoints(f.health)
-    f.overlay:SetFrameLevel(f.health:GetFrameLevel()+1)
+    f.overlay:SetFrameLevel(2)
 
     self:CreateHighlight(frame, f)
     self:CreateHealthText(frame, f)

@@ -43,7 +43,7 @@ do
 
     function mod:CreateThreatBrackets(frame)
         local tb = CreateFrame('Frame',nil,frame.health)
-        tb:SetFrameLevel(5) -- one level beneath castbar
+        tb:SetFrameLevel(1) -- same as castbar/healthbar
         tb:Hide()
 
         for k,v in ipairs(brackets) do
