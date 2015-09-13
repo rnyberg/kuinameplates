@@ -1,5 +1,7 @@
 # Kui Nameplates
-Prettier nameplates. Download releases [at Curse](http://www.curse.com/addons/wow/kuinameplates). Zips under the releases tab on GitHub are not complete packages!
+Prettier nameplates. Download releases [at Curse](http://www.curse.com/addons/wow/kuinameplates).
+
+**Zips under the releases tab on GitHub are not complete packages!**
 
 I have a problem/question!
 ---
