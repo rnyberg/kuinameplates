@@ -148,6 +148,8 @@ do
         if f.player and knownGUIDs[f.name.text] then
             f.guid = knownGUIDs[f.name.text]
             loadedGUIDs[f.guid] = f
+
+            addon:SendMessage('KuiNameplates_GUIDAssumed', f)
         end
     end
     function addon:StoreGUID(f, unit)

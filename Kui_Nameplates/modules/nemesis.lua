@@ -191,6 +191,7 @@ function mod:SoftDisable()
     -- stop watching combat/quest log but still create elements
     -- still watch PLAYER_ENTERING_WORLD to reactivate upon entering draenor
     self:UnregisterMessage('KuiNameplates_GUIDStored')
+    self:UnregisterMessage('KuiNameplates_GUIDAssumed')
     self:UnregisterMessage('KuiNameplates_PostShow')
     self:UnregisterMessage('KuiNameplates_PostHide')
 
@@ -200,6 +201,7 @@ function mod:SoftDisable()
 end
 function mod:SoftEnable()
     self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
+    self:RegisterMessage('KuiNameplates_GUIDAssumed', 'GUIDStored')
     self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
     self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
 
