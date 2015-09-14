@@ -11,6 +11,7 @@ local len = string.len
 local utf8sub = LibStub('Kui-1.0').utf8sub
 local orig_SetName
 
+-- mod functions ###############################################################
 -- toggle nameonly mode on
 local function SwitchOn(f)
     if f.friend and not f.player then
@@ -57,7 +58,6 @@ local function SwitchOff(f)
     -- reset name text
     f:SetName()
 end
-
 local function nameonly_SetName(f)
     orig_SetName(f)
 
@@ -69,7 +69,6 @@ local function nameonly_SetName(f)
         '|cff555555'..utf8sub(f.name.text, health_length+1)
     )
 end
-
 local function OnHealthValueChanged(oldHealth)
     if not mod.db.profile.enabled then return end
     local f = oldHealth.kuiParent.kui
@@ -80,11 +79,10 @@ local function OnHealthValueChanged(oldHealth)
         SwitchOff(f)
     else
         SwitchOn(f)
-        -- set name colour depending on health
         f:SetName()
     end
 end
-
+-- message listeners ###########################################################
 function mod:PostShow(msg,f)
     OnHealthValueChanged(f.oldHealth)
 end
@@ -100,7 +98,27 @@ end
 function mod:PostTarget(msg,f)
     OnHealthValueChanged(f.oldHealth)
 end
-
+-- post db change functions ####################################################
+mod.configChangedFuncs = { runOnce = {} }
+mod.configChangedFuncs.runOnce.enabled = function(v)
+    if v then
+        mod:Enable()
+    else
+        mod:Disable()
+    end
+end
+mod.configChangedFuncs.enabled = function(f,v)
+    if v then
+        OnHealthValueChanged(f.oldHealth)
+    else
+        SwitchOff(f)
+    end
+end
+mod.configChangedFuncs.ondamaged = function(f)
+    if not mod.db.profile.enabled then return end
+    OnHealthValueChanged(f.oldHealth)
+end
+-- initialise ##################################################################
 function mod:GetOptions()
     return {
         enabled = {
@@ -122,27 +140,6 @@ function mod:GetOptions()
         }
     }
 end
-
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.enabled = function(v)
-    if v then
-        mod:Enable()
-    else
-        mod:Disable()
-    end
-end
-mod.configChangedFuncs.enabled = function(f,v)
-    if v then
-        OnHealthValueChanged(f.oldHealth)
-    else
-        SwitchOff(f)
-    end
-end
-mod.configChangedFuncs.ondamaged = function(f)
-    if not mod.db.profile.enabled then return end
-    OnHealthValueChanged(f.oldHealth)
-end
-
 function mod:OnInitialize()
     self:SetEnabledState(true)
 
