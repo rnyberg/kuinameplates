@@ -55,7 +55,7 @@ local function OnHealthValueChanged(oldHealth)
 end
 
 function mod:PostShow(msg,f)
-    if not f.friendly then
+    if not f.friend then
         f.nameonly_ignore = true
     else
         f.nameonly_ignore = nil
