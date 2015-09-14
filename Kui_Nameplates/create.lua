@@ -89,7 +89,7 @@ function addon:CreateHealthBar(frame, f)
     f.health = CreateFrame('StatusBar', nil, f)
     f.health:SetFrameLevel(1)
     f.health:SetStatusBarTexture(addon.bartexture)
-	f.health.percent = 100
+    f.health.percent = 100
 
     f.health:GetStatusBarTexture():SetDrawLayer('ARTWORK',-8)
 
@@ -196,18 +196,18 @@ end
 function addon:UpdateName(f, trivial)
     f.name:ClearAllPoints()
 
-	-- silly hacky way of fixing horizontal jitter with center aligned texts
-	local offset
-	if trivial or not self.db.profile.general.leftie then
-		local swidth = f.name:GetStringWidth()
-		swidth = swidth - abs(swidth)
-		offset = (swidth > .7 or swidth < .2) and .5 or 0
-	end
+    -- silly hacky way of fixing horizontal jitter with center aligned texts
+    local offset
+    if trivial or not self.db.profile.general.leftie then
+        local swidth = f.name:GetStringWidth()
+        swidth = swidth - abs(swidth)
+        offset = (swidth > .7 or swidth < .2) and .5 or 0
+    end
 
     if trivial then
         f.name:SetPoint('BOTTOM', f.health, 'TOP', offset, -self.db.profile.text.healthoffset)
-		f.name:SetWidth(addon.sizes.frame.twidth * 2)
-		f.name:SetJustifyH('CENTER')
+        f.name:SetWidth(addon.sizes.frame.twidth * 2)
+        f.name:SetJustifyH('CENTER')
     else
         if self.db.profile.general.leftie then
             f.name:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
@@ -219,7 +219,7 @@ function addon:UpdateName(f, trivial)
             -- move to top center
             f.name:SetPoint('BOTTOM', f.health, 'TOP',
                             offset, -self.db.profile.text.healthoffset)
-			f.name:SetWidth(addon.sizes.frame.width * 2)
+            f.name:SetWidth(addon.sizes.frame.width * 2)
             f.name:SetJustifyH('CENTER')
         end
     end
