@@ -10,6 +10,7 @@ mod.uiName = "Name-only display"
 local len = string.len
 local utf8sub = LibStub('Kui-1.0').utf8sub
 local orig_SetName
+local hooked
 
 -- mod functions ###############################################################
 -- toggle nameonly mode on
@@ -86,6 +87,10 @@ local function UpdateNameOnly(f)
         f:SetName()
     end
 end
+local function HookSetName(f)
+    orig_SetName = f.SetName
+    f.SetName = nameonly_SetName
+end
 -- message listeners ###########################################################
 function mod:PostShow(msg,f)
     UpdateNameOnly(f)
@@ -96,11 +101,12 @@ end
 function mod:PostCreate(msg,f)
     f.oldHealth:HookScript('OnValueChanged',UpdateNameOnly)
 
-    orig_SetName = f.SetName
-    f.SetName = nameonly_SetName
+    if self.db.profile.enabled and self.db.profile.ondamaged then
+        HookSetName(f)
+    end
 end
 function mod:PostTarget(msg,f)
-    UpdateNameOnly(f.oldHealth)
+    UpdateNameOnly(f)
 end
 -- post db change functions ####################################################
 mod.configChangedFuncs = { runOnce = {} }
@@ -113,14 +119,18 @@ mod.configChangedFuncs.runOnce.enabled = function(v)
 end
 mod.configChangedFuncs.enabled = function(f,v)
     if v then
-        UpdateNameOnly(f.oldHealth)
+        if mod.db.profile.ondamaged and f.SetName ~= nameonly_SetName then
+            HookSetName(f)
+        end
+
+        UpdateNameOnly(f)
     else
         SwitchOff(f)
     end
 end
 mod.configChangedFuncs.ondamaged = function(f)
     if not mod.db.profile.enabled then return end
-    UpdateNameOnly(f.oldHealth)
+    mod.configChangedFuncs.enabled(f,true)
 end
 -- initialise ##################################################################
 function mod:GetOptions()
