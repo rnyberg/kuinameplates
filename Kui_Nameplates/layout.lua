@@ -769,6 +769,9 @@ function addon:InitFrame(frame)
     if _G['KuiNameplatesDrawFrames'] then
         frame:SetBackdrop({bgFile=kui.m.t.solid})
         frame:SetBackdropColor(1, 1, 1, .5)
+
+        f.overlay:SetBackdrop({ bgFile = kui.m.t.solid })
+        f.overlay:SetBackdropColor(1,1,1)
     end
 
     if _G['KuiNameplatesDebug'] then
