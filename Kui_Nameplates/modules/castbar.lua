@@ -159,9 +159,9 @@ function mod:CreateCastbar(msg, frame)
     -- uninterruptible cast shield -----------------------------------------
     frame.castbar.shield = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
     frame.castbar.shield:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\Shield')
-    frame.castbar.shield:SetTexCoord(0, .8125, 0, 1)
+    frame.castbar.shield:SetTexCoord(0, .84375, 0, 1)
 
-    frame.castbar.shield:SetSize(sizes.shield * .8125, sizes.shield)
+    frame.castbar.shield:SetSize(sizes.shield * .84375, sizes.shield)
     frame.castbar.shield:SetPoint('LEFT', frame.castbar.bg, -7, 0)
 
     frame.castbar.shield:SetBlendMode('BLEND')
