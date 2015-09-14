@@ -53,6 +53,9 @@ local function SwitchOff(f)
 
     -- reposition name
     addon:UpdateName(f,f.trivial)
+
+    -- reset name text
+    f:SetName()
 end
 
 local function nameonly_SetName(f)
@@ -70,14 +73,16 @@ end
 local function OnHealthValueChanged(oldHealth)
     if not mod.db.profile.enabled then return end
     local f = oldHealth.kuiParent.kui
-    if f.target or not f.friend then
+
+    if (f.target or not f.friend) or
+       (not mod.db.profile.ondamaged and f.health.curr < f.health.max)
+    then
         SwitchOff(f)
     else
         SwitchOn(f)
+        -- set name colour depending on health
+        f:SetName()
     end
-
-    -- correct the name colour
-    f:SetName()
 end
 
 function mod:PostShow(msg,f)
@@ -132,6 +137,10 @@ mod.configChangedFuncs.enabled = function(f,v)
     else
         SwitchOff(f)
     end
+end
+mod.configChangedFuncs.ondamaged = function(f)
+    if not mod.db.profile.enabled then return end
+    OnHealthValueChanged(f.oldHealth)
 end
 
 function mod:OnInitialize()
