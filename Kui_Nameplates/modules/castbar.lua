@@ -39,6 +39,7 @@ local function OnDefaultCastbarShow(self)
     -- is cast uninterruptible?
     if f.shield:IsShown() then
         f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
+        f.castbar.shield:SetVertexColor(unpack(mod.db.profile.display.shieldbarcolour))
         f.castbar.shield:Show()
     else
         f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.barcolour))
@@ -158,14 +159,13 @@ function mod:CreateCastbar(msg, frame)
     -- uninterruptible cast shield -----------------------------------------
     frame.castbar.shield = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
     frame.castbar.shield:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\Shield')
-    frame.castbar.shield:SetTexCoord(0, .53125, 0, .625)
+    frame.castbar.shield:SetTexCoord(0, .8125, 0, 1)
 
-    frame.castbar.shield:SetSize(sizes.shieldw, sizes.shieldh)
+    frame.castbar.shield:SetSize(sizes.shield * .8125, sizes.shield)
     frame.castbar.shield:SetPoint('LEFT', frame.castbar.bg, -7, 0)
 
     frame.castbar.shield:SetBlendMode('BLEND')
     frame.castbar.shield:SetDrawLayer('ARTWORK', 7)
-    frame.castbar.shield:SetVertexColor(1,1,1)
 
     frame.castbar.shield:Hide()
 
@@ -350,8 +350,7 @@ function mod:OnInitialize()
 
     sizes = {
         cbheight = self.db.profile.display.cbheight,
-        shieldw = 13,
-        shieldh = 15
+        shield = 16
     }
 
     self.configChangedFuncs.runOnce.cbheight(sizes.cbheight)
