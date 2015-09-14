@@ -5,6 +5,7 @@
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('NameOnly', 'AceEvent-3.0')
+mod.uiName = "Name-only display"
 
 local len = string.len
 local utf8sub = LibStub('Kui-1.0').utf8sub
@@ -67,6 +68,7 @@ local function nameonly_SetName(f)
 end
 
 local function OnHealthValueChanged(oldHealth)
+    if not mod.db.profile.enabled then return end
     local f = oldHealth.kuiParent.kui
     if f.target or not f.friend then
         SwitchOff(f)
@@ -74,6 +76,7 @@ local function OnHealthValueChanged(oldHealth)
         SwitchOn(f)
     end
 
+    -- correct the name colour
     f:SetName()
 end
 
@@ -93,12 +96,66 @@ function mod:PostTarget(msg,f)
     OnHealthValueChanged(f.oldHealth)
 end
 
+function mod:GetOptions()
+    return {
+        enabled = {
+            name = 'Only show name of friendly units',
+            desc = 'Change the layout of friendly nameplates so as to only show their names.',
+            type = 'toggle',
+            width = 'full',
+            order = 0
+        },
+        ondamaged = {
+            name = 'Even when damaged',
+            desc = 'Only show the name of damaged friendly nameplates, too. Their name will be coloured as a percentage of health remaining.',
+            type = 'toggle',
+            width = 'full',
+            order = 10,
+            disabled = function()
+                return not mod.db.profile.enabled
+            end
+        }
+    }
+end
+
+mod.configChangedFuncs = { runOnce = {} }
+mod.configChangedFuncs.runOnce.enabled = function(v)
+    if v then
+        mod:Enable()
+    else
+        mod:Disable()
+    end
+end
+mod.configChangedFuncs.enabled = function(f,v)
+    if v then
+        OnHealthValueChanged(f.oldHealth)
+    else
+        SwitchOff(f)
+    end
+end
+
 function mod:OnInitialize()
     self:SetEnabledState(true)
+
+    self.db = addon.db:RegisterNamespace(self.moduleName, {
+        profile = {
+            enabled = false,
+            ondamaged = true,
+        }
+    })
+
+    addon:InitModuleOptions(self)
+    self:SetEnabledState(self.db.profile.enabled)
 end
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostHide','PostHide')
     self:RegisterMessage('KuiNameplates_PostShow','PostShow')
     self:RegisterMessage('KuiNameplates_PostCreate','PostCreate')
     self:RegisterMessage('KuiNameplates_PostTarget','PostTarget')
+end
+function mod:OnDisable()
+    self:UnregisterMessage('KuiNameplates_PostHide','PostHide')
+    self:UnregisterMessage('KuiNameplates_PostShow','PostShow')
+    self:UnregisterMessage('KuiNameplates_PostCreate','PostCreate')
+    self:UnregisterMessage('KuiNameplates_PostTarget','PostTarget')
 end
