@@ -325,7 +325,7 @@ function mod:GetOptions()
                     type = 'range',
                     step = 1,
                     min = 3,
-                    softMax = 10,
+                    softMax = 20,
                     max = 100
                 },
             }
