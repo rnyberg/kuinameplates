@@ -6,8 +6,17 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('NameOnly', 'AceEvent-3.0')
 
+local len = string.len
+local utf8sub = LibStub('Kui-1.0').utf8sub
+local orig_SetName
+
 -- toggle nameonly mode on
 local function SwitchOn(f)
+    if f.friend and not f.player then
+        -- color NPC names
+        f.name:SetTextColor(.6,1,.6)
+    end
+
     if f.nameonly then return end
     f.nameonly = true
 
@@ -17,10 +26,6 @@ local function SwitchOn(f)
     f.name:SetParent(f)
     f.name:ClearAllPoints()
     f.name:SetPoint('CENTER')
-
-    if f.friend and not f.player then
-        f.name:SetTextColor(.6,1,.6)
-    end
 
     f.health:Hide()
     f.overlay:Hide()
@@ -49,24 +54,27 @@ local function SwitchOff(f)
     addon:UpdateName(f,f.trivial)
 end
 
+local function nameonly_SetName(f)
+    orig_SetName(f)
+
+    if not f.health.curr or not f.nameonly then return end
+
+    local health_length = len(f.name.text) * (f.health.curr / f.health.max)
+    f.name:SetText(
+        utf8sub(f.name.text, 0, health_length)..
+        '|cff555555'..utf8sub(f.name.text, health_length+1)
+    )
+end
+
 local function OnHealthValueChanged(oldHealth)
     local f = oldHealth.kuiParent.kui
-
-    if not f.friend then
-        if f.nameonly then
-            SwitchOff(f)
-        end
-        return
-    end
-
-    local _,max = oldHealth:GetMinMaxValues()
-    local cur = oldHealth:GetValue()
-
-    if cur == max then
-        SwitchOn(f)
-    else
+    if f.target or not f.friend then
         SwitchOff(f)
+    else
+        SwitchOn(f)
     end
+
+    f:SetName()
 end
 
 function mod:PostShow(msg,f)
@@ -77,14 +85,12 @@ function mod:PostHide(msg,f)
 end
 function mod:PostCreate(msg,f)
     f.oldHealth:HookScript('OnValueChanged',OnHealthValueChanged)
+
+    orig_SetName = f.SetName
+    f.SetName = nameonly_SetName
 end
-function mod:PostTarget(msg,f,is_target)
-    if is_target then
-        -- never nameonly the target
-        SwitchOff(f)
-    else
-        OnHealthValueChanged(f.oldHealth)
-    end
+function mod:PostTarget(msg,f)
+    OnHealthValueChanged(f.oldHealth)
 end
 
 function mod:OnInitialize()

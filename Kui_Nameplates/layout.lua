@@ -70,7 +70,7 @@ local function SetHealthColour(self,sticky,r,g,b)
     then
         -- store the default colour
         self.health.r, self.health.g, self.health.b = r, g, b
-        self.health.reset, self.friend, self.player, self.tapped = nil, nil, nil, nil
+        self.health.reset, self.player, self.tapped = nil, nil, nil, nil
 
         if g > .9 and r == 0 and b == 0 then
             -- friendly NPC
@@ -83,16 +83,20 @@ local function SetHealthColour(self,sticky,r,g,b)
             r, g, b = unpack(profile_hp.reactioncolours.playercol)
         elseif r > .9 and g == 0 and b == 0 then
             -- enemy NPC
+            self.friend = nil
             r, g, b = unpack(profile_hp.reactioncolours.hatedcol)
         elseif (r + g) > 1.8 and b == 0 then
             -- neutral NPC
+            self.friend = nil
             r, g, b = unpack(profile_hp.reactioncolours.neutralcol)
         elseif r < .6 and (r+g) == (r+b) then
             -- tapped NPC
+            -- keep previous self.friend value
             self.tapped = true
             r, g, b = unpack(profile_hp.reactioncolours.tappedcol)
         else
             -- enemy player, use default UI colour
+            self.friend = nil
             self.player = true
         end
 
@@ -363,6 +367,7 @@ local function OnFrameHide(self)
     -- unset stored health bar colours
     f.health.r, f.health.g, f.health.b, f.health.reset
         = nil, nil, nil, nil
+    f.friend = nil
 
     addon:SendMessage('KuiNameplates_PostHide', f)
 end
