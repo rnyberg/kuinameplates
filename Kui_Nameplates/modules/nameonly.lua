@@ -59,6 +59,7 @@ local function SwitchOff(f)
     -- reset name text
     f:SetName()
 end
+-- SetName hook, to set name's colour based on health
 local function nameonly_SetName(f)
     orig_SetName(f)
 
@@ -70,6 +71,11 @@ local function nameonly_SetName(f)
         '|cff555555'..utf8sub(f.name.text, health_length+1)
     )
 end
+local function HookSetName(f)
+    orig_SetName = f.SetName
+    f.SetName = nameonly_SetName
+end
+-- toggle name-only display mode
 local function UpdateNameOnly(f)
     if not mod.db.profile.enabled then return end
 
@@ -87,10 +93,6 @@ local function UpdateNameOnly(f)
         f:SetName()
     end
 end
-local function HookSetName(f)
-    orig_SetName = f.SetName
-    f.SetName = nameonly_SetName
-end
 -- message listeners ###########################################################
 function mod:PostShow(msg,f)
     UpdateNameOnly(f)
@@ -100,8 +102,9 @@ function mod:PostHide(msg,f)
 end
 function mod:PostCreate(msg,f)
     f.oldHealth:HookScript('OnValueChanged',UpdateNameOnly)
+    f.nameonly_hooked = true
 
-    if self.db.profile.enabled and self.db.profile.ondamaged then
+    if self.db.profile.ondamaged then
         HookSetName(f)
     end
 end
@@ -119,6 +122,10 @@ mod.configChangedFuncs.runOnce.enabled = function(v)
 end
 mod.configChangedFuncs.enabled = function(f,v)
     if v then
+        if not f.nameonly_hooked then
+            mod:PostCreate(nil,f)
+        end
+
         if mod.db.profile.ondamaged and f.SetName ~= nameonly_SetName then
             HookSetName(f)
         end
@@ -164,8 +171,6 @@ function mod:OnInitialize()
         }
     })
 
-    self:RegisterMessage('KuiNameplates_PostCreate','PostCreate')
-
     addon:InitModuleOptions(self)
     self:SetEnabledState(self.db.profile.enabled)
 end
@@ -173,9 +178,11 @@ function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostHide','PostHide')
     self:RegisterMessage('KuiNameplates_PostShow','PostShow')
     self:RegisterMessage('KuiNameplates_PostTarget','PostTarget')
+    self:RegisterMessage('KuiNameplates_PostCreate','PostCreate')
 end
 function mod:OnDisable()
     self:UnregisterMessage('KuiNameplates_PostHide','PostHide')
     self:UnregisterMessage('KuiNameplates_PostShow','PostShow')
     self:UnregisterMessage('KuiNameplates_PostTarget','PostTarget')
+    self:UnregisterMessage('KuiNameplates_PostCreate','PostCreate')
 end
