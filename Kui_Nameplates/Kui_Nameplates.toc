@@ -21,3 +21,4 @@ modules\targetarrows.lua
 modules\lowhealth.lua
 modules\nemesis.lua
 modules\healthpatch.lua
+modules\nameonly.lua
