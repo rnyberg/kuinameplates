@@ -585,7 +585,7 @@ function mod:GetOptions()
                     desc = 'Increases memory usage.',
                     type = 'toggle',
                     order = 10,
-                    width = 'double',
+                    width = 'full',
                 },
                 timerThreshold = {
                     name = 'Timer threshold (s)',

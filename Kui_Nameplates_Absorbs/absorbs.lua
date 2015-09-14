@@ -115,7 +115,7 @@ function mod:GetOptions()
             name = 'Show total absorbs',
             desc = 'Display total absorbs over the target\'s health bar',
             type = 'toggle',
-            width = 'double',
+            width = 'full',
             order = 10,
             disabled = false
         },

@@ -226,7 +226,7 @@ function mod:GetOptions()
         enabled = {
             name = 'Show race icons on nemesis targets',
             desc = 'Show race icons besides the nameplates of your current nemesis targets. This is only active while in the open world of Draenor and while you have an active nemesis quest (kill 500...).',
-            width = 'double',
+            width = 'full',
             type = 'toggle',
             order = 1,
             disabled = false

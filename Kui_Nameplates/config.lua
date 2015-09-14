@@ -143,13 +143,19 @@ do
         args = {
             header = {
                 type = 'header',
-                name = '|cffff4444Many options currently require a UI reload to take effect.|r',
+                name = '|cffff6666Many options currently require a UI reload to take effect',
                 order = 0
+            },
+            reload = {
+                name = 'Reload UI',
+                type = 'execute',
+                order = 1,
+                func = ReloadUI
             },
             general = {
                 name = 'General display',
                 type = 'group',
-                order = 1,
+                order = 10,
                 args = {
                     combataction_hostile = {
                         name = 'Combat action: hostile',
@@ -207,7 +213,7 @@ do
                         desc = 'The frame glow is used to indicate threat. It becomes black when a unit has no threat status. Disabling this option will make it transparent instead.',
                         type = 'toggle',
                         order = 70,
-                        width = 'double'
+                        width = 'full'
                     },
                     targetglow = {
                         name = 'Show target glow',
@@ -229,7 +235,7 @@ do
                         desc = 'Show arrows around your target\'s nameplate. They will inherit the colour of the target glow, set above.',
                         type = 'toggle',
                         order = 100,
-                        width = 'double'
+                        width = 'full'
                     },
                     hheight = {
                         name = 'Health bar height',
@@ -298,46 +304,25 @@ do
             fade = {
                 name = 'Frame fading',
                 type = 'group',
-                order = 2,
+                order = 20,
                 args = {
-                    fadedalpha = {
-                        name = 'Faded alpha',
-                        desc = 'The alpha value to which plates fade out to',
-                        type = 'range',
-                        min = 0,
-                        max = 1,
-                        bigStep = .01,
-                        isPercent = true,
-                        order = 4
-                    },
-                    fademouse = {
-                        name = 'Fade in with mouse',
-                        desc = 'Fade plates in on mouse-over',
-                        type = 'toggle',
-                        order = 1
-                    },
-                    fadeall = {
-                        name = 'Fade all frames',
-                        desc = 'Fade out all frames by default (rather than in)',
-                        type = 'toggle',
-                        order = 2
-                    },
                     smooth = {
                         name = 'Smoothly fade',
                         desc = 'Smoothly fade plates in/out (fading is instant when disabled)',
                         type = 'toggle',
                         order = 0
                     },
-                    fadespeed = {
-                        name = 'Smooth fade speed',
-                        desc = 'Fade animation speed modifier (lower is faster)',
-                        type = 'range',
-                        min = 0,
-                        softMax = 5,
-                        order = 3,
-                        disabled = function(info)
-                            return not addon.db.profile.fade.smooth
-                        end
+                    fademouse = {
+                        name = 'Fade in with mouse',
+                        desc = 'Fade plates in on mouse-over',
+                        type = 'toggle',
+                        order = 5
+                    },
+                    fadeall = {
+                        name = 'Fade all frames',
+                        desc = 'Fade out all frames by default (rather than in)',
+                        type = 'toggle',
+                        order = 10
                     },
                     rules = {
                         name = 'Fading rules',
@@ -371,13 +356,41 @@ do
                             },
                         },
                     },
+                    fadedalpha = {
+                        name = 'Faded alpha',
+                        desc = 'The alpha value to which plates fade out to',
+                        type = 'range',
+                        min = 0,
+                        max = 1,
+                        bigStep = .01,
+                        isPercent = true,
+                        order = 30
+                    },
+                    fadespeed = {
+                        name = 'Smooth fade speed',
+                        desc = 'Fade animation speed modifier (lower is faster)',
+                        type = 'range',
+                        min = 0,
+                        softMax = 5,
+                        order = 40,
+                        disabled = function(info)
+                            return not addon.db.profile.fade.smooth
+                        end
+                    },
                 }
             },
             text = {
                 name = 'Text',
                 type = 'group',
-                order = 3,
+                order = 30,
                 args = {
+                    level = {
+                        name = 'Show levels',
+                        desc = 'Show levels on nameplates',
+                        width = 'full',
+                        type = 'toggle',
+                        order = 0
+                    },
                     healthoffset = {
                         name = 'Health bar text offset',
                         desc = 'Offset of the text on the top and bottom of the health bar: level, name, standard health and contextual health. The offset is reversed for contextual health.\n'..
@@ -386,20 +399,14 @@ do
                         bigStep = .5,
                         softMin = -5,
                         softMax = 10,
-                        order = 1
-                    },
-                    level = {
-                        name = 'Show levels',
-                        desc = 'Show levels on nameplates',
-                        type = 'toggle',
-                        order = 2
+                        order = 10
                     },
                 }
             },
             hp = {
                 name = 'Health display',
                 type = 'group',
-                order = 4,
+                order = 40,
                 args = {
                     reactioncolours = {
                         name = 'Reaction colours',
@@ -503,6 +510,7 @@ do
             fonts = {
                 name = 'Fonts',
                 type = 'group',
+                order = 50,
                 args = {
                     options = {
                         name = 'Global font settings',
@@ -552,13 +560,6 @@ do
                         }
                     },
                 }
-            },
-            reload = {
-                name = 'Reload UI',
-                type = 'execute',
-                width = 'triple',
-                order = 99,
-                func = ReloadUI
             },
         }
     }

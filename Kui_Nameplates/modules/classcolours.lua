@@ -81,14 +81,14 @@ function mod:GetOptions()
             name = 'Class colour friendly player names',
             desc = 'Class colour the names of friendly players and dim the names of friendly players with no class information. Note that friendly players will only become class coloured once you mouse over their frames, at which point their class will be cached.',
             type = 'toggle',
-            width = 'double',
+            width = 'full',
             order = 10
         },
         enemy = {
             name = 'Class colour hostile players\' health bars',
             desc = 'Class colour the health bars of hostile players, where they are attackable. This is a default interface option.',
             type = 'toggle',
-            width = 'double',
+            width = 'full',
             order = 20
         }
     }

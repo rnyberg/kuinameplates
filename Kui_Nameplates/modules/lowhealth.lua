@@ -62,7 +62,7 @@ function mod:GetOptions()
             name = 'Change colour of health bars at low health',
             desc = 'Change the colour of low health units\' health bars. "Low health" is determined by the "Low health value" option under "General display".',
             type = 'toggle',
-            width = 'double',
+            width = 'full',
             order = 10
         },
         over_tankmode = {

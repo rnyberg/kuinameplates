@@ -293,7 +293,7 @@ function mod:GetOptions()
                     name = 'Show cast time',
                     desc = 'Show cast time and time remaining',
                     type = 'toggle',
-                    width = 'double',
+                    width = 'full',
                     order = 20
                 },
                 spellname = {
