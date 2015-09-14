@@ -69,9 +69,13 @@ local function nameonly_SetName(f)
         '|cff555555'..utf8sub(f.name.text, health_length+1)
     )
 end
-local function OnHealthValueChanged(oldHealth)
+local function UpdateNameOnly(f)
     if not mod.db.profile.enabled then return end
-    local f = oldHealth.kuiParent.kui
+
+    if f.kuiParent then
+        -- resolve frame for oldHealth hook
+        f = f.kuiParent.kui
+    end
 
     if (f.target or not f.friend) or
        (not mod.db.profile.ondamaged and f.health.curr < f.health.max)
@@ -84,19 +88,19 @@ local function OnHealthValueChanged(oldHealth)
 end
 -- message listeners ###########################################################
 function mod:PostShow(msg,f)
-    OnHealthValueChanged(f.oldHealth)
+    UpdateNameOnly(f)
 end
 function mod:PostHide(msg,f)
     SwitchOff(f)
 end
 function mod:PostCreate(msg,f)
-    f.oldHealth:HookScript('OnValueChanged',OnHealthValueChanged)
+    f.oldHealth:HookScript('OnValueChanged',UpdateNameOnly)
 
     orig_SetName = f.SetName
     f.SetName = nameonly_SetName
 end
 function mod:PostTarget(msg,f)
-    OnHealthValueChanged(f.oldHealth)
+    UpdateNameOnly(f.oldHealth)
 end
 -- post db change functions ####################################################
 mod.configChangedFuncs = { runOnce = {} }
@@ -109,14 +113,14 @@ mod.configChangedFuncs.runOnce.enabled = function(v)
 end
 mod.configChangedFuncs.enabled = function(f,v)
     if v then
-        OnHealthValueChanged(f.oldHealth)
+        UpdateNameOnly(f.oldHealth)
     else
         SwitchOff(f)
     end
 end
 mod.configChangedFuncs.ondamaged = function(f)
     if not mod.db.profile.enabled then return end
-    OnHealthValueChanged(f.oldHealth)
+    UpdateNameOnly(f.oldHealth)
 end
 -- initialise ##################################################################
 function mod:GetOptions()
@@ -150,18 +154,18 @@ function mod:OnInitialize()
         }
     })
 
+    self:RegisterMessage('KuiNameplates_PostCreate','PostCreate')
+
     addon:InitModuleOptions(self)
     self:SetEnabledState(self.db.profile.enabled)
 end
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostHide','PostHide')
     self:RegisterMessage('KuiNameplates_PostShow','PostShow')
-    self:RegisterMessage('KuiNameplates_PostCreate','PostCreate')
     self:RegisterMessage('KuiNameplates_PostTarget','PostTarget')
 end
 function mod:OnDisable()
     self:UnregisterMessage('KuiNameplates_PostHide','PostHide')
     self:UnregisterMessage('KuiNameplates_PostShow','PostShow')
-    self:UnregisterMessage('KuiNameplates_PostCreate','PostCreate')
     self:UnregisterMessage('KuiNameplates_PostTarget','PostTarget')
 end
