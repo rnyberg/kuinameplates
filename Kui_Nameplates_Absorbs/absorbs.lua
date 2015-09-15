@@ -25,8 +25,8 @@ local missEvents = {
 
 function mod:UpdateAbsorbAmount(frame, amount)
     if amount > 0 then
-        frame.absorb:SetMinMaxValues(frame.health:GetMinMaxValues())
-        frame.absorb:SetValue(amount)
+        frame.absorb:SetMinMaxValues(0,1)
+        frame.absorb:SetValue(amount / frame.health.max)
         frame.absorb:Show()
     else
         frame.absorb:Hide()
