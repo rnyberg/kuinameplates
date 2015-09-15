@@ -233,7 +233,7 @@ do
         if loadedGUIDs[guid] then return end
 
         local name = GetUnitName(unit)
-        if not knownGUIDs[name] then
+        if name and not knownGUIDs[name] then
             addon:StoreNameWithGUID(name,guid)
         end
 
