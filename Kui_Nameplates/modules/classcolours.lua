@@ -110,6 +110,7 @@ function mod:OnInitialize()
     InterfaceOptionsNamesPanel:HookScript('OnShow', function()
         InterfaceOptionsNamesPanelUnitNameplatesNameplateClassColors:Disable()
         InterfaceOptionsNamesPanelUnitNameplatesNameplateClassColors:SetChecked(mod.db.profile.enemy)
+        InterfaceOptionsNamesPanelUnitNameplatesNameplateClassColors.Enable = function() return end
     end)
     InterfaceOptionsFrame:HookScript('OnHide', function()
         -- ensure our options stay applied
