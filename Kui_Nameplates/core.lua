@@ -220,13 +220,7 @@ do
 
     -- return the given unit's nameplate
     function addon:GetUnitPlate(unit)
-        local name,realm = UnitName(unit)
-
-        if realm and UnitRealmRelationship(unit) == LE_REALM_RELATION_COALESCED then
-            name = name .. ' (*)'
-        end
-
-        return self:GetNameplate(UnitGUID(unit), name)
+        return self:GetNameplate(UnitGUID(unit), GetUnitName(unit))
     end
 
     -- store an assumed unique name with guid before it becomes visible
@@ -238,11 +232,8 @@ do
         if not guid then return end
         if loadedGUIDs[guid] then return end
 
-        local name,realm = UnitName(unit)
-        if not name then return end
-
+        local name = GetUnitName(unit)
         if not knownGUIDs[name] then
-            if realm then name = name..' (*)' end
             addon:StoreNameWithGUID(name,guid)
         end
 
