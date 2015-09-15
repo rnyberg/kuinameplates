@@ -494,6 +494,9 @@ function addon:OnInitialize()
     end
 
     addon:CreateConfigChangedListener(addon)
+
+    -- we treat the castbar like a built-in element; call it in InitFrame
+    addon.Castbar = addon:GetModule('Castbar')
 end
 ---------------------------------------------------------------------- enable --
 function addon:OnEnable()

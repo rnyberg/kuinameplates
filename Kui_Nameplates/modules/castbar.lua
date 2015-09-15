@@ -5,7 +5,7 @@
 ]]
 local kui = LibStub('Kui-1.0')
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('CastBar', 'AceEvent-3.0')
+local mod = addon:NewModule('Castbar', 'AceEvent-3.0')
 
 mod.uiName = 'Cast bars'
 
@@ -122,7 +122,7 @@ local function UpdateCastbar(frame)
     end
 end
 
-function mod:CreateCastbar(msg, frame)
+function mod:CreateCastbar(frame)
     if frame.castbar then return end
     -- container ---------------------------------------------------------------
     frame.castbar = CreateFrame('Frame', nil, frame)
@@ -227,7 +227,7 @@ function mod:CreateCastbar(msg, frame)
     frame.oldCastbar:HookScript('OnUpdate', OnDefaultCastbarUpdate)
 end
 ------------------------------------------------------------------------ Hide --
-function mod:HideCastbar(msg, frame)
+function mod:HideCastbar(frame)
     if frame.castbar then
         ResetFade(frame)
     end
@@ -380,19 +380,16 @@ function mod:OnInitialize()
     SetCVars()
 end
 function mod:OnEnable()
-    self:RegisterMessage('KuiNameplates_PostCreate', 'CreateCastbar')
-    self:RegisterMessage('KuiNameplates_PostHide', 'HideCastbar')
-
     local _,frame
     for _, frame in pairs(addon.frameList) do
         if not frame.kui or not frame.kui.castbar then
-            self:CreateCastbar(nil, frame.kui)
+            self:CreateCastbar(frame.kui)
         end
     end
 end
 function mod:OnDisable()
     local _,frame
     for _, frame in pairs(addon.frameList) do
-        self:HideCastbar(nil, frame.kui)
+        self:HideCastbar(frame.kui)
     end
 end

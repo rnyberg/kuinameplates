@@ -757,6 +757,11 @@ function addon:InitFrame(frame)
     self:CreateLevel(frame, f)
     self:CreateName(frame, f)
 
+    -- castbar #################################################################
+    if self.Castbar and self.Castbar.db.profile.enabled then
+        self.Castbar:CreateCastbar(f)
+    end
+
     -- target highlight --------------------------------------------------------
     if profile.general.targetglow then
         self:CreateTargetGlow(f)
