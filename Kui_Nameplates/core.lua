@@ -229,13 +229,32 @@ do
         return self:GetNameplate(UnitGUID(unit), name)
     end
 
-    function addon:UPDATE_MOUSEOVER_UNIT(event)
-        if not UnitIsPlayer('mouseover') then return end
-        -- if mouseover is a player, we can -probably- assign its' GUID
-        local f = self:GetUnitPlate('mouseover')
-        if f and f.player then
-            self:StoreGUID(f, 'mouseover')
+    -- store an assumed unique name with guid before it becomes visible
+    local function StoreUnit(unit)
+        if not unit then return end
+        if not UnitIsPlayer(unit) then return end
+
+        local guid = UnitGUID(unit)
+        if not guid then return end
+        if loadedGUIDs[guid] then return end
+
+        local name,realm = UnitName(unit)
+        if not name then return end
+
+        if not knownGUIDs[name] then
+            if realm then name = name..' (*)' end
+            addon:StoreNameWithGUID(name,guid)
         end
+
+        -- also send GUIDStored if the frame currently exists
+        local f = addon:GetNameplate(guid,name)
+        if f then
+            addon:StoreGUID(f,unit,guid)
+        end
+    end
+
+    function addon:UPDATE_MOUSEOVER_UNIT(event)
+        StoreUnit('mouseover')
     end
 
     local unit_prefix,max_members
@@ -251,20 +270,7 @@ do
         end
 
         for i=1,max_members do
-            local unit = unit_prefix..i
-            local guid = UnitGUID(unit)
-            if guid and not loadedGUIDs[guid] then
-                local name,realm = UnitName(unit)
-
-                if not knownGUIDs[name] then
-                    if realm then name = name..' (*)' end
-                    self:StoreNameWithGUID(name,guid)
-                end
-
-                -- and send GUIDStored if the frame exists
-                local f = self:GetNameplate(guid,name)
-                if f then self:StoreGUID(f,unit,guid) end
-            end
+            StoreUnit(unit_prefix..i)
         end
     end
 end
