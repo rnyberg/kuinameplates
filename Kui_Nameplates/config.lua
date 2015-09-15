@@ -177,7 +177,7 @@ do
                     },
                     fixaa = {
                         name = 'Fix aliasing',
-                        desc = 'Attempt to make plates appear sharper. Has a positive effect on FPS, but will make plates appear a bit "loose", especially at low frame rates. Works best when uiscale is disabled and at larger resolutions (lower resolutions automatically downscale the interface regardless of uiscale setting).'..RELOAD_HINT,
+                        desc = 'Attempt to make plates appear sharper.\nWorks best when WoW\'s UI Scale system option is disabled and at larger resolutions.\n\n|cff88ff88This has a positive effect on performance.|r'..RELOAD_HINT,
                         type = 'toggle',
                         order = 10
                     },

@@ -23,6 +23,14 @@ local profile_fade, profile_fade_rules, profile_lowhealthval, profile_hp
 local select, strfind, strsplit, pairs, ipairs, unpack, tinsert, type, floor
     = select, strfind, strsplit, pairs, ipairs, unpack, tinsert, type, floor
 local UnitExists=UnitExists
+-- non-laggy, pixel perfect positioning ########################################
+local function SizerOnSizeChanged(self,x,y)
+    self.f:Hide()
+    self.f:SetPoint('CENTER',WorldFrame,'BOTTOMLEFT',
+        floor(x),
+        floor(y))
+    self.f:Show()
+end
 ------------------------------------------------------------- Frame functions --
 local function SetFrameCentre(f)
     -- using CENTER breaks pixel-perfectness with oddly sized frames
@@ -331,9 +339,9 @@ local function OnFrameShow(self)
     -- reset glow colour
     f:SetGlowColour()
 
-    f.DoShow = true
     -- dispatch the PostShow message after the first UpdateFrame
     f.DispatchPostShow = true
+    f.DoShow = true
 end
 local function OnFrameHide(self)
     local f = self.kui
@@ -374,28 +382,15 @@ end
 -- stuff that needs to be updated every frame
 local function OnFrameUpdate(self, e)
     local f = self.kui
-
     f.elapsed   = f.elapsed - e
     f.critElap  = f.critElap - e
 
-    if f.fixaa then
-        -- Set position manually
-        -- Otherwise, position is set by SetAllPoints
-        local x,y = f.firstChild:GetCenter()
-        local scale = f.firstChild:GetScale()
-
-        f:SetPoint('CENTER', UIParent, 'BOTTOMLEFT',
-            floor((x / addon.uiscale) * scale),
-            floor((y / addon.uiscale) * scale))
-    end
-
-    -- show the frame after it's been moved so it doesn't flash
+    -- Show during first update to prevent flashyness
     -- .DoShow is set OnFrameShow
     if f.DoShow then
         f:Show()
         f.DoShow = nil
     end
-
     ------------------------------------------------------------------- Alpha --
     f.defaultAlpha = self:GetAlpha()
     f.currentAlpha = GetDesiredAlpha(f)
@@ -623,7 +618,6 @@ function addon:IsNameplate(frame)
         return frame.ArtContainer and true
     end
 end
-
 function addon:InitFrame(frame)
     -- container for kui objects!
     frame.kui = CreateFrame('Frame', nil,
@@ -733,7 +727,11 @@ function addon:InitFrame(frame)
         end
         --@end-debug@
 
-        f.fixaa = true
+        local sizer = CreateFrame('Frame',nil,f)
+        sizer:SetPoint('BOTTOMLEFT',WorldFrame)
+        sizer:SetPoint('TOPRIGHT',frame,'CENTER')
+        sizer:SetScript('OnSizeChanged',SizerOnSizeChanged)
+        sizer.f = f
     else
         f:SetAllPoints(frame)
     end
