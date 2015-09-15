@@ -152,10 +152,12 @@ do
             addon:SendMessage('KuiNameplates_GUIDAssumed', f)
         end
     end
-    function addon:StoreGUID(f, unit)
+    function addon:StoreGUID(f,unit,guid)
         if not unit then return end
-        local guid = UnitGUID(unit)
-        if not guid then return end
+        if not guid then
+            guid = UnitGUID(unit)
+            if not guid then return end
+        end
 
         if f.guid and loadedGUIDs[f.guid] then
             if f.guid ~= guid then
@@ -233,6 +235,36 @@ do
         local f = self:GetUnitPlate('mouseover')
         if f and f.player then
             self:StoreGUID(f, 'mouseover')
+        end
+    end
+
+    local unit_prefix,max_members
+    function addon:GroupUpdate()
+        if GetNumGroupMembers() <= 0 then return end
+
+        if IsInRaid() then
+            unit_prefix = 'raid'
+            max_members = 40
+        else
+            unit_prefix = 'party'
+            max_members = 5
+        end
+
+        for i=1,max_members do
+            local unit = unit_prefix..i
+            local guid = UnitGUID(unit)
+            if guid and not loadedGUIDs[guid] then
+                local name,realm = UnitName(unit)
+
+                if not knownGUIDs[name] then
+                    if realm then name = name..' (*)' end
+                    self:StoreNameWithGUID(name,guid)
+                end
+
+                -- and send GUIDStored if the frame exists
+                local f = self:GetNameplate(guid,name)
+                if f then self:StoreGUID(f,unit,guid) end
+            end
         end
     end
 end
@@ -562,6 +594,7 @@ function addon:OnEnable()
     self:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
     self:RegisterEvent('PLAYER_REGEN_DISABLED')
+    self:RegisterEvent('GROUP_ROSTER_UPDATE', 'GroupUpdate')
 
     self:ScheduleRepeatingTimer('OnUpdate', .1)
 end

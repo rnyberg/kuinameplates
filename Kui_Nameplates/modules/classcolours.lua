@@ -8,6 +8,9 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('ClassColours', 'AceEvent-3.0')
 
+local select,GetPlayerInfoByGUID,tinsert=
+      select,GetPlayerInfoByGUID,tinsert
+
 local cc_table
 local cache = {}
 local cache_index = {}
@@ -23,21 +26,19 @@ function mod:SetClassColour(frame, cc)
     frame.name:SetTextColor(cc.r,cc.g,cc.b)
 end
 -- message handlers ############################################################
-function mod:GUIDStored(msg, f, unit)
-    -- get colour from unit definition and override cache
-    if not (f.friend and f.player) then return end
-    if not UnitIsPlayer(unit) then return end
-    if UnitIsFriend('player',unit) then
-        local class = select(2,UnitClass(unit))
-        self:SetClassColour(f, cc_table[class])
+function mod:GUIDAssumed(msg,f)
+    if not (f.friend and f.player and f.guid) then return end
+    local class = select(2,GetPlayerInfoByGUID(f.guid))
+    if not class then return end
 
-        tinsert(cache_index, f.name.text)
-        cache[f.name.text] = class
+    self:SetClassColour(f, cc_table[class])
 
-        -- purge index over 100
-        if #cache_index > 100 then
-            cache[tremove(cache_index, 1)] = nil
-        end
+    tinsert(cache_index, f.name.text)
+    cache[f.name.text] = class
+
+    -- purge index over 100
+    if #cache_index > 100 then
+        cache[tremove(cache_index, 1)] = nil
     end
 end
 function mod:PostShow(msg, f)
@@ -120,12 +121,14 @@ function mod:OnInitialize()
     SetCVars()
 end
 function mod:OnEnable()
-    self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
+    self:RegisterMessage('KuiNameplates_GUIDAssumed', 'GUIDAssumed')
+    self:RegisterMessage('KuiNameplates_GUIDStored', 'GUIDAssumed')
     self:RegisterMessage('KuiNameplates_PostShow', 'PostShow')
     self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
 end
 function mod:OnDisable()
-    self:UnregisterMessage('KuiNameplates_GUIDStored', 'GUIDStored')
-    self:UnregisterMessage('KuiNameplates_PostShow', 'PostShow')
-    self:UnregisterMessage('KuiNameplates_PostHide', 'PostHide')
+    self:UnregisterMessage('KuiNameplates_GUIDAssumed')
+    self:UnregisterMessage('KuiNameplates_GUIDStored')
+    self:UnregisterMessage('KuiNameplates_PostShow')
+    self:UnregisterMessage('KuiNameplates_PostHide')
 end
