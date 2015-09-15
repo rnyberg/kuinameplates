@@ -153,8 +153,9 @@ function mod:CreateCastbar(msg, frame)
     frame.castbar.spark:SetDrawLayer('ARTWORK', 6)
     frame.castbar.spark:SetVertexColor(1,1,.8)
     frame.castbar.spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
-    frame.castbar.spark:SetPoint('CENTER', frame.castbar.bar:GetRegions(), 'RIGHT', 1, 0)
-    frame.castbar.spark:SetSize(6, sizes.cbheight + 6)
+    frame.castbar.spark:SetPoint('TOP', frame.castbar.bar:GetRegions(), 'TOPRIGHT', 0, 3)
+    frame.castbar.spark:SetPoint('BOTTOM', frame.castbar.bar:GetRegions(), 'BOTTOMRIGHT', 0, -3)
+    frame.castbar.spark:SetWidth(6)
 
     -- uninterruptible cast shield -----------------------------------------
     frame.castbar.shield = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
