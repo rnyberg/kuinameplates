@@ -167,7 +167,7 @@ function mod:OnInitialize()
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
             enabled = false,
-            ondamaged = true,
+            ondamaged = false,
         }
     })
 
