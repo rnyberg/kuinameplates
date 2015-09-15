@@ -1,2 +1,5 @@
 * add nameonly module: hides the healthbar of friendly nameplates (disabled by default)
 * the "fix aliasing" option no longer makes frames appear "loose"
+* change the castbar shield icon
+* increase softmax of the castbar height option (you can still type bigger numbers)
+* store information (like class colours) about players in your group
