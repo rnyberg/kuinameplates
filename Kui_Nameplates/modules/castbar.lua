@@ -53,10 +53,6 @@ local function OnDefaultCastbarShow(self)
             f.castbar.icon.bg:Hide()
         end
 
-        if f.castbar.name then
-            f.castbar.name:Hide()
-        end
-
         if f.castbar.curr then
             f.castbar.curr:Hide()
         end
@@ -65,10 +61,6 @@ local function OnDefaultCastbarShow(self)
             f.castbar.icon:SetTexture(f.spell:GetTexture())
             f.castbar.icon.bg:Show()
             f.castbar.icon:Show()
-        end
-
-        if f.castbar.name then
-            f.castbar.name:Show()
         end
 
         if f.castbar.curr then
