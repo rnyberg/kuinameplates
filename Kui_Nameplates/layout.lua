@@ -610,8 +610,7 @@ local function SetName(self)
     self.name:SetText(self.name.text)
 end
 local function IsTrivial(self)
-    return true
-    --return self.firstChild:GetScale() < 1 and not addon.notrivial
+    return self.firstChild:GetScale() < 1 and not addon.notrivial
 end
 --------------------------------------------------------------- KNP functions --
 function addon:IsNameplate(frame)
