@@ -28,7 +28,9 @@ local function SwitchOn(f)
     f.nameonly = true
 
     f:CreateFontString(f.name, {
-        reset = true, size = f.trivial and 'small' or 'name', shadow = true
+        reset = true,
+        size = f.trivial and 'nameonlytrivial' or 'nameonly',
+        shadow = true
     })
     f.name:SetParent(f)
     f.name:ClearAllPoints()
@@ -89,7 +91,7 @@ local function UpdateNameOnly(f)
     end
 
     if (f.target or not f.friend) or
-       (not mod.db.profile.ondamaged and f.health.curr < f.health.max)
+       (not mod.db.profile.display.ondamaged and f.health.curr < f.health.max)
     then
         SwitchOff(f)
     else
@@ -108,7 +110,7 @@ function mod:PostCreate(msg,f)
     f.oldHealth:HookScript('OnValueChanged',UpdateNameOnly)
     f.nameonly_hooked = true
 
-    if self.db.profile.ondamaged then
+    if self.db.profile.display.ondamaged then
         HookSetName(f)
     end
 end
@@ -116,6 +118,19 @@ function mod:PostTarget(msg,f)
     UpdateNameOnly(f)
 end
 -- post db change functions ####################################################
+local function UpdateFontSize()
+    addon:RegisterFontSize('nameonly',tonumber(mod.db.profile.display.fontsize))
+    addon:RegisterFontSize('nameonlytrivial',tonumber(mod.db.profile.display.fontsizetrivial))
+end
+local function UpdateDisplay(f)
+    if not f.nameonly then return end
+    f:CreateFontString(f.name, {
+        reset = true,
+        size = f.trivial and 'nameonlytrivial' or 'nameonly',
+        shadow = true
+    })
+end
+
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(v)
     if v then
@@ -130,7 +145,7 @@ mod.configChangedFuncs.enabled = function(f,v)
             mod:PostCreate(nil,f)
         end
 
-        if mod.db.profile.ondamaged and f.SetName ~= nameonly_SetName then
+        if mod.db.profile.display.ondamaged and f.SetName ~= nameonly_SetName then
             HookSetName(f)
         end
 
@@ -143,6 +158,11 @@ mod.configChangedFuncs.ondamaged = function(f)
     if not mod.db.profile.enabled then return end
     mod.configChangedFuncs.enabled(f,true)
 end
+
+mod.configChangedFuncs.runOnce.fontsize = UpdateFontSize
+mod.configChangedFuncs.runOnce.fontsizetrivial = UpdateFontSize
+mod.configChangedFuncs.fontsize = UpdateDisplay
+mod.configChangedFuncs.fontsizetrivial = UpdateDisplay
 -- initialise ##################################################################
 function mod:GetOptions()
     return {
@@ -153,15 +173,39 @@ function mod:GetOptions()
             width = 'full',
             order = 0
         },
-        ondamaged = {
-            name = 'Even when damaged',
-            desc = 'Only show the name of damaged friendly nameplates, too. Their name will be coloured as a percentage of health remaining.',
-            type = 'toggle',
-            width = 'full',
-            order = 10,
+        display = {
+            name = 'Display',
+            type = 'group',
+            inline = true,
             disabled = function()
                 return not mod.db.profile.enabled
-            end
+            end,
+            args = {
+                ondamaged = {
+                    name = 'Even when damaged',
+                    desc = 'Only show the name of damaged nameplates, too. Their name will be coloured as a percentage of health remaining.',
+                    type = 'toggle',
+                    width = 'full',
+                    order = 10,
+                },
+                fontsize = {
+                    name = 'Font size',
+                    desc = 'Font size used when in name-only display. This is affected by the standard "Font scale" option under "Fonts".',
+                    type = 'range',
+                    step = 1,
+                    min = 1,
+                    softMin = 1,
+                    softMax = 30
+                },
+                fontsizetrivial = {
+                    name = 'Trivial font size',
+                    type = 'range',
+                    step = 1,
+                    min = 1,
+                    softMin = 1,
+                    softMax = 30
+                }
+            }
         }
     }
 end
@@ -171,7 +215,11 @@ function mod:OnInitialize()
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
             enabled = true,
-            ondamaged = false,
+            display = {
+                ondamaged = false,
+                fontsize = 11,
+                fontsizetrivial = 9,
+            }
         }
     })
 
@@ -179,6 +227,8 @@ function mod:OnInitialize()
     self:SetEnabledState(self.db.profile.enabled)
 end
 function mod:OnEnable()
+    UpdateFontSize()
+
     self:RegisterMessage('KuiNameplates_PostHide','PostHide')
     self:RegisterMessage('KuiNameplates_PostShow','PostShow')
     self:RegisterMessage('KuiNameplates_PostTarget','PostTarget')
