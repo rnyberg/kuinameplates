@@ -5,7 +5,7 @@
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('TankMode', 'AceEvent-3.0')
-local class
+local class, tankmode
 
 mod.uiName = 'Threat'
 
@@ -109,12 +109,12 @@ function mod:Update()
         end
 
         if role == 'TANK' then
-            addon.TankMode = true
+            tankmode = true
         else
-            addon.TankMode = false
+            tankmode = false
         end
     else
-        addon.TankMode = (self.db.profile.enabled == 3)
+        tankmode = (self.db.profile.enabled == 3)
     end
 end
 
@@ -143,17 +143,28 @@ function mod:ThreatUpdate(frame)
     frame.holdingThreat = frame.glow.r > .9 and (frame.glow.g + frame.glow.b) < .1
 
     if not frame.targetGlow or not frame.target then
-        -- set glow to tank colour unless this is the current target
-        frame:SetGlowColour(unpack(self.db.profile.glowcolour))
+        if tankmode then
+            -- set glow to tank colour unless this is the current target
+            frame:SetGlowColour(unpack(self.db.profile.glowcolour))
+        else
+            -- not in tank mode; set glow to default ui's colour
+            frame:SetGlowColour(frame.glow.r, frame.glow.g, frame.glow.b)
+        end
     end
 
-    if frame.holdingThreat then
-        frame:SetHealthColour(10, unpack(self.db.profile.barcolour))
-        ShowThreatBrackets(frame, unpack(self.db.profile.barcolour))
+    if tankmode then
+        -- also change health bar colour in tank mode
+        if frame.holdingThreat then
+            frame:SetHealthColour(10, unpack(self.db.profile.barcolour))
+            ShowThreatBrackets(frame, unpack(self.db.profile.barcolour))
+        else
+            -- losing/gaining threat
+            frame:SetHealthColour(10, unpack(self.db.profile.midcolour))
+            ShowThreatBrackets(frame, unpack(self.db.profile.midcolour))
+        end
     else
-        -- losing/gaining threat
-        frame:SetHealthColour(10, unpack(self.db.profile.midcolour))
-        ShowThreatBrackets(frame, unpack(self.db.profile.midcolour))
+        -- not in tank mode; use default glow colour for brackets, too
+        ShowThreatBrackets(frame, frame.glow.r, frame.glow.g, frame.glow.b)
     end
 end
 function mod:ThreatClear(frame)
@@ -253,6 +264,5 @@ function mod:OnEnable()
         self:RegisterMessage('KuiNameplates_PostHide', 'PostHide')
     end
 
-    addon.TankModule = self
     self:Toggle()
 end

@@ -4,3 +4,4 @@
 * increase softmax of the castbar height option (you can still type bigger numbers)
 * store information (like class colours) about players in your group
 * spell names are now shown on trivial units
+* make threat brackets show when not in tank mode

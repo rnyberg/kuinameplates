@@ -524,8 +524,10 @@ function addon:OnInitialize()
 
     addon:CreateConfigChangedListener(addon)
 
-    -- we treat the castbar like a built-in element; call it in InitFrame
+    -- we treat these like built in elements rather than having them rely
+    -- on messages
     addon.Castbar = addon:GetModule('Castbar')
+    addon.TankModule = addon:GetModule('TankMode')
 end
 ---------------------------------------------------------------------- enable --
 function addon:OnEnable()

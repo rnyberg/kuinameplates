@@ -475,14 +475,9 @@ local function UpdateFrameCritical(self)
         self.glow.wasVisible = true
         self.glow.r, self.glow.g, self.glow.b = self.glow:GetVertexColor()
 
-        if not self.friend and addon.TankModule and addon.TankMode then
-            self.hasThreat = true
-            -- in tank mode; handoff to tank module
+        if addon.TankModule then
+            -- handoff to tank module
             addon.TankModule:ThreatUpdate(self)
-        elseif not self.targetGlow or not self.target then
-            -- not in tank mode, so set glow to default ui's current colour
-            -- only when this isn't the current target
-            self:SetGlowColour(self.glow.r, self.glow.g, self.glow.b)
         end
     elseif self.glow.wasVisible then
         self.glow.wasVisible = nil
