@@ -12,8 +12,6 @@ local select,GetPlayerInfoByGUID,tinsert=
       select,GetPlayerInfoByGUID,tinsert
 
 local cc_table
-local cache = {}
-local cache_index = {}
 
 mod.uiName = "Class colours"
 
@@ -32,25 +30,12 @@ function mod:GUIDAssumed(msg,f)
     if not class then return end
 
     self:SetClassColour(f, cc_table[class])
-
-    tinsert(cache_index, f.name.text)
-    cache[f.name.text] = class
-
-    -- purge index over 100
-    if #cache_index > 100 then
-        cache[tremove(cache_index, 1)] = nil
-    end
 end
 function mod:PostShow(msg, f)
     if not (f.friend and f.player) then return end
-    if cache[f.name.text] then
-        -- restore colour from cache
-        self:SetClassColour(f, cc_table[cache[f.name.text]])
-    else
-        -- a friendly player with no class information
-        -- make their name slightly gray
-        f.name:SetTextColor(.7,.7,.7)
-    end
+    -- a friendly player; make their name slightly gray
+    -- will be overwritten when GUIDStored/Assumed fires
+    f.name:SetTextColor(.7,.7,.7)
 end
 function mod:PostHide(msg, f)
     f.name.class_coloured = nil

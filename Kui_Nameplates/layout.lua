@@ -464,11 +464,11 @@ local function UpdateFrame(self)
         -- force initial health update, which relies on health colour
         self:OnHealthValueChanged()
 
-        -- return guid to an assumed unique name
-        addon:GetGUID(self)
-
         addon:SendMessage('KuiNameplates_PostShow', self)
         self.DispatchPostShow = nil
+
+        -- return guid to an assumed unique name
+        addon:GetGUID(self)
     end
 end
 

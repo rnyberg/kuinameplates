@@ -134,6 +134,7 @@ do
         -- used to provide aggressive name -> guid matching
         -- should only be used for players
         if not name or not guid then return end
+        if knownGUIDs[name] then return end
         knownGUIDs[name] = guid
         tinsert(knownIndex, name)
 
@@ -141,6 +142,10 @@ do
         if #knownIndex > 100 then
             knownGUIDs[tremove(knownIndex, 1)] = nil
         end
+
+        --@debug@
+        --print('cached name: '..name..' ['..guid..'], total: '..(knownIndex and #knownIndex or 'nil'))
+        --@end-debug@
     end
 
     function addon:GetGUID(f)
