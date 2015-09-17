@@ -263,7 +263,6 @@ function mod:GetOptions()
 end
 
 function mod:configChangedListener()
-    print('woo')
     profile_tankmode = self.db.profile.tankmode
 end
 
