@@ -220,7 +220,7 @@ function mod:GetOptions()
         },
         enable_brackets = {
             name = 'Show threat brackets',
-            desc = 'Also show threat brackets when in tank mode. Kind of like target arrows, but for threat. They will inherit the bar colour.',
+            desc = 'Show threat brackets when you have threat on a nameplate. Kind of like target arrows, but for threat. In tank mode they will inherit the bar colour set above. Otherwise they will use the default glow colour.',
             type = 'toggle',
             order = 10
         },
@@ -246,7 +246,7 @@ function mod:OnInitialize()
             barcolour = { .2, .9, .1 },
             midcolour = { 1, .5, 0 },
             glowcolour = { 1, 0, 0, 1 },
-            enable_brackets = false,
+            enable_brackets = true,
             scale = 1,
         }
     })
