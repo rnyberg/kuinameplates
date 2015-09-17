@@ -508,20 +508,6 @@ function addon:OnInitialize()
     self.db.RegisterCallback(self, 'OnProfileChanged', 'ProfileChanged')
     LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMMediaRegistered')
 
-    -- move old reactioncolours config
-    if self.db.profile.general.reactioncolours then
-        local rc = self.db.profile.general.reactioncolours
-        local nrc = self.db.profile.hp.reactioncolours
-
-        if rc.hatedcol then nrc.hatedcol = rc.hatedcol end
-        if rc.neutralcol then nrc.neutralcol = rc.neutralcol end
-        if rc.friendlycol then nrc.friendlycol = rc.friendlycol end
-        if rc.tappedcol then nrc.tappedcol = rc.tappedcol end
-        if rc.playercol then nrc.playercol = rc.playercol end
-
-        self.db.profile.general.reactioncolours = nil
-    end
-
     addon:CreateConfigChangedListener(addon)
 
     -- we treat these like built in elements rather than having them rely
