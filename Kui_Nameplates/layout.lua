@@ -379,6 +379,10 @@ local function OnFrameHide(self)
         f.highlight:Hide()
     end
 
+    if addon.Castbar then
+        addon.Castbar:HideCastbar(f)
+    end
+
     -- unset stored health bar colours
     f.health.r, f.health.g, f.health.b, f.health.reset
         = nil, nil, nil, nil
