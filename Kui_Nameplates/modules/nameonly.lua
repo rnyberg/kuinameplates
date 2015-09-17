@@ -27,7 +27,7 @@ local function SwitchOn(f)
         end
     end
 
-    if mod.db.profile.hidecastbars then
+    if mod.db.profile.display.hidecastbars then
         addon.Castbar:IgnoreFrame(f)
     end
 
@@ -53,7 +53,7 @@ local function SwitchOff(f)
         f.name:SetTextColor(1,1,1)
     end
 
-    if mod.db.profile.hidecastbars then
+    if mod.db.profile.display.hidecastbars then
         addon.Castbar:UnignoreFrame(f)
     end
 

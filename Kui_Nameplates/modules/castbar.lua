@@ -11,6 +11,8 @@ mod.uiName = 'Cast bars'
 
 local format = format
 local function ResetFade(f)
+    if not f.castbar then return end
+
     kui.frameFadeRemoveFrame(f.castbar)
     f.castbar.shield:Hide()
     f.castbar:Hide()
@@ -32,9 +34,7 @@ local function OnDefaultCastbarShow(self)
     local f = self:GetParent():GetParent().kui
     ResetFade(f)
 
-    if (f.friend and not mod.db.profile.onfriendly) or
-        f.castbar_ignore_frame
-    then
+    if mod:FrameIsIgnored(f) then
         return
     end
 
@@ -93,6 +93,11 @@ local function OnDefaultCastbarUpdate(self, elapsed)
     if not mod.enabledState then return end
 
     local f = self:GetParent():GetParent().kui
+
+    if mod:FrameIsIgnored(f) then
+        return
+    end
+
     local min,max = self:GetMinMaxValues()
 
     if f.castbar.curr then
@@ -222,17 +227,22 @@ function mod:CreateCastbar(frame)
 end
 ------------------------------------------------------------------------ Hide --
 function mod:HideCastbar(frame)
-    if frame.castbar then
+    ResetFade(frame)
+end
+------------------------------------------------------------------- Functions --
+function mod:FrameIsIgnored(frame)
+    return frame.castbar_ignore_frame or (frame.friend and not mod.db.profile.onfriendly)
+end
+function mod:IgnoreFrame(frame)
+    frame.castbar_ignore_frame = (frame.castbar_ignore_frame and frame.castbar_ignore_frame + 1 or 1)
+
+    if frame.castbar and frame.castbar:IsShown() then
         ResetFade(frame)
     end
 end
-------------------------------------------------------------------- Functions --
-function mod:IgnoreFrame(frame)
-    frame.castbar_ignore_frame = (frame.castbar_ignore_frame and frame.castbar_ignore_frame + 1 or 1)
-end
 function mod:UnignoreFrame(frame)
     frame.castbar_ignore_frame = (frame.castbar_ignore_frame and frame.castbar_ignore_frame - 1 or nil)
-    if frame.castbar_ignore_frame <= 0 then
+    if frame.castbar_ignore_frame and frame.castbar_ignore_frame <= 0 then
         frame.castbar_ignore_frame = nil
     end
 end

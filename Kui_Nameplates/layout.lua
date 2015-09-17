@@ -381,6 +381,7 @@ local function OnFrameHide(self)
 
     if addon.Castbar then
         addon.Castbar:HideCastbar(f)
+        f.castbar_ignore_frame = nil
     end
 
     -- unset stored health bar colours
