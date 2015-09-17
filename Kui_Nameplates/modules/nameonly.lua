@@ -15,9 +15,13 @@ local hooked
 -- mod functions ###############################################################
 -- toggle nameonly mode on
 local function SwitchOn(f)
-    if f.friend and not f.player then
+    if not f.player then
         -- color NPC names
-        f.name:SetTextColor(.6,1,.6)
+        if f.friend then
+            f.name:SetTextColor(.6,1,.6)
+        else
+            f.name:SetTextColor(1,.6,.6)
+        end
     end
 
     if f.nameonly then return end
@@ -45,7 +49,7 @@ local function SwitchOff(f)
     f.name:SetParent(f.overlay)
     f.name:ClearAllPoints()
 
-    if f.friend and not f.player then
+    if not f.player then
         f.name:SetTextColor(1,1,1)
     end
 

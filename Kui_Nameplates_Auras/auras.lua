@@ -42,7 +42,10 @@ local ADDITION_EVENTS = {
 local stored_spells = {}
 
 local function debug_print(msg)
+    --@debug@
     print(GetTime()..': '..msg)
+    --@end-debug@
+    return
 end
 
 local function ArrangeButtons(self)
@@ -191,12 +194,14 @@ local function OnAuraUpdate(self, elapsed)
 end
 local function OnAuraShow(self)
     local parent = self:GetParent()
+    if not parent or parent.frame.MOVING then return end
     parent:ArrangeButtons()
 
     addon:SendMessage('KuiNameplates_PostAuraShow', parent.frame, self.spellId)
 end
 local function OnAuraHide(self)
     local parent = self:GetParent()
+    if not parent or parent.frame.MOVING then return end
 
     if parent.spellIds[self.spellId] == self then
         -- remove spell id from parent list
@@ -385,6 +390,7 @@ function mod:Create(msg, frame)
     frame.auras.DisplayAura    = DisplayAura
 
     frame.auras:SetScript('OnHide', function(self)
+        if self.frame.MOVING then return end
         for k,b in pairs(self.buttons) do
             b:Hide()
         end

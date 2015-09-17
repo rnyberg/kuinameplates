@@ -23,13 +23,20 @@ local profile_fade, profile_fade_rules, profile_lowhealthval, profile_hp
 local select, strfind, strsplit, pairs, ipairs, unpack, tinsert, type, floor
     = select, strfind, strsplit, pairs, ipairs, unpack, tinsert, type, floor
 local UnitExists=UnitExists
--- non-laggy, pixel perfect positioning ########################################
+-- non-laggy, pixel perfect positioning (Semlar's) #############################
 local function SizerOnSizeChanged(self,x,y)
+    -- because :Hide bubbles up and triggers the OnHide script of any elements
+    -- that might use it, we set MOVING to let them know they should ignore
+    -- that invocation
+    -- Hiding frames before moving them significantly increases FPS for some
+    -- reason, so I thought this was better than nothing
+    self.f.MOVING=true
     self.f:Hide()
     self.f:SetPoint('CENTER',WorldFrame,'BOTTOMLEFT',
         floor(x),
         floor(y))
     self.f:Show()
+    self.f.MOVING=nil
 end
 ------------------------------------------------------------- Frame functions --
 local function SetFrameCentre(f)
