@@ -32,6 +32,12 @@ local function OnDefaultCastbarShow(self)
     local f = self:GetParent():GetParent().kui
     ResetFade(f)
 
+    if (f.friend and not mod.db.profile.onfriendly) or
+        f.castbar_ignore_frame
+    then
+        return
+    end
+
     if f.castbar.name then
         f.castbar.name:SetText(f.spellName:GetText())
     end
@@ -67,10 +73,8 @@ local function OnDefaultCastbarShow(self)
             f.castbar.curr:Show()
         end
     end
-
     -- castbar is shown on first update
 end
-
 local function OnDefaultCastbarHide(self)
     local f = self:GetParent():GetParent().kui
     if f.castbar:IsShown() then
@@ -85,7 +89,6 @@ local function OnDefaultCastbarHide(self)
         })
     end
 end
-
 local function OnDefaultCastbarUpdate(self, elapsed)
     if not mod.enabledState then return end
 
@@ -113,7 +116,6 @@ local function UpdateCastbar(frame)
         frame.castbar.icon.bg:SetSize(sizes.icon, sizes.icon)
     end
 end
-
 function mod:CreateCastbar(frame)
     if frame.castbar then return end
     -- container ---------------------------------------------------------------
@@ -224,7 +226,16 @@ function mod:HideCastbar(frame)
         ResetFade(frame)
     end
 end
-
+------------------------------------------------------------------- Functions --
+function mod:IgnoreFrame(frame)
+    frame.castbar_ignore_frame = (frame.castbar_ignore_frame and frame.castbar_ignore_frame + 1 or 1)
+end
+function mod:UnignoreFrame(frame)
+    frame.castbar_ignore_frame = (frame.castbar_ignore_frame and frame.castbar_ignore_frame - 1 or nil)
+    if frame.castbar_ignore_frame <= 0 then
+        frame.castbar_ignore_frame = nil
+    end
+end
 ---------------------------------------------------- Post db change functions --
 mod.configChangedFuncs = { runOnce = {} }
 mod.configChangedFuncs.runOnce.enabled = function(val)
@@ -253,7 +264,6 @@ mod.configChangedFuncs.cbheight = UpdateCastbar
 mod.configChangedFuncs.global = { runOnce = {} }
 mod.configChangedFuncs.global.runOnce.hheight = mod.configChangedFuncs.runOnce.cbheight
 mod.configChangedFuncs.global.hheight = UpdateCastbar
-
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
     return {
@@ -273,11 +283,20 @@ function mod:GetOptions()
                 return not self.db.profile.enabled
             end
         },
+        onfriendly = {
+            name = 'Show friendly cast bars',
+            desc = 'Show cast bars on friendly nameplates',
+            type = 'toggle',
+            order = 10,
+            disabled = function()
+                return not self.db.profile.enabled
+            end
+        },
         display = {
             name = 'Display',
             type = 'group',
             inline = true,
-            order = 10,
+            order = 20,
             disabled = function()
                 return not self.db.profile.enabled
             end,
@@ -330,6 +349,7 @@ function mod:OnInitialize()
         profile = {
             enabled = true,
             onlyontarget = false,
+            onfriendly = true,
             display = {
                 casttime        = false,
                 spellname       = true,

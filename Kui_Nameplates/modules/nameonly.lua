@@ -15,6 +15,9 @@ local hooked
 -- mod functions ###############################################################
 -- toggle nameonly mode on
 local function SwitchOn(f)
+    if f.nameonly then return end
+    f.nameonly = true
+
     if not f.player then
         -- color NPC names
         if f.friend then
@@ -24,8 +27,9 @@ local function SwitchOn(f)
         end
     end
 
-    if f.nameonly then return end
-    f.nameonly = true
+    if mod.db.profile.hidecastbars then
+        addon.Castbar:IgnoreFrame(f)
+    end
 
     f:CreateFontString(f.name, {
         reset = true,
@@ -45,15 +49,19 @@ local function SwitchOff(f)
     if not f.nameonly then return end
     f.nameonly = nil
 
+    if not f.player then
+        f.name:SetTextColor(1,1,1)
+    end
+
+    if mod.db.profile.hidecastbars then
+        addon.Castbar:UnignoreFrame(f)
+    end
+
     f:CreateFontString(f.name, {
         reset = true, size = 'name'
     })
     f.name:SetParent(f.overlay)
     f.name:ClearAllPoints()
-
-    if not f.player then
-        f.name:SetTextColor(1,1,1)
-    end
 
     f.health:Show()
     f.overlay:Show()
@@ -185,13 +193,19 @@ function mod:GetOptions()
                     name = 'Even when damaged',
                     desc = 'Only show the name of damaged nameplates, too. Their name will be coloured as a percentage of health remaining.',
                     type = 'toggle',
-                    width = 'full',
                     order = 10,
+                },
+                hidecastbars = {
+                    name = 'Hide castbars',
+                    desc = 'Hide castbars when in name-only display.',
+                    type = 'toggle',
+                    order = 20,
                 },
                 fontsize = {
                     name = 'Font size',
                     desc = 'Font size used when in name-only display. This is affected by the standard "Font scale" option under "Fonts".',
                     type = 'range',
+                    order = 30,
                     step = 1,
                     min = 1,
                     softMin = 1,
@@ -200,6 +214,7 @@ function mod:GetOptions()
                 fontsizetrivial = {
                     name = 'Trivial font size',
                     type = 'range',
+                    order = 40,
                     step = 1,
                     min = 1,
                     softMin = 1,
@@ -217,6 +232,7 @@ function mod:OnInitialize()
             enabled = true,
             display = {
                 ondamaged = false,
+                hidecastbars = true,
                 fontsize = 11,
                 fontsizetrivial = 9,
             }
