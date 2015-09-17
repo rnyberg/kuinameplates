@@ -6,3 +6,4 @@
 * spell names are now shown on trivial units
 * make threat brackets show when not in tank mode
 * add option to hide castbars on friendly nameplates
+* add option to hide castbars when in name-only display

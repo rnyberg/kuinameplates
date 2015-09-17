@@ -231,7 +231,7 @@ function mod:HideCastbar(frame)
 end
 ------------------------------------------------------------------- Functions --
 function mod:FrameIsIgnored(frame)
-    return frame.castbar_ignore_frame or (frame.friend and not mod.db.profile.onfriendly)
+    return frame.castbar_ignore_frame or (frame.friend and not self.db.profile.onfriendly)
 end
 function mod:IgnoreFrame(frame)
     frame.castbar_ignore_frame = (frame.castbar_ignore_frame and frame.castbar_ignore_frame + 1 or 1)
