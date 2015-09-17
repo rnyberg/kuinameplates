@@ -366,6 +366,7 @@ local function OnFrameHide(self)
     -- if there are name duplicates, this will be recreated in an onupdate
     addon:ClearName(f)
 
+    f.active    = nil
     f.lastAlpha = nil
     f.fadingTo  = nil
     f.hasThreat = nil
@@ -459,6 +460,12 @@ local function UpdateFrame(self)
 
     -- reset/update health bar colour
     self:SetHealthColour()
+
+    if select(2,self.oldName:GetTextColor()) == 0 then
+        self.active = true
+    else
+        self.active = nil
+    end
 
     if self.DispatchPostShow then
         -- force initial health update, which relies on health colour
@@ -601,6 +608,10 @@ local function UpdateFrameCritical(self)
 
         if self.target then
             self.nametext:SetText((self.nametext:GetText() or '')..' [target]')
+        end
+
+        if self.active then
+            self.nametext:SetText((self.nametext:GetText() or '')..' [active]')
         end
 
         if self.friend then
