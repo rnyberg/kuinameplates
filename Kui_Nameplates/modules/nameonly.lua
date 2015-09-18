@@ -38,7 +38,15 @@ local function SwitchOn(f)
     })
     f.name:SetParent(f)
     f.name:ClearAllPoints()
-    f.name:SetPoint('CENTER')
+
+    -- same as create.lua, UpdateName
+    -- prevents font string jitter for some reason
+    local swidth = f.name:GetStringWidth()
+    swidth = swidth - abs(swidth)
+    offset = (swidth > .7 or swidth < .2) and .5 or 0
+
+    f.name:SetPoint('CENTER',offset,.5)
+    --f.name:SetPoint('CENTER')
 
     f.health:Hide()
     f.overlay:Hide()
