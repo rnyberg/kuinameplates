@@ -1,6 +1,7 @@
 ## Interface: 60200
 ## Author: Kesava
 ## Title: Kui |cff9966ffNameplates|r
+## Version: @project-version@
 ## Notes: Prettier nameplates.
 ## SavedVariables: KuiNameplatesGDB
 
