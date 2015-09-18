@@ -7,6 +7,10 @@ local addon = LibStub('AceAddon-3.0'):NewAddon('KuiNameplates', 'AceEvent-3.0', 
 local kui = LibStub('Kui-1.0')
 local LSM = LibStub('LibSharedMedia-3.0')
 
+local group_update
+local GROUP_UPDATE_INTERVAL = 1
+local group_update_elapsed
+
 addon.font = ''
 addon.uiscale = nil
 
@@ -255,6 +259,7 @@ do
 
     local unit_prefix,max_members
     function addon:GroupUpdate()
+        group_update = nil
         if GetNumGroupMembers() <= 0 then return end
 
         if IsInRaid() then
@@ -269,6 +274,10 @@ do
             StoreUnit(unit_prefix..i)
         end
     end
+end
+function addon:QueueGroupUpdate()
+    group_update = true
+    group_update_elapsed = 0
 end
 ---------------------------------------------------------------------- events --
 do
@@ -518,6 +527,32 @@ function addon:LSMMediaRegistered(msg, mediatype, key)
         end
     end
 end
+------------------------------------------------------------ main update loop --
+do
+    local WorldFrame,tinsert,select = WorldFrame,tinsert,select
+    function addon:OnUpdate()
+        -- find new nameplates
+        local frames = select('#', WorldFrame:GetChildren())
+        if frames ~= self.numFrames then
+            local i, f
+            for i = 1, frames do
+                f = select(i, WorldFrame:GetChildren())
+                if self:IsNameplate(f) and not f.kui then
+                    self:InitFrame(f)
+                    tinsert(self.frameList, f)
+                end
+            end
+            self.numFrames = frames
+        end
+        -- process group update queue
+        if group_update then
+            group_update_elapsed = group_update_elapsed + .1
+            if group_update_elapsed > GROUP_UPDATE_INTERVAL then
+                self:GroupUpdate()
+            end
+        end
+    end
+end
 ------------------------------------------------------------------------ init --
 function addon:OnInitialize()
     self.db = LibStub('AceDB-3.0'):New('KuiNameplatesGDB', defaults)
@@ -600,11 +635,11 @@ function addon:OnEnable()
     self:RegisterEvent('UPDATE_MOUSEOVER_UNIT')
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
     self:RegisterEvent('PLAYER_REGEN_DISABLED')
-    self:RegisterEvent('GROUP_ROSTER_UPDATE', 'GroupUpdate')
+    self:RegisterEvent('GROUP_ROSTER_UPDATE', 'QueueGroupUpdate')
 
     self:RegisterEvent('PET_BATTLE_OPENING_START', 'PetBattleUpdate')
     self:RegisterEvent('PET_BATTLE_OPENING_DONE', 'PetBattleUpdate')
     self:RegisterEvent('PET_BATTLE_CLOSE', 'PetBattleUpdate')
 
-    self:ScheduleRepeatingTimer('OnUpdate', .1)
+    self:ScheduleRepeatingTimer('OnUpdate',.1)
 end

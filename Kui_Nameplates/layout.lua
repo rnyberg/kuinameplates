@@ -851,26 +851,6 @@ function addon:PLAYER_REGEN_ENABLED()
     end
 end
 ------------------------------------------------------------- Script handlers --
-do
-    local WorldFrame = WorldFrame
-    function addon:OnUpdate()
-        local frames = select('#', WorldFrame:GetChildren())
-
-        if frames ~= self.numFrames then
-            local i, f
-
-            for i = 1, frames do
-                f = select(i, WorldFrame:GetChildren())
-                if self:IsNameplate(f) and not f.kui then
-                    self:InitFrame(f)
-                    tinsert(self.frameList, f)
-                end
-            end
-
-            self.numFrames = frames
-        end
-    end
-end
 function addon:configChangedListener()
     -- cache values used often to reduce table lookup
     profile = addon.db.profile
