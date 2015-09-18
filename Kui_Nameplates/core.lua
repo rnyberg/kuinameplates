@@ -270,6 +270,22 @@ do
         end
     end
 end
+---------------------------------------------------------------------- events --
+do
+    -- hide friendly nameplates when in a pet battle
+    -- (and restore them after)
+    local was_in_battle, prev_state
+    function addon:PetBattleUpdate(event)
+        local in_battle = C_PetBattles.IsInBattle()
+        if in_battle and not was_in_battle then
+            prev_state = GetCVarBool('nameplateShowFriends')
+            SetCVar('nameplateShowFriends',false)
+        elseif prev_state and not in_battle and was_in_battle then
+            SetCVar('nameplateShowFriends',prev_state and true)
+        end
+        was_in_battle = in_battle
+    end
+end
 ------------------------------------------------------------ helper functions --
 -- cycle all frames' fontstrings and reset the font
 local function UpdateAllFonts()
@@ -585,6 +601,10 @@ function addon:OnEnable()
     self:RegisterEvent('PLAYER_REGEN_ENABLED')
     self:RegisterEvent('PLAYER_REGEN_DISABLED')
     self:RegisterEvent('GROUP_ROSTER_UPDATE', 'GroupUpdate')
+
+    self:RegisterEvent('PET_BATTLE_OPENING_START', 'PetBattleUpdate')
+    self:RegisterEvent('PET_BATTLE_OPENING_DONE', 'PetBattleUpdate')
+    self:RegisterEvent('PET_BATTLE_CLOSE', 'PetBattleUpdate')
 
     self:ScheduleRepeatingTimer('OnUpdate', .1)
 end
