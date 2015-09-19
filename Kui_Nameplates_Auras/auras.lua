@@ -40,6 +40,7 @@ local ADDITION_EVENTS = {
 }
 
 local function UpdateSizes()
+    -- Update size/position related variables
     size_ratio = mod.db.profile.icons.squareness
     sizes.auraWidth = mod.db.profile.icons.icon_size
     sizes.tauraWidth = mod.db.profile.icons.trivial_icon_size
@@ -64,6 +65,48 @@ local function UpdateSizes()
     trivial_num_per_column = floor(trivial_width / (sizes.tauraWidth + 1))
     sizes.trivial_container_width = (sizes.tauraWidth * trivial_num_per_column) + (1 * (trivial_num_per_column - 1))
     sizes.trivial_container_offset = (trivial_width - sizes.trivial_container_width) / 2
+end
+local function UpdateButtonSize(self,button)
+    -- Set size of an aura icon
+    -- Used whenever a button is requested to be shown
+    button.icon:SetTexCoord(.1, .9, .1+icon_ratio, .9-icon_ratio)
+
+    if self.frame.trivial then
+        -- shrink icons for trivial frames!
+        button:SetHeight(sizes.tauraHeight)
+        button:SetWidth(sizes.tauraWidth)
+        button.time = self.frame:CreateFontString(button.time, {
+            reset = true, size = 'small' })
+        button.count = self.frame:CreateFontString(button.count, {
+            reset = true, size = 'small' })
+    else
+        -- normal size!
+        button:SetHeight(sizes.auraHeight)
+        button:SetWidth(sizes.auraWidth)
+        button.time = self.frame:CreateFontString(button.time, { reset = true })
+        button.count = self.frame:CreateFontString(button.count, { reset = true })
+    end
+end
+local function UpdateContainerSize(frame)
+    -- Set size and position of the container frame
+    -- Used OnFrameShow
+    local v_offset = frame.trivial and sizes.taurasOffset or sizes.aurasOffset
+    frame.auras.num_per_column = frame.trivial and trivial_num_per_column or num_per_column
+
+    frame.auras:SetWidth(frame.trivial and sizes.trivial_container_width or sizes.container_width)
+    frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'TOPLEFT',
+        -1 + (frame.trivial and sizes.trivial_container_offset or sizes.container_offset), v_offset)
+end
+local function UpdateAllButtons(frame)
+    -- Update the container and button sizes
+    -- Used only by configChangedFuncs
+    UpdateContainerSize(frame)
+
+    for k,b in ipairs(frame.auras.buttons) do
+        UpdateButtonSize(frame.auras,b)
+    end
+
+    frame.auras:ArrangeButtons()
 end
 
 -- stored spell id durations
@@ -307,28 +350,10 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
         button.icon:SetPoint('TOPLEFT', 1, -1)
         button.icon:SetPoint('BOTTOMRIGHT', -1, 1)
 
-        button.icon:SetTexCoord(.1, .9, .1+icon_ratio, .9-icon_ratio)
-
         tinsert(self.buttons, button)
 
         button:SetScript('OnHide', OnAuraHide)
         button:SetScript('OnShow', OnAuraShow)
-    end
-
-    if self.frame.trivial then
-        -- shrink icons for trivial frames!
-        button:SetHeight(sizes.tauraHeight)
-        button:SetWidth(sizes.tauraWidth)
-        button.time = self.frame:CreateFontString(button.time, {
-            reset = true, size = 'small' })
-        button.count = self.frame:CreateFontString(button.count, {
-            reset = true, size = 'small' })
-    else
-        -- normal size!
-        button:SetHeight(sizes.auraHeight)
-        button:SetWidth(sizes.auraWidth)
-        button.time = self.frame:CreateFontString(button.time, { reset = true })
-        button.count = self.frame:CreateFontString(button.count, { reset = true })
     end
 
     button.icon:SetTexture(icon)
@@ -345,6 +370,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
     button.spellId = spellId
     button.elapsed = 0
 
+    UpdateButtonSize(self,button)
     UpdateButtonDuration(button)
 
     -- store this spell's original duration
@@ -420,12 +446,7 @@ function mod:Create(msg, frame)
     end)
 end
 function mod:Show(msg, frame)
-    local v_offset = frame.trivial and sizes.taurasOffset or sizes.aurasOffset
-    frame.auras.num_per_column = frame.trivial and trivial_num_per_column or num_per_column
-
-    frame.auras:SetWidth(frame.trivial and sizes.trivial_container_width or sizes.container_width)
-    frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'TOPLEFT',
-        -1 + (frame.trivial and sizes.trivial_container_offset or sizes.container_offset), v_offset)
+    UpdateContainerSize(frame)
 end
 function mod:Hide(msg, frame)
     if frame.auras then
@@ -565,8 +586,13 @@ mod.configChangedFuncs.runOnce.enabled = function(val)
 end
 
 mod.configChangedFuncs.runOnce.icon_size = UpdateSizes
+mod.configChangedFuncs.icon_size = UpdateAllButtons
+
 mod.configChangedFuncs.runOnce.trivial_icon_size = UpdateSizes
+mod.configChangedFuncs.trivial_icon_size = UpdateAllButtons
+
 mod.configChangedFuncs.runOnce.squareness = UpdateSizes
+mod.configChangedFuncs.squareness = UpdateAllButtons
 ---------------------------------------------------- initialisation functions --
 function mod:GetOptions()
     return {
