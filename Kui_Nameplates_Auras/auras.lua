@@ -18,7 +18,7 @@ local PLAYER_GUID
 
 local sizes = {}
 local num_per_column,trivial_num_per_column
-local icon_ratio
+local size_ratio,icon_ratio
 
 -- store profiles to reduce lookup in OnAuraUpdate
 local db_display,db_behav
@@ -40,13 +40,11 @@ local ADDITION_EVENTS = {
 }
 
 local function UpdateSizes()
-    local trivial_ratio = .8
-    local size_ratio = .7
+    size_ratio = mod.db.profile.icons.squareness
+    sizes.auraWidth = mod.db.profile.icons.icon_size
+    sizes.tauraWidth = mod.db.profile.icons.trivial_icon_size
 
-    sizes.auraWidth = 25
     sizes.auraHeight = floor(sizes.auraWidth * size_ratio)
-
-    sizes.tauraWidth = 20
     sizes.tauraHeight = floor(sizes.tauraWidth * size_ratio)
 
     -- used by SetTexCoord
@@ -565,6 +563,10 @@ mod.configChangedFuncs.runOnce.enabled = function(val)
         mod:Disable()
     end
 end
+
+mod.configChangedFuncs.runOnce.icon_size = UpdateSizes
+mod.configChangedFuncs.runOnce.trivial_icon_size = UpdateSizes
+mod.configChangedFuncs.runOnce.squareness = UpdateSizes
 ---------------------------------------------------- initialisation functions --
 function mod:GetOptions()
     return {
@@ -583,6 +585,29 @@ function mod:GetOptions()
             disabled = function()
                 return not self.db.profile.enabled
             end,
+        },
+        behav = {
+            name = 'Behaviour',
+            type = 'group',
+            inline = true,
+            disabled = function()
+                return not self.db.profile.enabled
+            end,
+            order = 5,
+            args = {
+                useWhitelist = {
+                    name = 'Use whitelist',
+                    desc = 'Only display spells which your class needs to keep track of for PVP or an effective DPS rotation. Most passive effects are excluded.\n\n|cff00ff00You can use KuiSpellListConfig from Curse.com to customise this list.',
+                    type = 'toggle',
+                    order = 0,
+                },
+                showSecondary = {
+                    name = 'Show on secondary targets',
+                    desc = 'Attempt to show and refresh auras on secondary targets - i.e. nameplates which do not have a visible unit frame on the default UI. Particularly useful when tanking.',
+                    type = 'toggle',
+                    order = 10
+                }
+            }
         },
         display = {
             name = 'Display',
@@ -642,26 +667,42 @@ function mod:GetOptions()
 
             }
         },
-        behav = {
-            name = 'Behaviour',
+        icons = {
+            name = 'Icons',
             type = 'group',
             inline = true,
             disabled = function()
                 return not self.db.profile.enabled
             end,
-            order = 5,
+            order = 20,
             args = {
-                useWhitelist = {
-                    name = 'Use whitelist',
-                    desc = 'Only display spells which your class needs to keep track of for PVP or an effective DPS rotation. Most passive effects are excluded.\n\n|cff00ff00You can use KuiSpellListConfig from Curse.com to customise this list.',
-                    type = 'toggle',
-                    order = 0,
+                icon_size = {
+                    name = 'Size',
+                    desc = 'Aura icon size on normal frames',
+                    type = 'range',
+                    order = 10,
+                    min = 5,
+                    softMax = 50,
+                    step = 1
                 },
-                showSecondary = {
-                    name = 'Show on secondary targets',
-                    desc = 'Attempt to show and refresh auras on secondary targets - i.e. nameplates which do not have a visible unit frame on the default UI. Particularly useful when tanking.',
-                    type = 'toggle',
-                    order = 10
+                trivial_icon_size = {
+                    name = 'Size (trivial)',
+                    desc = 'Aura icon size on trivial frames',
+                    type = 'range',
+                    order = 20,
+                    min = 5,
+                    softMax = 50,
+                    step = 1
+                },
+                squareness = {
+                    name = 'Squareness',
+                    desc = 'Where 1 is completely square and .5 is completely rectangular',
+                    type = 'range',
+                    order = 30,
+                    min = .1,
+                    softMin = .5,
+                    max = 1,
+                    step = .1
                 }
             }
         }
@@ -672,6 +713,10 @@ function mod:OnInitialize()
         profile = {
             enabled = true,
             showtrivial = false,
+            behav = {
+                useWhitelist = true,
+                showSecondary = true,
+            },
             display = {
                 pulsate = true,
                 decimal = true,
@@ -680,9 +725,10 @@ function mod:OnInitialize()
                 lengthMin = 0,
                 lengthMax = -1,
             },
-            behav = {
-                useWhitelist = true,
-                showSecondary = true,
+            icons = {
+                icon_size = 25,
+                trivial_icon_size = 20,
+                squareness = .7
             }
         }
     })
