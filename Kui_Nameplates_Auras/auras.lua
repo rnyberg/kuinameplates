@@ -43,11 +43,11 @@ local function UpdateSizes()
     local trivial_ratio = .8
     local size_ratio = .7
 
-    sizes.auraWidth = 26
+    sizes.auraWidth = 25
     sizes.auraHeight = floor(sizes.auraWidth * size_ratio)
 
-    sizes.tauraWidth = floor(sizes.auraWidth * trivial_ratio)
-    sizes.tauraHeight = floor(sizes.auraHeight * trivial_ratio)
+    sizes.tauraWidth = 20
+    sizes.tauraHeight = floor(sizes.tauraWidth * size_ratio)
 
     -- used by SetTexCoord
     icon_ratio = (1 - (sizes.auraHeight / sizes.auraWidth)) / 2
@@ -57,13 +57,13 @@ local function UpdateSizes()
 
     -- calculate width of container & number of icons per column
     local normal_width = addon.db.profile.general.width
-    num_per_column = floor(normal_width / sizes.auraWidth)
+    num_per_column = floor(normal_width / (sizes.auraWidth + 1))
     sizes.container_width = (sizes.auraWidth * num_per_column) + (1 * (num_per_column - 1))
     sizes.container_offset = (normal_width - sizes.container_width) / 2
 
     -- and the trivial version...
     local trivial_width = addon.db.profile.general.twidth
-    trivial_num_per_column = floor(trivial_width / sizes.tauraWidth)
+    trivial_num_per_column = floor(trivial_width / (sizes.tauraWidth + 1))
     sizes.trivial_container_width = (sizes.tauraWidth * trivial_num_per_column) + (1 * (trivial_num_per_column - 1))
     sizes.trivial_container_offset = (trivial_width - sizes.trivial_container_width) / 2
 end
