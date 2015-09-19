@@ -17,6 +17,8 @@ local UnitExists,UnitGUID=UnitExists,UnitGUID
 local PLAYER_GUID
 
 local sizes = {}
+local num_per_column,trivial_num_per_column
+local icon_ratio
 
 -- store profiles to reduce lookup in OnAuraUpdate
 local db_display,db_behav
@@ -37,16 +39,38 @@ local ADDITION_EVENTS = {
     ['SPELL_AURA_APPLIED_DOSE'] = true,
 }
 
+local function UpdateSizes()
+    local trivial_ratio = .8
+    local size_ratio = .7
+
+    sizes.auraWidth = 26
+    sizes.auraHeight = floor(sizes.auraWidth * size_ratio)
+
+    sizes.tauraWidth = floor(sizes.auraWidth * trivial_ratio)
+    sizes.tauraHeight = floor(sizes.auraHeight * trivial_ratio)
+
+    -- used by SetTexCoord
+    icon_ratio = (1 - (sizes.auraHeight / sizes.auraWidth)) / 2
+
+    sizes.aurasOffset = 14
+    sizes.taurasOffset = 14
+
+    -- calculate width of container & number of icons per column
+    local normal_width = addon.db.profile.general.width
+    num_per_column = floor(normal_width / sizes.auraWidth)
+    sizes.container_width = (sizes.auraWidth * num_per_column) + (1 * (num_per_column - 1))
+    sizes.container_offset = (normal_width - sizes.container_width) / 2
+
+    -- and the trivial version...
+    local trivial_width = addon.db.profile.general.twidth
+    trivial_num_per_column = floor(trivial_width / sizes.tauraWidth)
+    sizes.trivial_container_width = (sizes.tauraWidth * trivial_num_per_column) + (1 * (trivial_num_per_column - 1))
+    sizes.trivial_container_offset = (trivial_width - sizes.trivial_container_width) / 2
+end
+
 -- stored spell id durations
 -- used for giving timers to aura icons when they're added by the combat log
 local stored_spells = {}
-
-local function debug_print(msg)
-    --@debug@
-    print(GetTime()..': '..msg)
-    --@end-debug@
-    return
-end
 
 local function ArrangeButtons(self)
     local pv, pc
@@ -59,7 +83,7 @@ local function ArrangeButtons(self)
             b:ClearAllPoints()
 
             if pv then
-                if (self.visible-1) % (self.frame.trivial and 3 or 5) == 0 then
+                if (self.visible-1) % self.num_per_column == 0 then
                     -- start of row
                     b:SetPoint('BOTTOMLEFT', pc, 'TOPLEFT', 0, 1)
                     pc = b
@@ -287,7 +311,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
         button.icon:SetPoint('TOPLEFT', 1, -1)
         button.icon:SetPoint('BOTTOMRIGHT', -1, 1)
 
-        button.icon:SetTexCoord(.1, .9, .2, .8)
+        button.icon:SetTexCoord(.1, .9, .1+icon_ratio, .9-icon_ratio)
 
         tinsert(self.buttons, button)
 
@@ -333,7 +357,7 @@ local function GetAuraButton(self, spellId, icon, count, duration, expirationTim
     return button
 end
 local function DisplayAura(self,spellid,name,icon,count,duration,expirationTime)
-    --debug_print('aura application of '..name)
+    --kui.print('aura application of '..name)
     name = strlower(name) or nil
     if not name then return end
 
@@ -377,9 +401,8 @@ function mod:Create(msg, frame)
     frame.auras = CreateFrame('Frame', nil, frame)
     frame.auras.frame = frame
 
-    -- BOTTOMLEFT is set OnShow
-    frame.auras:SetPoint('BOTTOMRIGHT', frame.health, 'TOPRIGHT', -3, 0)
-    frame.auras:SetHeight(50)
+    -- Position and size is set OnShow (below)
+    frame.auras:SetHeight(10)
     frame.auras:Hide()
 
     frame.auras.visible = 0
@@ -399,16 +422,12 @@ function mod:Create(msg, frame)
     end)
 end
 function mod:Show(msg, frame)
-    -- set vertical position of the container frame
-    if frame.trivial then
-        frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
-            3, sizes.taurasOffset)
-    else
-        frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'BOTTOMLEFT',
-            3, sizes.aurasOffset)
-    end
+    local v_offset = frame.trivial and sizes.taurasOffset or sizes.aurasOffset
+    frame.auras.num_per_column = frame.trivial and trivial_num_per_column or num_per_column
 
-    -- TODO calculate size of auras & num per column here
+    frame.auras:SetWidth(frame.trivial and sizes.trivial_container_width or sizes.container_width)
+    frame.auras:SetPoint('BOTTOMLEFT', frame.health, 'TOPLEFT',
+        -1 + (frame.trivial and sizes.trivial_container_offset or sizes.container_offset), v_offset)
 end
 function mod:Hide(msg, frame)
     if frame.auras then
@@ -450,7 +469,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
         if not f or not f.auras then return end
         if f.trivial and not self.db.profile.showtrivial then return end
 
-        --debug_print('COMBAT_LOG_EVENT fired on '..f.name.text)
+        --kui.print('COMBAT_LOG_EVENT fired on '..f.name.text)
 
         local spId = select(12, ...)
         if not spId then return end
@@ -491,7 +510,7 @@ function mod:UNIT_AURA(event, unit, frame)
     if frame.trivial and not self.db.profile.showtrivial then return end
     --unit = 'player' -- DEBUG
 
-    --debug_print('UNIT_AURA fired on '..frame.name.text)
+    --kui.print('UNIT_AURA fired on '..frame.name.text)
 
     local filter = 'PLAYER '
     if UnitIsFriend(unit, 'player') then
@@ -668,16 +687,10 @@ function mod:OnInitialize()
         }
     })
 
-    sizes.auraHeight = 18
-    sizes.auraWidth = 26
-    sizes.tauraHeight = 12
-    sizes.tauraWidth = 20
-
-    sizes.aurasOffset = 26
-    sizes.taurasOffset = 17
-
     addon:InitModuleOptions(self)
     mod:SetEnabledState(self.db.profile.enabled)
+
+    UpdateSizes()
 
     self:WhitelistChanged()
     spelllist.RegisterChanged(self, 'WhitelistChanged')
