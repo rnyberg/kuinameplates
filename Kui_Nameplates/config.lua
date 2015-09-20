@@ -114,12 +114,22 @@ do
     local function ResolveKeys(mod,keys,ro,pf)
         local g = mod.configChangedFuncs
 
-        for _,key in ipairs(keys) do
-            if not g[key] then
-                g[key] = {}
+        if type(keys) == 'table' then
+            for _,key in ipairs(keys) do
+                if not g[key] then
+                    g[key] = {}
+                end
+
+                g = g[key]
+            end
+        elseif type(keys) == 'string' then
+            if not g[keys] then
+                g[keys] = {}
             end
 
-            g = g[key]
+            g = g[keys]
+        else
+            return
         end
 
         g.ro = ro
@@ -132,13 +142,13 @@ do
         end
         mod.configChangedFuncs.NEW = true
 
-        if type(key_groups[1]) == 'table' then
+        if type(key_groups) == 'table' and type(key_groups[1]) == 'table' then
             -- multiple key groups
             for _,keys in ipairs(key_groups) do
                 ResolveKeys(mod,keys,ro,pf)
             end
         else
-            -- one key group
+            -- one key group, or a string
             ResolveKeys(mod,key_groups,ro,pf)
         end
     end

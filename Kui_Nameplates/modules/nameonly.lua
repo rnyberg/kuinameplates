@@ -4,7 +4,7 @@
 -- All rights reserved.
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('NameOnly', 'AceEvent-3.0')
+local mod = addon:NewModule('NameOnly', addon.Prototype, 'AceEvent-3.0')
 mod.uiName = "Name-only display"
 
 local len = string.len
@@ -147,12 +147,11 @@ local function UpdateDisplay(f)
     })
 end
 
-mod.configChangedFuncs = { NEW = true }
-mod.configChangedFuncs.enabled = {
-    ro = function(v)
+mod:AddConfigChanged('enabled',
+    function(v)
         mod:SetEnabledState(v)
     end,
-    pf = function(f,v)
+    function(f,v)
         if v then
             if not f.nameonly_hooked then
                 mod:PostCreate(nil,f)
@@ -167,20 +166,17 @@ mod.configChangedFuncs.enabled = {
             SwitchOff(f)
         end
     end
-}
-
-mod.configChangedFuncs.display = {}
-mod.configChangedFuncs.display.ondamaged = {
-    pf = function(f)
+)
+mod:AddConfigChanged({'display','ondamaged'}, nil,
+    function(f)
         if not mod.db.profile.enabled then return end
-        mod.configChangedFuncs.enabled(f,true)
+        mod.configChangedFuncs.enabled.pf(f,true)
     end
-}
-mod.configChangedFuncs.display.fontsize = {
-    ro = UpdateFontSize,
-    pf = UpdateDisplay
-}
-mod.configChangedFuncs.display.fontsizetrivial = mod.configChangedFuncs.display.fontsize
+)
+mod:AddConfigChanged({{'display','fontsize'},{'display','fontsizetrivial'}},
+    UpdateFontSize,
+    UpdateDisplay
+)
 -- initialise ##################################################################
 function mod:GetOptions()
     return {
