@@ -7,6 +7,8 @@ I have a problem/question!
 ---
 Issues submitted [here](https://github.com/kesava-wow/kuinameplates/issues) won't necessarily receive a response, but I do read all of them. If you just want to ask a question or get in touch with me, the comments on Curse are a better option. I try to respond to all of those.
 
+**When submitting a ticket, please separate distint issues/requests out into multiple tickets, rather than bundling them together. It's easier to work with that way.**
+
 Remember these three points, however:
 - I am human. I main a draenei, though.
 - This addon was mainly created for myself.
