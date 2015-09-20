@@ -561,8 +561,6 @@ function addon:OnInitialize()
     self.db.RegisterCallback(self, 'OnProfileChanged', 'ProfileChanged')
     LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMMediaRegistered')
 
-    addon:CreateConfigChangedListener(addon)
-
     -- we treat these like built in elements rather than having them rely
     -- on messages
     addon.Castbar = addon:GetModule('Castbar')

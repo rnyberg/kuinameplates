@@ -3,9 +3,10 @@
 -- By Kesava at curse.com
 -- All rights reserved
 ]]
+
 local kui = LibStub('Kui-1.0')
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('Castbar', 'AceEvent-3.0')
+local mod = addon:NewModule('Castbar', addon.Prototype, 'AceEvent-3.0')
 
 mod.uiName = 'Cast bars'
 
@@ -371,6 +372,9 @@ function mod:OnInitialize()
         }
     })
 
+    addon:InitModuleOptions(self)
+    self:SetEnabledState(self.db.profile.enabled)
+
     sizes = {
         cbheight = self.db.profile.display.cbheight,
         shield = 16
@@ -378,12 +382,8 @@ function mod:OnInitialize()
 
     self.configChangedFuncs.runOnce.cbheight(sizes.cbheight)
 
-    addon:InitModuleOptions(self)
-
     -- listen for health bar height being changed to resize the spell icon
     self:RegisterForConfigChanged('addon', 'hheight')
-
-    self:SetEnabledState(self.db.profile.enabled)
 
     -- handle default interface cvars & checkboxes
     InterfaceOptionsCombatPanel:HookScript('OnShow', function()

@@ -4,8 +4,8 @@
 -- All rights reserved
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('CastWarnings', 'AceEvent-3.0')
-    
+local mod = addon:NewModule('CastWarnings', addon.Prototype, 'AceEvent-3.0')
+
 mod.uiName = 'Cast warnings'
 
 -- combat log events to listen to for cast warnings/healing
@@ -71,7 +71,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 			-- fetch the spell's target's nameplate
 			guid, name = targetGUID, targetName
 		end
-		
+
 		--guid, name = UnitGUID('target'), GetUnitName('target') -- [DEBUG]
 
 		if self.db.profile.useNames and name then
@@ -84,7 +84,7 @@ function mod:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		if f then
 			if not f.castWarning or f.trivial then return end
 			local spName, spSch = select(13, ...)
-			
+
 			if event == 'SPELL_HEAL' or
 			   event == 'SPELL_PERIODIC_HEAL'
 			then
@@ -173,7 +173,7 @@ function mod:Hide(msg, frame)
 		frame.castWarning.ag:Stop()
 		frame.castWarning:SetText()
 		frame.castWarning:Hide()
-		
+
 		frame.incWarning.ag:Stop()
 		frame.incWarning:SetText()
 		frame.incWarning:Hide()
@@ -217,14 +217,14 @@ function mod:OnInitialize()
 		}
 	})
 
-	addon:InitModuleOptions(self)
+    addon:InitModuleOptions(self)
 	mod:SetEnabledState(self.db.profile.warnings)
 end
 
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostCreate', 'CreateCastWarnings')
     self:RegisterMessage('KuiNameplates_PostHide', 'Hide')
-    
+
     self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 
     local _,frame

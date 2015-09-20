@@ -8,7 +8,7 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local spelllist = LibStub('KuiSpellList-1.0')
 local kui = LibStub('Kui-1.0')
-local mod = addon:NewModule('Auras', 'AceEvent-3.0')
+local mod = addon:NewModule('Auras', addon.Prototype, 'AceEvent-3.0')
 local whitelist, _
 
 local GetTime, floor, ceil, format = GetTime, floor, ceil, format
@@ -749,12 +749,9 @@ function mod:OnInitialize()
     })
 
     addon:InitModuleOptions(self)
-
-
     mod:SetEnabledState(self.db.profile.enabled)
 
     UpdateSizes()
-
 
     self:WhitelistChanged()
     spelllist.RegisterChanged(self, 'WhitelistChanged')

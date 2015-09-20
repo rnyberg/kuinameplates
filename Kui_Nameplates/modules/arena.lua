@@ -7,7 +7,7 @@
 -- Modifications for plates while in an arena
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('Arena', 'AceEvent-3.0')
+local mod = addon:NewModule('Arena', addon.Prototype, 'AceEvent-3.0')
 
 mod.uiName = "Arena modifications"
 

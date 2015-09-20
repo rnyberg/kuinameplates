@@ -659,19 +659,12 @@ do
         end
     end
 
-    -- create module.ConfigChanged function
-    function addon:CreateConfigChangedListener(module)
-        if module.configChangedFuncs and not module.ConfigChanged then
-            module.ConfigChanged = ConfigChangedSkeleton
-        end
-
-        if module.configChangedListener then
-            -- run listener upon initialisation
-            module:configChangedListener()
-        end
-
-        module.AddConfigChanged = AddConfigChanged
-    end
+    -- module prototype
+    addon.Prototype = {
+        ConfigChanged = ConfigChangedSkeleton,
+        RegisterForConfigChanged = RegisterForConfigChanged,
+        AddConfigChanged = AddConfigChanged
+    }
 
     -- create an options table for the given module
     function addon:InitModuleOptions(module)
@@ -679,8 +672,18 @@ do
         local opts = module:GetOptions()
         local name = module.uiName or module.moduleName
 
-        self:CreateConfigChangedListener(module)
-        module.RegisterForConfigChanged = RegisterForConfigChanged
+        if module.configChangedListener then
+            -- run listener upon initialisation
+            module:configChangedListener()
+        end
+
+        if not module.ConfigChanged then
+            -- this module wasn't created with the prototype, so mix it in now
+            -- (legacy support)
+            for k,v in pairs(addon.Prototype) do
+                module[k] = v
+            end
+        end
 
         options.args[name] = {
             name = name,
@@ -701,6 +704,11 @@ do
         AceConfigDialog:AddToBlizOptions('kuinameplates', category)
 
         self.FinalizeOptions = nil
+    end
+
+    -- apply prototype to addon
+    for k,v in pairs(addon.Prototype) do
+        addon[k] = v
     end
 end
 
