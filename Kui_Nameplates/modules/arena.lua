@@ -1,4 +1,3 @@
-
 --[[
 -- Kui_Nameplates
 -- By Kesava at curse.com
@@ -80,4 +79,3 @@ end
 function mod:OnEnable()
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
-
