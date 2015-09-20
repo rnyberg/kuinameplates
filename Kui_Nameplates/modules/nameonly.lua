@@ -147,38 +147,40 @@ local function UpdateDisplay(f)
     })
 end
 
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.enabled = function(v)
-    if v then
-        mod:Enable()
-    else
-        mod:Disable()
-    end
-end
-mod.configChangedFuncs.enabled = function(f,v)
-    if v then
-        if not f.nameonly_hooked then
-            mod:PostCreate(nil,f)
+mod.configChangedFuncs = { NEW = true }
+mod.configChangedFuncs.enabled = {
+    ro = function(v)
+        mod:SetEnabledState(v)
+    end,
+    pf = function(f,v)
+        if v then
+            if not f.nameonly_hooked then
+                mod:PostCreate(nil,f)
+            end
+
+            if mod.db.profile.display.ondamaged and f.SetName ~= nameonly_SetName then
+                HookSetName(f)
+            end
+
+            UpdateNameOnly(f)
+        else
+            SwitchOff(f)
         end
-
-        if mod.db.profile.display.ondamaged and f.SetName ~= nameonly_SetName then
-            HookSetName(f)
-        end
-
-        UpdateNameOnly(f)
-    else
-        SwitchOff(f)
     end
-end
-mod.configChangedFuncs.ondamaged = function(f)
-    if not mod.db.profile.enabled then return end
-    mod.configChangedFuncs.enabled(f,true)
-end
+}
 
-mod.configChangedFuncs.runOnce.fontsize = UpdateFontSize
-mod.configChangedFuncs.runOnce.fontsizetrivial = UpdateFontSize
-mod.configChangedFuncs.fontsize = UpdateDisplay
-mod.configChangedFuncs.fontsizetrivial = UpdateDisplay
+mod.configChangedFuncs.display = {}
+mod.configChangedFuncs.display.ondamaged = {
+    pf = function(f)
+        if not mod.db.profile.enabled then return end
+        mod.configChangedFuncs.enabled(f,true)
+    end
+}
+mod.configChangedFuncs.display.fontsize = {
+    ro = UpdateFontSize,
+    pf = UpdateDisplay
+}
+mod.configChangedFuncs.display.fontsizetrivial = mod.configChangedFuncs.display.fontsize
 -- initialise ##################################################################
 function mod:GetOptions()
     return {

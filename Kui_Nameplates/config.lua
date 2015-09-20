@@ -36,10 +36,40 @@ do
     local handlerMeta = { __index = handlerProto }
 
     -- called by handler:Set when configuration is changed
-    local function ConfigChangedSkeleton(mod, key, profile)
+    local function ConfigChangedSkeleton(mod, info, profile)
         if mod.configChangedListener then
             -- notify that any option has changed
             mod:configChangedListener()
+        end
+
+        -- legacy support
+        local key = info[#info]
+
+        if mod.configChangedFuncs.NEW then
+            -- new ConfigChanged support (TODO: voyeurs)
+            local cc_table,k
+            for i=1,#info do
+                k = info[i]
+
+                if not cc_table then
+                    cc_table = mod.configChangedFuncs
+                end
+
+                if cc_table and cc_table[k] then
+                    cc_table = cc_table[k]
+
+                    if type(cc_table.ro) == 'function' then
+                        cc_table.ro(profile[key])
+                    end
+
+                    if type(cc_table.pf) == 'function' then
+                        for _,frame in pairs(addon.frameList) do
+                            cc_table.pf(frame.kui,profile[key])
+                        end
+                    end
+                end
+            end
+            return
         end
 
         -- call option specific callbacks
@@ -123,7 +153,7 @@ do
 
         if self.dbPath.ConfigChanged then
             -- inform module of configuration change
-            self.dbPath:ConfigChanged(k, p)
+            self.dbPath:ConfigChanged(info,p)
         end
     end
 
