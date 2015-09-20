@@ -4,6 +4,7 @@
 -- All rights reserved
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
+local category = 'Kui |cff9966ffNameplates|r'
 ------------------------------------------------------------------ Ace config --
 local AceConfig = LibStub('AceConfig-3.0')
 local AceConfigDialog = LibStub('AceConfigDialog-3.0')
@@ -82,22 +83,22 @@ do
     end
 
     function handlerProto:ResolveInfo(info)
-        local p = self.dbPath.db.profile
-
+        local profile = self.dbPath.db.profile
         local child, k
+
         for i = 1, #info do
             k = info[i]
 
             if i < #info then
                 if not child then
-                    child = p[k]
+                    child = profile[k]
                 else
                     child = child[k]
                 end
             end
         end
 
-        return child or p, k
+        return child or profile, k
     end
 
     function handlerProto:Get(info, ...)
@@ -629,8 +630,15 @@ do
         }
     end
 
-    AceConfig:RegisterOptionsTable('kuinameplates', options)
-    AceConfigDialog:AddToBlizOptions('kuinameplates', 'Kui Nameplates')
+    function addon:FinalizeOptions()
+        options.args['profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
+        options.args.profiles.order = -1
+
+        AceConfig:RegisterOptionsTable('kuinameplates', options)
+        AceConfigDialog:AddToBlizOptions('kuinameplates', category)
+
+        self.FinalizeOptions = nil
+    end
 end
 
 --------------------------------------------------------------- Slash command --
@@ -639,6 +647,6 @@ SLASH_KUINAMEPLATES2 = '/knp'
 
 function SlashCmdList.KUINAMEPLATES()
     -- twice to workaround an issue introduced with 5.3
-    InterfaceOptionsFrame_OpenToCategory('Kui Nameplates')
-    InterfaceOptionsFrame_OpenToCategory('Kui Nameplates')
+    InterfaceOptionsFrame_OpenToCategory(category)
+    InterfaceOptionsFrame_OpenToCategory(category)
 end

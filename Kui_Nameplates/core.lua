@@ -556,10 +556,7 @@ end
 ------------------------------------------------------------------------ init --
 function addon:OnInitialize()
     self.db = LibStub('AceDB-3.0'):New('KuiNameplatesGDB', defaults)
-
-    -- enable ace3 profiles
-    LibStub('AceConfig-3.0'):RegisterOptionsTable('kuinameplates-profiles', LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db))
-    LibStub('AceConfigDialog-3.0'):AddToBlizOptions('kuinameplates-profiles', 'Profiles', 'Kui Nameplates')
+    self:FinalizeOptions()
 
     self.db.RegisterCallback(self, 'OnProfileChanged', 'ProfileChanged')
     LSM.RegisterCallback(self, 'LibSharedMedia_Registered', 'LSMMediaRegistered')
