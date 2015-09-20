@@ -576,23 +576,11 @@ mod.configChangedListener = function(self)
     end
 end
 
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.enabled = function(val)
-    if val then
-        mod:Enable()
-    else
-        mod:Disable()
-    end
-end
+mod:AddConfigChanged({'enabled'}, function(v)
+    mod:SetEnabledState(v)
+end)
 
-mod.configChangedFuncs.runOnce.icon_size = UpdateSizes
-mod.configChangedFuncs.icon_size = UpdateAllButtons
-
-mod.configChangedFuncs.runOnce.trivial_icon_size = UpdateSizes
-mod.configChangedFuncs.trivial_icon_size = UpdateAllButtons
-
-mod.configChangedFuncs.runOnce.squareness = UpdateSizes
-mod.configChangedFuncs.squareness = UpdateAllButtons
+mod:AddConfigChanged({'icons'}, UpdateSizes, UpdateAllButtons)
 ---------------------------------------------------- initialisation functions --
 function mod:GetOptions()
     return {
@@ -707,7 +695,8 @@ function mod:GetOptions()
                     desc = 'Aura icon size on normal frames',
                     type = 'range',
                     order = 10,
-                    min = 5,
+                    min = 1,
+                    softMin = 10,
                     softMax = 50,
                     step = 1
                 },
@@ -760,9 +749,12 @@ function mod:OnInitialize()
     })
 
     addon:InitModuleOptions(self)
+
+
     mod:SetEnabledState(self.db.profile.enabled)
 
     UpdateSizes()
+
 
     self:WhitelistChanged()
     spelllist.RegisterChanged(self, 'WhitelistChanged')

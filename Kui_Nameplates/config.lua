@@ -109,7 +109,38 @@ do
                 end
             end
         end
+    end
 
+    local function ResolveKeys(mod,keys,ro,pf)
+        local g = mod.configChangedFuncs
+
+        for _,key in ipairs(keys) do
+            if not g[key] then
+                g[key] = {}
+            end
+
+            g = g[key]
+        end
+
+        g.ro = ro
+        g.pf = pf
+    end
+
+    local function AddConfigChanged(mod,key_groups,ro,pf)
+        if not mod.configChangedFuncs then
+            mod.configChangedFuncs = {}
+        end
+        mod.configChangedFuncs.NEW = true
+
+        if type(key_groups[1]) == 'table' then
+            -- multiple key groups
+            for _,keys in ipairs(key_groups) do
+                ResolveKeys(mod,keys,ro,pf)
+            end
+        else
+            -- one key group
+            ResolveKeys(mod,key_groups,ro,pf)
+        end
     end
 
     function handlerProto:ResolveInfo(info)
@@ -638,6 +669,8 @@ do
             -- run listener upon initialisation
             module:configChangedListener()
         end
+
+        module.AddConfigChanged = AddConfigChanged
     end
 
     -- create an options table for the given module
