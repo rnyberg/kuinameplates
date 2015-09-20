@@ -6,7 +6,7 @@
 -- Provides class colours for friendly targets
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('ClassColours', 'AceEvent-3.0')
+local mod = addon:NewModule('ClassColours', addon.Prototype, 'AceEvent-3.0')
 
 local select,GetPlayerInfoByGUID,tinsert=
       select,GetPlayerInfoByGUID,tinsert
@@ -42,24 +42,24 @@ function mod:PostHide(msg, f)
     f.name:SetTextColor(1,1,1,1)
 end
 -- config changed hooks ########################################################
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.friendly = function(v)
+mod:AddConfigChanged({'friendly'}, function(v)
     if v then
         mod:Enable()
     else
         mod:Disable()
     end
-end
-mod.configChangedFuncs.friendly = function(f,v)
+end,
+function(f,v)
     if v then
         mod:PostShow(nil, f)
     else
         mod:PostHide(nil, f)
     end
-end
-mod.configChangedFuncs.runOnce.enemy = function(v)
+end)
+
+mod:AddConfigChanged({'enemy'}, function(v)
     SetCVars()
-end
+end)
 -- config hooks ################################################################
 function mod:GetOptions()
     return {
