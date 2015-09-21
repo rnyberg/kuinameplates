@@ -75,16 +75,19 @@ local function UpdateButtonSize(self,button)
         -- shrink icons for trivial frames!
         button:SetHeight(sizes.tauraHeight)
         button:SetWidth(sizes.tauraWidth)
-        button.time = self.frame:CreateFontString(button.time, {
-            reset = true, size = 'small' })
-        button.count = self.frame:CreateFontString(button.count, {
-            reset = true, size = 'small' })
     else
         -- normal size!
         button:SetHeight(sizes.auraHeight)
         button:SetWidth(sizes.auraWidth)
-        button.time = self.frame:CreateFontString(button.time, { reset = true })
-        button.count = self.frame:CreateFontString(button.count, { reset = true })
+    end
+
+    if button:GetWidth() <= 21 then
+        -- use small text for small icons
+        button.time:SetFontSize('small')
+        button.count:SetFontSize('small')
+    else
+        button.time:SetFontSize('name')
+        button.count:SetFontSize('name')
     end
 end
 local function UpdateContainerSize(frame)
