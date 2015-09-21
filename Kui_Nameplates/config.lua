@@ -470,8 +470,8 @@ do
                                'Note that the default value ends in .5 as this prevents jittering text.',
                         type = 'range',
                         bigStep = .5,
-                        softMin = -5,
-                        softMax = 10,
+                        softMin = -10,
+                        softMax = 20,
                         order = 10
                     },
                 }
