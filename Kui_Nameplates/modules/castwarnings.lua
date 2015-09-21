@@ -181,15 +181,9 @@ function mod:Hide(msg, frame)
 end
 
 ---------------------------------------------------- Post db change functions --
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.warnings = function(val)
-    if val then
-        mod:Enable()
-    else
-        mod:Disable()
-    end
-end
-
+mod:AddConfigChanged('warnings', function(v)
+    mod:SetEnabledState(v)
+end)
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
     return {

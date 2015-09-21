@@ -4,7 +4,7 @@
 -- All rights reserved
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
-local mod = addon:NewModule('TankMode', 'AceEvent-3.0')
+local mod = addon:NewModule('TankMode', addon.Prototype, 'AceEvent-3.0')
 local class, tankmode
 
 local profile_tankmode
@@ -181,16 +181,17 @@ function mod:PostHide(msg,f)
     ShowThreatBrackets(f,false)
 end
 ---------------------------------------------------- Post db change functions --
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.enabled = function()
+mod:AddConfigChanged('enabled', function()
     mod:Toggle()
-end
-mod.configChangedFuncs.runOnce.scale = function(val)
-    mod:UpdateThreatBracketScaling()
-end
-mod.configChangedFuncs.scale = function(frame, val)
-    mod:UpdateThreatBrackets(frame)
-end
+end)
+mod:AddConfigChanged({'brackets','scale'},
+    function()
+        mod:UpdateThreatBracketScaling()
+    end,
+    function(f)
+        mod:UpdateThreatBrackets(f)
+    end
+)
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
     return {

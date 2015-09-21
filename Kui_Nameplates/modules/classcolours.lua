@@ -42,24 +42,27 @@ function mod:PostHide(msg, f)
     f.name:SetTextColor(1,1,1,1)
 end
 -- config changed hooks ########################################################
-mod:AddConfigChanged({'friendly'}, function(v)
-    if v then
-        mod:Enable()
-    else
-        mod:Disable()
+mod:AddConfigChanged('friendly',
+    function(v)
+        if v then
+            mod:Enable()
+        else
+            mod:Disable()
+        end
+    end,
+    function(f,v)
+        if v then
+            mod:PostShow(nil, f)
+        else
+            mod:PostHide(nil, f)
+        end
     end
-end,
-function(f,v)
-    if v then
-        mod:PostShow(nil, f)
-    else
-        mod:PostHide(nil, f)
+)
+mod:AddConfigChanged('enemy',
+    function(v)
+        SetCVars()
     end
-end)
-
-mod:AddConfigChanged({'enemy'}, function(v)
-    SetCVars()
-end)
+)
 -- config hooks ################################################################
 function mod:GetOptions()
     return {
