@@ -466,8 +466,8 @@ do
                     },
                     healthoffset = {
                         name = 'Health bar text offset',
-                        desc = 'Offset of the text on the top and bottom of the health bar: level, name, standard health and contextual health. The offset is reversed for contextual health.\n'..
-                               'Note that the default values end in .5 as this prevents jittering text, but only if "fix aliasing" is also enabled.',
+                        desc = 'Vertical offset of the text on the top and bottom of the health bar: level, name and health.\n'..
+                               'Note that the default value ends in .5 as this prevents jittering text.',
                         type = 'range',
                         bigStep = .5,
                         softMin = -5,
