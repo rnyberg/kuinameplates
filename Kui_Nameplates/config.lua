@@ -44,42 +44,44 @@ do
             mod:configChangedListener()
         end
 
-        -- legacy support
-        local key = info[#info]
+        if mod.configChangedFuncs then
+            -- legacy support
+            local key = info[#info]
 
-        if mod.configChangedFuncs.NEW then
-            -- new ConfigChanged support (TODO: voyeurs)
-            local cc_table,k
-            for i=1,#info do
-                k = info[i]
+            if mod.configChangedFuncs.NEW then
+                -- new ConfigChanged support (TODO: voyeurs)
+                local cc_table,k
+                for i=1,#info do
+                    k = info[i]
 
-                if not cc_table then
-                    cc_table = mod.configChangedFuncs
-                end
-
-                if cc_table and cc_table[k] then
-                    cc_table = cc_table[k]
-
-                    if type(cc_table.ro) == 'function' then
-                        cc_table.ro(profile[key])
+                    if not cc_table then
+                        cc_table = mod.configChangedFuncs
                     end
 
-                    if type(cc_table.pf) == 'function' then
-                        for _,frame in pairs(addon.frameList) do
-                            cc_table.pf(frame.kui,profile[key])
+                    if cc_table and cc_table[k] then
+                        cc_table = cc_table[k]
+
+                        if type(cc_table.ro) == 'function' then
+                            cc_table.ro(profile[key])
+                        end
+
+                        if type(cc_table.pf) == 'function' then
+                            for _,frame in pairs(addon.frameList) do
+                                cc_table.pf(frame.kui,profile[key])
+                            end
                         end
                     end
                 end
+                return
             end
-            return
-        end
 
-        -- call option specific callbacks
-        if mod.configChangedFuncs.runOnce and
-           mod.configChangedFuncs.runOnce[key]
-        then
-            -- call runOnce function
-            mod.configChangedFuncs.runOnce[key](profile[key])
+            -- call option specific callbacks
+            if mod.configChangedFuncs.runOnce and
+               mod.configChangedFuncs.runOnce[key]
+            then
+                -- call runOnce function
+                mod.configChangedFuncs.runOnce[key](profile[key])
+            end
         end
 
         -- find and call global config changed listeners
@@ -101,14 +103,14 @@ do
             end
         end
 
-        if mod.configChangedFuncs[key] then
-            -- iterate frames and call
-            for _, frame in pairs(addon.frameList) do
+        -- iterate frames and call
+        for _, frame in pairs(addon.frameList) do
+            if mod.configChangedFuncs and mod.configChangedFuncs[key] then
                 mod.configChangedFuncs[key](frame.kui, profile[key])
+            end
 
-                for _,voyeur in ipairs(voyeurs) do
-                    voyeur.configChangedFuncs.global[key](frame.kui, profile[key])
-                end
+            for _,voyeur in ipairs(voyeurs) do
+                voyeur.configChangedFuncs.global[key](frame.kui, profile[key])
             end
         end
     end
