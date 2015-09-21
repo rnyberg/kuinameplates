@@ -127,7 +127,7 @@ function mod:CreateCastbar(frame)
     -- container ---------------------------------------------------------------
     frame.castbar = CreateFrame('Frame', nil, frame)
     frame.castbar:SetFrameLevel(1)
-    --frame.castbar:Hide()
+    frame.castbar:Hide()
 
     -- background --------------------------------------------------------------
     frame.castbar.bg = frame.castbar:CreateTexture(nil,'ARTWORK',nil,1)
@@ -168,7 +168,7 @@ function mod:CreateCastbar(frame)
     frame.castbar.shield:SetBlendMode('BLEND')
     frame.castbar.shield:SetDrawLayer('ARTWORK', 7)
 
-    --frame.castbar.shield:Hide()
+    frame.castbar.shield:Hide()
 
     -- cast bar text -------------------------------------------------------
     if self.db.profile.display.spellname then
