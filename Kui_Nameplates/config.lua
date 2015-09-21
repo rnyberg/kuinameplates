@@ -265,12 +265,6 @@ do
                         type = 'toggle',
                         order = 20
                     },
-                    leftie = {
-                        name = 'Use leftie layout',
-                        desc = 'Use left-aligned text layout (similar to the pre-223 layout). Note that this layout truncates long names. But maybe you prefer that.'..RELOAD_HINT,
-                        type = 'toggle',
-                        order = 30
-                    },
                     highlight = {
                         name = 'Highlight',
                         desc = 'Highlight plates on mouse over.',

@@ -38,6 +38,7 @@ local function SwitchOn(f)
     })
     f.name:SetParent(f)
     f.name:ClearAllPoints()
+    f.name:SetJustifyH('CENTER')
 
     -- same as create.lua, UpdateName
     -- prevents font string jitter for some reason
@@ -46,7 +47,6 @@ local function SwitchOn(f)
     offset = (swidth > .7 or swidth < .2) and .5 or 0
 
     f.name:SetPoint('CENTER',offset,.5)
-    --f.name:SetPoint('CENTER')
 
     f.health:Hide()
     f.overlay:Hide()

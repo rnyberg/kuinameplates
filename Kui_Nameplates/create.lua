@@ -127,7 +127,7 @@ end
 function addon:CreateHealthText(frame, f)
     f.health.p = f:CreateFontString(f.overlay, {
         font = self.font,
-        size = self.db.profile.general.leftie and 'large' or 'name',
+        size = 'name',
         alpha = 1,
         outline = "OUTLINE" })
 
@@ -148,13 +148,10 @@ function addon:UpdateHealthText(f, trivial)
             f.health.p:Show()
         end
 
-        if self.db.profile.general.leftie then
-            f.health.p:SetPoint('BOTTOMRIGHT', f.health, 'TOPRIGHT',
-                                -2.5, -self.db.profile.text.healthoffset)
-        else
-            f.health.p:SetPoint('TOPRIGHT', f.health, 'BOTTOMRIGHT',
-                                -2.5, self.db.profile.text.healthoffset + 4)
-        end
+        f.health.p:SetPoint(
+            'TOPRIGHT', f.health, 'BOTTOMRIGHT',
+            -2.5, self.db.profile.text.healthoffset + 4
+        )
     end
 end
 ------------------------------------------------------------------ Level text --
@@ -197,31 +194,20 @@ function addon:UpdateName(f, trivial)
     f.name:ClearAllPoints()
 
     -- silly hacky way of fixing horizontal jitter with center aligned texts
-    local offset
-    if trivial or not self.db.profile.general.leftie then
-        local swidth = f.name:GetStringWidth()
-        swidth = swidth - abs(swidth)
-        offset = (swidth > .7 or swidth < .2) and .5 or 0
-    end
+    local swidth = f.name:GetStringWidth()
+    swidth = swidth - abs(swidth)
+    local offset = (swidth > .7 or swidth < .2) and .5 or 0
 
     if trivial then
         f.name:SetPoint('BOTTOM', f.health, 'TOP', offset, -self.db.profile.text.healthoffset)
         f.name:SetWidth(addon.sizes.frame.twidth * 2)
         f.name:SetJustifyH('CENTER')
     else
-        if self.db.profile.general.leftie then
-            f.name:SetPoint('BOTTOMLEFT', f.health, 'TOPLEFT',
-                            2.5, -self.db.profile.text.healthoffset)
-
-            f.name:SetPoint('RIGHT', f.health.p, 'LEFT')
-            f.name:SetJustifyH('LEFT')
-        else
-            -- move to top center
-            f.name:SetPoint('BOTTOM', f.health, 'TOP',
-                            offset, -self.db.profile.text.healthoffset)
-            f.name:SetWidth(addon.sizes.frame.width * 2)
-            f.name:SetJustifyH('CENTER')
-        end
+        -- move to top center
+        f.name:SetPoint('BOTTOM', f.health, 'TOP',
+                        offset, -self.db.profile.text.healthoffset)
+        f.name:SetWidth(addon.sizes.frame.width * 2)
+        f.name:SetJustifyH('CENTER')
     end
 end
 ----------------------------------------------------------------- Target glow --

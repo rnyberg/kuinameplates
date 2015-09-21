@@ -70,7 +70,6 @@ local defaults = {
             thheight    = 9,
             width       = 130,
             twidth      = 72,
-            leftie      = false,
             glowshadow  = true,
             strata      = 'BACKGROUND',
             lowhealthval = 20,

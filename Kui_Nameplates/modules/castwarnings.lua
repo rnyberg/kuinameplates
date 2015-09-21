@@ -108,13 +108,7 @@ function mod:CreateCastWarnings(msg, frame)
     frame.castWarning = frame:CreateFontString(frame.overlay, {
         size = 'name', outline = 'OUTLINE' })
     frame.castWarning:Hide()
-
-    if addon.db.profile.general.leftie then
-        frame.castWarning:SetPoint('BOTTOMLEFT', frame.name, 'TOPLEFT', 0, 1)
-        frame.castWarning:SetJustifyH('LEFT')
-    else
-        frame.castWarning:SetPoint('BOTTOM', frame.name, 'TOP', 0, 1)
-    end
+    frame.castWarning:SetPoint('BOTTOM', frame.name, 'TOP', 0, 1)
 
     frame.castWarning.ag    = frame.castWarning:CreateAnimationGroup()
     frame.castWarning.fade  = frame.castWarning.ag:CreateAnimation('Alpha')
@@ -134,13 +128,7 @@ function mod:CreateCastWarnings(msg, frame)
     frame.incWarning = frame:CreateFontString(frame.overlay, {
         size = 'small', outline = 'OUTLINE' })
     frame.incWarning:Hide()
-
-    if addon.db.profile.general.leftie then
-        frame.incWarning:SetPoint('BOTTOMRIGHT', frame.health.p, 'TOPRIGHT', 0, 1)
-        frame.incWarning:SetJustifyH('RIGHT')
-    else
-        frame.incWarning:SetPoint('TOP', frame.name, 'BOTTOM', 0, -3)
-    end
+    frame.incWarning:SetPoint('TOP', frame.name, 'BOTTOM', 0, -3)
 
     frame.incWarning.ag      = frame.incWarning:CreateAnimationGroup()
     frame.incWarning.ag.fade = frame.incWarning.ag:CreateAnimation('Alpha')
