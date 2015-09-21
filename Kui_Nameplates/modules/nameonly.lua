@@ -12,19 +12,17 @@ local utf8sub = LibStub('Kui-1.0').utf8sub
 local orig_SetName
 local hooked
 
+local colour_friendly
+
 -- mod functions ###############################################################
 -- toggle nameonly mode on
 local function SwitchOn(f)
     if f.nameonly then return end
     f.nameonly = true
 
-    if not f.player then
+    if not f.player and f.friend then
         -- color NPC names
-        if f.friend then
-            f.name:SetTextColor(.6,1,.6)
-        else
-            f.name:SetTextColor(1,.6,.6)
-        end
+        f.name:SetTextColor(unpack(colour_friendly))
     end
 
     if mod.db.profile.display.hidecastbars then
@@ -39,6 +37,10 @@ local function SwitchOn(f)
     f.name:SetParent(f)
     f.name:ClearAllPoints()
     f.name:SetJustifyH('CENTER')
+
+    f.icon:SetParent(f)
+    f.icon:ClearAllPoints()
+    f.icon:SetPoint('RIGHT',f.name,'LEFT',-5,0)
 
     -- same as create.lua, UpdateName
     -- prevents font string jitter for some reason
@@ -92,6 +94,8 @@ local function nameonly_SetName(f)
         utf8sub(f.name.text, 0, health_length)..
         '|cff555555'..utf8sub(f.name.text, health_length+1)
     )
+
+    f.name:SetWidth(f.name:GetStringWidth())
 end
 local function HookSetName(f)
     orig_SetName = f.SetName
@@ -227,8 +231,26 @@ function mod:GetOptions()
                     softMax = 30
                 }
             }
+        },
+        colours = {
+            name = 'Colours',
+            type = 'group',
+            inline = true,
+            disabled = function()
+                return not mod.db.profile.enabled
+            end,
+            args = {
+                friendly = {
+                    name = 'Friendly',
+                    type = 'color',
+                    order = 1
+                },
+            }
         }
     }
+end
+function mod:configChangedListener()
+    colour_friendly = self.db.profile.colours.friendly
 end
 function mod:OnInitialize()
     self:SetEnabledState(true)
@@ -241,7 +263,10 @@ function mod:OnInitialize()
                 hidecastbars = true,
                 fontsize = 11,
                 fontsizetrivial = 9,
-            }
+            },
+            colours = {
+                friendly = {.6,1,.6}
+            },
         }
     })
 

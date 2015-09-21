@@ -24,7 +24,7 @@ addon.sizes = {
         bgOffset = 8   -- inset of the frame glow
     },
     tex = {
-        raidicon = 23,
+        raidicon = 30,
         targetGlowH = 7,
         targetArrow = 33,
     },
