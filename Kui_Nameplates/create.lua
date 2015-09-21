@@ -227,3 +227,10 @@ function addon:UpdateTargetGlow(f, trivial)
         f.targetGlow:SetSize(self.sizes.tex.targetGlowW, self.sizes.tex.targetGlowH)
     end
 end
+-- raid icon ###################################################################
+function addon:UpdateRaidIcon(f)
+    f.icon:SetParent(f.overlay)
+    f.icon:SetSize(addon.sizes.tex.raidicon, addon.sizes.tex.raidicon)
+    f.icon:ClearAllPoints()
+    f.icon:SetPoint('LEFT',f.overlay,'RIGHT',8,0)
+end

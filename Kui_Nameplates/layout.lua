@@ -786,10 +786,7 @@ function addon:InitFrame(frame)
     end
 
     -- raid icon ---------------------------------------------------------------
-    f.icon:SetParent(f.overlay)
-    f.icon:SetSize(addon.sizes.tex.raidicon, addon.sizes.tex.raidicon)
-    f.icon:ClearAllPoints()
-    f.icon:SetPoint('LEFT',f.overlay,'RIGHT',8,0)
+    self:UpdateRaidIcon(f)
 
     --@debug@
     if _G['KuiNameplatesDrawFrames'] then

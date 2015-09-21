@@ -80,6 +80,9 @@ local function SwitchOff(f)
     -- reposition name
     addon:UpdateName(f,f.trivial)
 
+    -- reposition raid icon
+    addon:UpdateRaidIcon(f)
+
     -- reset name text
     f:SetName()
 end
