@@ -4,6 +4,7 @@
 -- All rights reserved
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
+local LSM = LibStub('LibSharedMedia-3.0')
 local category = 'Kui |cff9966ffNameplates|r'
 ------------------------------------------------------------------ Ace config --
 local AceConfig = LibStub('AceConfig-3.0')
@@ -721,7 +722,6 @@ do
         addon[k] = v
     end
 end
-
 --------------------------------------------------------------- Slash command --
 SLASH_KUINAMEPLATES1 = '/kuinameplates'
 SLASH_KUINAMEPLATES2 = '/knp'
@@ -730,4 +730,132 @@ function SlashCmdList.KUINAMEPLATES()
     -- twice to workaround an issue introduced with 5.3
     InterfaceOptionsFrame_OpenToCategory(category)
     InterfaceOptionsFrame_OpenToCategory(category)
+end
+-- config handlers #############################################################
+do
+    -- cycle all frames and reset the health and castbar status bar textures
+    local function UpdateAllBars()
+        local _,frame
+        for _,frame in pairs(addon.frameList) do
+            if frame.kui.health then
+                frame.kui.health:SetStatusBarTexture(addon.bartexture)
+            end
+
+            if frame.kui.highlight then
+                frame.kui.highlight:SetTexture(addon.bartexture)
+            end
+
+            if frame.kui.castbar then
+                frame.kui.castbar.bar:SetStatusBarTexture(addon.bartexture)
+            end
+        end
+    end
+
+    -- post db change hooks ####################################################
+    -- n.b. this is better
+    addon:AddConfigChanged({'fonts','font'}, function(v)
+        addon.font = LSM:Fetch(LSM.MediaType.FONT, v)
+        addon:UpdateAllFonts()
+    end)
+
+    addon:AddConfigChanged({'fonts','fontscale'},
+        function()
+            addon:ScaleFontSizes()
+        end,
+        function(f)
+            local _, fontObject
+            for _, fontObject in pairs(v.fontObjects) do
+                if type(fontObject.size) == 'string' then
+                    fontObject:SetFontSize(addon.sizes.font[fontObject.size])
+                end
+            end
+        end
+    )
+
+    addon:AddConfigChanged({'fonts','outline'}, nil, function(f,v)
+        local _, fontObject
+        for _, fontObject in pairs(f.fontObjects) do
+            kui.ModifyFontFlags(fontObject, v, 'OUTLINE')
+        end
+    end)
+
+    addon:AddConfigChanged({'fonts','monochrome'}, nil, function(f,v)
+        local _, fontObject
+        for _, fontObject in pairs(f.fontObjects) do
+            kui.ModifyFontFlags(fontObject, v, 'MONOCHROME')
+        end
+    end)
+
+    addon:AddConfigChanged(
+        {
+            {'fonts','fontscale'},
+            {'fonts','onesize'}
+        },
+        nil,
+        function(f)
+            local _, fontObject
+            for _, fontObject in pairs(f.fontObjects) do
+                if fontObject.size then
+                    fontObject:SetFontSize(fontObject.size)
+                end
+            end
+        end
+    )
+
+    addon:AddConfigChanged({'text','healthoffset'},
+        function()
+            addon.sizes.tex.healthOffset = addon.db.profile.text.healthoffset
+        end,
+        function(f)
+            addon:UpdateHealthText(f, f.trivial)
+            addon:UpdateLevel(f, f.trivial)
+            addon:UpdateName(f, f.trivial)
+        end
+    )
+
+    addon:AddConfigChanged({'hp','text'}, nil, function(f)
+        if f:IsShown() then
+            f:OnHealthValueChanged()
+        end
+    end)
+
+    addon:AddConfigChanged({'general','bartexture'}, function(v)
+        addon.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, v)
+        UpdateAllBars()
+    end)
+
+    addon:AddConfigChanged({'general','targetglowcolour'}, nil, function(f,v)
+        if f.targetGlow then
+            f.targetGlow:SetVertexColor(unpack(v))
+        end
+
+        if f.targetArrows then
+            f.targetArrows.left:SetVertexColor(unpack(v))
+            f.targetArrows.right:SetVertexColor(unpack(v))
+        end
+    end)
+
+    addon:AddConfigChanged({'general','strata'}, nil, function(f,v)
+        f:SetFrameStrata(v)
+    end)
+
+    do
+        local function UpdateFrameSize(frame)
+            addon:UpdateBackground(frame, frame.trivial)
+            addon:UpdateHealthBar(frame, frame.trivial)
+            addon:UpdateName(frame, frame.trivial)
+            frame:SetCentre()
+        end
+
+        addon:AddConfigChanged(
+            {
+                {'general','width'},
+                {'general','twidth'},
+                {'general','hheight'},
+                {'general','thheight'}
+            },
+            addon.UpdateSizesTable,
+            UpdateFrameSize
+        )
+    end
 end

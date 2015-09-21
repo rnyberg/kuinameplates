@@ -116,7 +116,8 @@ local defaults = {
                 fontscale  = 1,
                 outline    = true,
                 monochrome = false,
-                noalpha    = false,
+                onesize    = false,
+                noalpha    = false
             },
             sizes = {
                 combopoints = 13,
@@ -297,7 +298,7 @@ do
 end
 ------------------------------------------------------------ helper functions --
 -- cycle all frames' fontstrings and reset the font
-local function UpdateAllFonts()
+function addon:UpdateAllFonts()
     local _,frame
     for _,frame in pairs(addon.frameList) do
         local _,fs
@@ -308,24 +309,7 @@ local function UpdateAllFonts()
     end
 end
 
--- cycle all frames and reset the health and castbar status bar textures
-local function UpdateAllBars()
-    local _,frame
-    for _,frame in pairs(addon.frameList) do
-        if frame.kui.health then
-            frame.kui.health:SetStatusBarTexture(addon.bartexture)
-        end
-
-        if frame.kui.highlight then
-            frame.kui.highlight:SetTexture(addon.bartexture)
-        end
-
-        if frame.kui.castbar then
-            frame.kui.castbar.bar:SetStatusBarTexture(addon.bartexture)
-        end
-    end
-end
-
+-- given to fontstrings created with frame:CreateFontString (below)
 local function SetFontSize(fs, size)
     if addon.db.profile.fonts.options.onesize then
         size = 'name'
@@ -342,6 +326,7 @@ local function SetFontSize(fs, size)
     fs:SetFont(font, size, flags)
 end
 
+-- given to frames
 local function CreateFontString(self, parent, obj)
     -- store size as a key of addon.fontSizes so that it can be recalled & scaled
     -- correctly. Used by SetFontSize.
@@ -377,32 +362,30 @@ end
 addon.CreateFontString = CreateFontString
 ----------------------------------------------------------- scaling functions --
 -- scale font sizes with the fontscale option
-local function ScaleFontSize(key)
-    local size = addon.defaultFontSizes[key]
-    addon.sizes.font[key] = size * addon.db.profile.fonts.options.fontscale
+function addon:ScaleFontSize(key)
+    local size = self.defaultFontSizes[key]
+    self.sizes.font[key] = size * self.db.profile.fonts.options.fontscale
 end
-
-local function ScaleFontSizes()
+-- the same, for all registered sizes
+function addon:ScaleFontSizes()
     local key,_
-    for key,_ in pairs(addon.defaultFontSizes) do
-        ScaleFontSize(key)
+    for key,_ in pairs(self.defaultFontSizes) do
+        self:ScaleFontSize(key)
     end
 end
-
 -- modules should use this to add font sizes which scale correctly with the
 -- fontscale option
 -- keys must be unique
 function addon:RegisterFontSize(key, size)
     addon.defaultFontSizes[key] = size
-    ScaleFontSize(key)
+    self:ScaleFontSize(key)
 end
-
 -- once upon a time, equivalent logic was necessary for all frame sizes
 function addon:RegisterSize(type, key, size)
     error('deprecated function call: RegisterSize '..(type or 'nil')..' '..(key or 'nil')..' '..(size or 'nil'))
 end
 
-local function UpdateSizesTable()
+function addon:UpdateSizesTable()
     -- populate sizes table with profile values
     addon.sizes.frame.height = addon.db.profile.general.hheight
     addon.sizes.frame.theight = addon.db.profile.general.thheight
@@ -413,117 +396,17 @@ local function UpdateSizesTable()
     addon.sizes.tex.targetGlowW = addon.sizes.frame.width - 5
     addon.sizes.tex.ttargetGlowW = addon.sizes.frame.twidth - 5
 end
----------------------------------------------------- Post db change functions --
--- n.b. this is absolutely terrible and horrible and i hate it
-addon.configChangedFuncs = { runOnce = {} }
-addon.configChangedFuncs.runOnce.fontscale = function(val)
-    ScaleFontSizes()
-end
-addon.configChangedFuncs.fontscale = function(frame, val)
-    local _, fontObject
-    for _, fontObject in pairs(frame.fontObjects) do
-        if type(fontObject.size) == 'string' then
-            fontObject:SetFontSize(addon.sizes.font[fontObject.size])
-        end
-    end
-end
-
-addon.configChangedFuncs.outline = function(frame, val)
-    local _, fontObject
-    for _, fontObject in pairs(frame.fontObjects) do
-        kui.ModifyFontFlags(fontObject, val, 'OUTLINE')
-    end
-end
-
-addon.configChangedFuncs.monochrome = function(frame, val)
-    local _, fontObject
-    for _, fontObject in pairs(frame.fontObjects) do
-        kui.ModifyFontFlags(fontObject, val, 'MONOCHROME')
-    end
-end
-
-addon.configChangedFuncs.fontscale = function(frame, val)
-    local _, fontObject
-    for _, fontObject in pairs(frame.fontObjects) do
-        if fontObject.size then
-            fontObject:SetFontSize(fontObject.size)
-        end
-    end
-end
-addon.configChangedFuncs.onesize = addon.configChangedFuncs.fontscale
-
-addon.configChangedFuncs.runOnce.healthoffset = function(val)
-    addon.sizes.tex.healthOffset = addon.db.profile.text.healthoffset
-end
-addon.configChangedFuncs.healthoffset = function(frame, val)
-    addon:UpdateHealthText(frame, frame.trivial)
-    addon:UpdateLevel(frame, frame.trivial)
-    addon:UpdateName(frame, frame.trivial)
-end
-
-addon.configChangedFuncs.Health = function(frame)
-    if frame:IsShown() then
-        -- update health display
-        frame:OnHealthValueChanged()
-    end
-end
-addon.configChangedFuncs.friendly = addon.configChangedFuncs.Health
-addon.configChangedFuncs.hostile = addon.configChangedFuncs.Health
-
-addon.configChangedFuncs.runOnce.bartexture = function(val)
-    addon.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, val)
-    UpdateAllBars()
-end
-
-addon.configChangedFuncs.runOnce.font = function(val)
-    addon.font = LSM:Fetch(LSM.MediaType.FONT, val)
-    UpdateAllFonts()
-end
-
-addon.configChangedFuncs.targetglowcolour = function(frame, val)
-    if frame.targetGlow then
-        frame.targetGlow:SetVertexColor(unpack(val))
-    end
-
-    if frame.targetArrows then
-        frame.targetArrows.left:SetVertexColor(unpack(val))
-        frame.targetArrows.right:SetVertexColor(unpack(val))
-    end
-end
-
-addon.configChangedFuncs.strata = function(frame,val)
-    frame:SetFrameStrata(val)
-end
-
-do
-    local function UpdateFrameSize(frame)
-        addon:UpdateBackground(frame, frame.trivial)
-        addon:UpdateHealthBar(frame, frame.trivial)
-        addon:UpdateName(frame, frame.trivial)
-        frame:SetCentre()
-    end
-
-    addon.configChangedFuncs.runOnce.width    = UpdateSizesTable
-    addon.configChangedFuncs.runOnce.twidth   = UpdateSizesTable
-    addon.configChangedFuncs.runOnce.hheight  = UpdateSizesTable
-    addon.configChangedFuncs.runOnce.thheight = UpdateSizesTable
-
-    addon.configChangedFuncs.width    = UpdateFrameSize
-    addon.configChangedFuncs.twidth   = UpdateFrameSize
-    addon.configChangedFuncs.hheight  = UpdateFrameSize
-    addon.configChangedFuncs.thheight = UpdateFrameSize
-end
 ------------------------------------------- Listen for LibSharedMedia changes --
 function addon:LSMMediaRegistered(msg, mediatype, key)
     if mediatype == LSM.MediaType.FONT then
         if key == self.db.profile.fonts.options.font then
             self.font = LSM:Fetch(mediatype, key)
-            UpdateAllFonts()
+            addon:UpdateAllFonts()
         end
     elseif mediatype == LSM.MediaType.STATUSBAR then
         if key == self.db.profile.general.bartexture then
             self.bartexture = LSM:Fetch(mediatype, key)
-            UpdateAllFonts()
+            addon:UpdateAllFonts()
         end
     end
 end
@@ -582,8 +465,8 @@ function addon:OnEnable()
 
     self.uiscale = UIParent:GetEffectiveScale()
 
-    UpdateSizesTable()
-    ScaleFontSizes()
+    self:UpdateSizesTable()
+    self:ScaleFontSizes()
 
     -------------------------------------- Health bar smooth update functions --
     if self.db.profile.hp.smooth then
