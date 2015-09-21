@@ -40,7 +40,7 @@ local function SwitchOn(f)
 
     f.icon:SetParent(f)
     f.icon:ClearAllPoints()
-    f.icon:SetPoint('RIGHT',f.name,'LEFT',-5,0)
+    f.icon:SetPoint('LEFT',f.name,'RIGHT',5,0)
 
     -- same as create.lua, UpdateName
     -- prevents font string jitter for some reason
