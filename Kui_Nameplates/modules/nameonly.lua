@@ -14,6 +14,13 @@ local hooked
 
 local colour_friendly
 
+local PositionRaidIcon = {
+    function(f) return f.icon:SetPoint('RIGHT',f.name,'LEFT',-2,2) end,
+    function(f) return f.icon:SetPoint('BOTTOM',f.name,'TOP',0,8) end,
+    function(f) return f.icon:SetPoint('LEFT',f.name,'RIGHT',0,2) end,
+    function(f) return f.icon:SetPoint('TOP',f.name,'BOTTOM',-1,-8) end,
+}
+
 -- mod functions ###############################################################
 -- toggle nameonly mode on
 local function SwitchOn(f)
@@ -40,7 +47,8 @@ local function SwitchOn(f)
 
     f.icon:SetParent(f)
     f.icon:ClearAllPoints()
-    f.icon:SetPoint('LEFT',f.name,'RIGHT',0,2)
+
+    PositionRaidIcon[addon.db.profile.general.raidicon_side](f)
 
     -- same as create.lua, UpdateName
     -- prevents font string jitter for some reason
