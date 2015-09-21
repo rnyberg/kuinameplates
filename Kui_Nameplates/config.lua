@@ -317,6 +317,38 @@ do
                         },
                         order = 1
                     },
+                    bartexture = {
+                        name = 'Status bar texture',
+                        desc = 'The texture used for both the health and cast bars.',
+                        type = 'select',
+                        dialogControl = 'LSM30_Statusbar',
+                        values = AceGUIWidgetLSMlists.statusbar,
+                        order = 5
+                    },
+                    strata = {
+                        name = 'Frame strata',
+                        desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 3.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
+                        type = 'select',
+                        values = StrataSelectList,
+                        order = 6
+                    },
+                    raidicon_size = {
+                        name = 'Raid icon size',
+                        desc = 'Size of the raid marker texture on nameplates (skull, cross, etc)',
+                        order = 7,
+                        type = 'range',
+                        bigStep = 1,
+                        min = 1,
+                        softMin = 10,
+                        softMax = 100
+                    },
+                    raidicon_side = {
+                        name = 'Raid icon position',
+                        desc = 'Which side of the nameplate the raid icon should be displayed on',
+                        type = 'select',
+                        values = { 'LEFT', 'TOP', 'RIGHT', 'BOTTOM' },
+                        order = 8
+                    },
                     fixaa = {
                         name = 'Fix aliasing',
                         desc = 'Attempt to make plates appear sharper.\nWorks best when WoW\'s UI Scale system option is disabled and at larger resolutions.\n\n|cff88ff88This has a positive effect on performance.|r'..RELOAD_HINT,
@@ -410,21 +442,6 @@ do
                         min = 1,
                         softMin = 25,
                         softMax = 220
-                    },
-                    bartexture = {
-                        name = 'Status bar texture',
-                        desc = 'The texture used for both the health and cast bars.',
-                        type = 'select',
-                        dialogControl = 'LSM30_Statusbar',
-                        values = AceGUIWidgetLSMlists.statusbar,
-                        order = 150,
-                    },
-                    strata = {
-                        name = 'Frame strata',
-                        desc = 'The frame strata used by all frames, which determines what "layer" of the UI the frame is on. Untargeted frames are displayed at frame level 0 of this strata. Targeted frames are bumped to frame level 3.\n\nThis does not and can not affect the click-box of the frames, only their visibility.',
-                        type = 'select',
-                        values = StrataSelectList,
-                        order = 160
                     },
                     lowhealthval = {
                         name = 'Low health value',
@@ -872,6 +889,7 @@ do
             addon:UpdateBackground(frame, frame.trivial)
             addon:UpdateHealthBar(frame, frame.trivial)
             addon:UpdateName(frame, frame.trivial)
+            addon:UpdateRaidIcon(frame)
             frame:SetCentre()
         end
 
@@ -880,7 +898,9 @@ do
                 {'general','width'},
                 {'general','twidth'},
                 {'general','hheight'},
-                {'general','thheight'}
+                {'general','thheight'},
+                {'general','raidicon_size'},
+                {'general','raidicon_side'},
             },
             addon.UpdateSizesTable,
             UpdateFrameSize

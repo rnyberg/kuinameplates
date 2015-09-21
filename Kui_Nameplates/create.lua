@@ -232,5 +232,14 @@ function addon:UpdateRaidIcon(f)
     f.icon:SetParent(f.overlay)
     f.icon:SetSize(addon.sizes.tex.raidicon, addon.sizes.tex.raidicon)
     f.icon:ClearAllPoints()
-    f.icon:SetPoint('LEFT',f.overlay,'RIGHT',8,0)
+
+    if addon.db.profile.general.raidicon_side == 1 then
+        f.icon:SetPoint('RIGHT',f.overlay,'LEFT',-8,0)
+    elseif addon.db.profile.general.raidicon_side == 2 then
+        f.icon:SetPoint('BOTTOM',f.overlay,'TOP',0,12)
+    elseif addon.db.profile.general.raidicon_side == 3 then
+        f.icon:SetPoint('LEFT',f.overlay,'RIGHT',8,0)
+    else
+        f.icon:SetPoint('TOP',f.overlay,'BOTTOM',0,-8)
+    end
 end

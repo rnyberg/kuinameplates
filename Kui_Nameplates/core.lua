@@ -24,7 +24,6 @@ addon.sizes = {
         bgOffset = 8   -- inset of the frame glow
     },
     tex = {
-        raidicon = 30,
         targetGlowH = 7,
         targetArrow = 33,
     },
@@ -73,6 +72,8 @@ local defaults = {
             glowshadow  = true,
             strata      = 'BACKGROUND',
             lowhealthval = 20,
+            raidicon_size = 30,
+            raidicon_side = 3,
         },
         fade = {
             smooth      = true, -- smoothy fade plates
@@ -391,6 +392,7 @@ function addon:UpdateSizesTable()
     addon.sizes.frame.width = addon.db.profile.general.width
     addon.sizes.frame.twidth = addon.db.profile.general.twidth
 
+    addon.sizes.tex.raidicon = addon.db.profile.general.raidicon_size
     addon.sizes.tex.healthOffset = addon.db.profile.text.healthoffset
     addon.sizes.tex.targetGlowW = addon.sizes.frame.width - 5
     addon.sizes.tex.ttargetGlowW = addon.sizes.frame.twidth - 5
