@@ -581,6 +581,15 @@ mod:AddConfigChanged({'enabled'}, function(v)
 end)
 
 mod:AddConfigChanged({'icons'}, UpdateSizes, UpdateAllButtons)
+
+mod:AddGlobalConfigChanged('addon',
+    {
+        {'general','width'},
+        {'general','twidth'}
+    },
+    UpdateSizes,
+    UpdateAllButtons
+)
 ---------------------------------------------------- initialisation functions --
 function mod:GetOptions()
     return {
