@@ -4,6 +4,7 @@
 -- All rights reserved
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
+local kui = LibStub('Kui-1.0')
 local LSM = LibStub('LibSharedMedia-3.0')
 local category = 'Kui |cff9966ffNameplates|r'
 ------------------------------------------------------------------ Ace config --
@@ -131,6 +132,10 @@ do
             g = g[keys]
         else
             return
+        end
+
+        if g.ro or g.pf then
+            kui.print('ConfigChanged callback overwritten in '..(mod:GetName() or 'nil'))
         end
 
         g.ro = ro
@@ -758,29 +763,13 @@ do
         addon:UpdateAllFonts()
     end)
 
-    addon:AddConfigChanged({'fonts','fontscale'},
-        function()
-            addon:ScaleFontSizes()
-        end,
-        function(f)
-            local _, fontObject
-            for _, fontObject in pairs(v.fontObjects) do
-                if type(fontObject.size) == 'string' then
-                    fontObject:SetFontSize(addon.sizes.font[fontObject.size])
-                end
-            end
-        end
-    )
-
     addon:AddConfigChanged({'fonts','outline'}, nil, function(f,v)
-        local _, fontObject
         for _, fontObject in pairs(f.fontObjects) do
             kui.ModifyFontFlags(fontObject, v, 'OUTLINE')
         end
     end)
 
     addon:AddConfigChanged({'fonts','monochrome'}, nil, function(f,v)
-        local _, fontObject
         for _, fontObject in pairs(f.fontObjects) do
             kui.ModifyFontFlags(fontObject, v, 'MONOCHROME')
         end
@@ -791,9 +780,10 @@ do
             {'fonts','fontscale'},
             {'fonts','onesize'}
         },
-        nil,
+        function()
+            addon:ScaleFontSizes()
+        end,
         function(f)
-            local _, fontObject
             for _, fontObject in pairs(f.fontObjects) do
                 if fontObject.size then
                     fontObject:SetFontSize(fontObject.size)
