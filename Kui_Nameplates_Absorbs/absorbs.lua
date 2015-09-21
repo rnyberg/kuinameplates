@@ -6,7 +6,7 @@
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local kui = LibStub('Kui-1.0')
-local mod = addon:NewModule('Absorbs', 'AceEvent-3.0')
+local mod = addon:NewModule('Absorbs', addon.Prototype, 'AceEvent-3.0')
 
 -- combat log events to listen to for damage
 local damageEvents = {
@@ -103,10 +103,9 @@ function mod:GUIDStored(msg, f, unit)
 end
 
 ---------------------------------------------------- Post db change functions --
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.enabled = function(val)
-    mod:SetEnabledState(val)
-end
+mod:AddConfigChanged('enabled', function(v)
+    mod:SetEnabledState(v)
+end)
 
 ---------------------------------------------------- initialisation functions --
 function mod:GetOptions()
