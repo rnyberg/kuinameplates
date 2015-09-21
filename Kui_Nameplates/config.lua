@@ -50,7 +50,7 @@ do
 
             if mod.configChangedFuncs.NEW then
                 -- new ConfigChanged support (TODO: voyeurs)
-                local cc_table,k
+                local cc_table,gcc_table,k
                 for i=1,#info do
                     k = info[i]
 
@@ -58,6 +58,11 @@ do
                         cc_table = mod.configChangedFuncs
                     end
 
+                    if not gcc_table then
+                        gcc_table = globalConfigChangedListeners[mod:GetName()]
+                    end
+
+                    -- call the modules functions..
                     if cc_table and cc_table[k] then
                         cc_table = cc_table[k]
 
@@ -71,7 +76,27 @@ do
                             end
                         end
                     end
+
+                    -- call any voyeur's functions..
+                    if gcc_table and gcc_table[k] then
+                        gcc_table = gcc_table[k]
+
+                        if gcc_table.ro then
+                            for _,voyeur in ipairs(gcc_table.ro) do
+                                voyeur(profile[key])
+                            end
+                        end
+
+                        if gcc_table.pf then
+                            for _,voyeur in ipairs(gcc_table.pf) do
+                                for _,frame in pairs(addon.frameList) do
+                                    voyeur(frame.kui,profile[key])
+                                end
+                            end
+                        end
+                    end
                 end
+
                 return
             end
 
@@ -115,8 +140,10 @@ do
         end
     end
 
-    local function ResolveKeys(mod,keys,ro,pf)
-        local g = mod.configChangedFuncs
+    local function ResolveKeys(mod,keys,ro,pf,g,global)
+        if not g then
+            g = mod.configChangedFuncs
+        end
 
         if type(keys) == 'table' then
             for _,key in ipairs(keys) do
@@ -136,12 +163,23 @@ do
             return
         end
 
-        if g.ro or g.pf then
-            kui.print('ConfigChanged callback overwritten in '..(mod:GetName() or 'nil'))
-        end
+        if not global then
+            if g.ro or g.pf then
+                kui.print('ConfigChanged callback overwritten in '..(mod:GetName() or 'nil'))
+            end
 
-        g.ro = ro
-        g.pf = pf
+            g.ro = ro
+            g.pf = pf
+        else
+            if ro then
+                if not g.ro then g.ro = {} end
+                tinsert(g.ro, ro)
+            end
+            if pf then
+                if not g.pf then g.pf = {} end
+                tinsert(g.pf, pf)
+            end
+        end
     end
 
     local function AddConfigChanged(mod,key_groups,ro,pf)
@@ -158,6 +196,30 @@ do
         else
             -- one key group, or a string
             ResolveKeys(mod,key_groups,ro,pf)
+        end
+    end
+
+    local function AddGlobalConfigChanged(mod,target_module,key_groups,ro,pf)
+        if not globalConfigChangedListeners then
+            globalConfigChangedListeners = {}
+        end
+
+        if not target_module or target_module == 'addon' then
+            target_module = 'KuiNameplates'
+        end
+
+        if not globalConfigChangedListeners[target_module] then
+            globalConfigChangedListeners[target_module] = {}
+        end
+
+        local target_table = globalConfigChangedListeners[target_module]
+
+        if type(key_groups) == 'table' and type(key_groups[1]) == 'table' then
+            for _,keys in ipairs(key_groups) do
+                ResolveKeys(mod,keys,ro,pf,target_table,true)
+            end
+        else
+            ResolveKeys(mod,key_groups,ro,pf,target_table,true)
         end
     end
 
@@ -638,26 +700,6 @@ do
         }
     }
 
-    local function RegisterForConfigChanged(module, target_module, key)
-        -- this module wants to listen for another module's (or the addon's)
-        -- configChanged calls
-        local mod_name = module:GetName()
-
-        if not target_module or target_module == 'addon' then
-            target_module = 'KuiNameplates'
-        end
-
-        if not globalConfigChangedListeners[target_module] then
-            globalConfigChangedListeners[target_module] = {}
-        end
-
-        if not globalConfigChangedListeners[target_module][key] then
-            globalConfigChangedListeners[target_module][key] = {}
-        end
-
-        tinsert(globalConfigChangedListeners[target_module][key], mod_name)
-    end
-
     function addon:ProfileChanged()
         -- call all configChangedListeners
         if addon.configChangedListener then
@@ -674,8 +716,8 @@ do
     -- module prototype
     addon.Prototype = {
         ConfigChanged = ConfigChangedSkeleton,
-        RegisterForConfigChanged = RegisterForConfigChanged,
-        AddConfigChanged = AddConfigChanged
+        AddConfigChanged = AddConfigChanged,
+        AddGlobalConfigChanged = AddGlobalConfigChanged,
     }
 
     -- create an options table for the given module

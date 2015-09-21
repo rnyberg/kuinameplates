@@ -127,7 +127,7 @@ function mod:CreateCastbar(frame)
     -- container ---------------------------------------------------------------
     frame.castbar = CreateFrame('Frame', nil, frame)
     frame.castbar:SetFrameLevel(1)
-    frame.castbar:Hide()
+    --frame.castbar:Hide()
 
     -- background --------------------------------------------------------------
     frame.castbar.bg = frame.castbar:CreateTexture(nil,'ARTWORK',nil,1)
@@ -168,7 +168,7 @@ function mod:CreateCastbar(frame)
     frame.castbar.shield:SetBlendMode('BLEND')
     frame.castbar.shield:SetDrawLayer('ARTWORK', 7)
 
-    frame.castbar.shield:Hide()
+    --frame.castbar.shield:Hide()
 
     -- cast bar text -------------------------------------------------------
     if self.db.profile.display.spellname then
@@ -231,33 +231,30 @@ function mod:UnignoreFrame(frame)
     end
 end
 ---------------------------------------------------- Post db change functions --
-mod.configChangedFuncs = { runOnce = {} }
-mod.configChangedFuncs.runOnce.enabled = function(val)
-    if val then
-        mod:Enable()
-    else
-        mod:Disable()
-    end
-end
+mod:AddConfigChanged('enabled', function(v)
+    mod:SetEnabledState(v)
+end)
 
-mod.configChangedFuncs.runOnce.onlyontarget = function(val)
+mod:AddConfigChanged('onlyontarget', function()
     SetCVars()
-end
+end)
 
-mod.configChangedFuncs.shieldbarcolour = function(frame, val)
-    frame.castbar.shield:SetVertexColor(unpack(val))
-end
+mod:AddConfigChanged({'display','shieldbarcolour'}, nil, function(f,v)
+    f.castbar.shield:SetVertexColor(unpack(v))
+end)
 
-mod.configChangedFuncs.runOnce.cbheight = function(val)
-    sizes.cbheight = mod.db.profile.display.cbheight
-    sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
-end
+mod:AddConfigChanged({'display','cbheight'},
+    function()
+        sizes.cbheight = mod.db.profile.display.cbheight
+        sizes.icon = addon.db.profile.general.hheight + sizes.cbheight + 1
+    end,
+    UpdateCastbar
+)
 
-mod.configChangedFuncs.cbheight = UpdateCastbar
-
-mod.configChangedFuncs.global = { runOnce = {} }
-mod.configChangedFuncs.global.runOnce.hheight = mod.configChangedFuncs.runOnce.cbheight
-mod.configChangedFuncs.global.hheight = UpdateCastbar
+mod:AddGlobalConfigChanged('addon', {'general','hheight'},
+    mod.configChangedFuncs.display.cbheight.ro,
+    UpdateCastbar
+)
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()
     return {
@@ -363,10 +360,7 @@ function mod:OnInitialize()
         shield = 16
     }
 
-    self.configChangedFuncs.runOnce.cbheight(sizes.cbheight)
-
-    -- listen for health bar height being changed to resize the spell icon
-    self:RegisterForConfigChanged('addon', 'hheight')
+    self.configChangedFuncs.display.cbheight.ro(sizes.cbheight)
 
     -- handle default interface cvars & checkboxes
     InterfaceOptionsCombatPanel:HookScript('OnShow', function()
