@@ -103,7 +103,7 @@ local function nameonly_SetName(f)
     local health_length = len(f.name.text) * (f.health.curr / f.health.max)
     f.name:SetText(
         utf8sub(f.name.text, 0, health_length)..
-        '|cff555555'..utf8sub(f.name.text, health_length+1)
+        '|cff666666'..utf8sub(f.name.text, health_length+1)
     )
 
     f.name:SetWidth(f.name:GetStringWidth())
