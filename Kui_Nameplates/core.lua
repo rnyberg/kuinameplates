@@ -251,6 +251,9 @@ do
         local f = addon:GetNameplate(guid,name)
         if f then
             addon:StoreGUID(f,unit,guid)
+        else
+            -- equivalent to GUIDStored, but with no currently-visible frame
+            addon:SendMessage('KuiNameplates_UnitStored', unit, name, guid)
         end
     end
 
