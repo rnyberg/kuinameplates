@@ -232,7 +232,7 @@ function mod:UnignoreFrame(frame)
 end
 ---------------------------------------------------- Post db change functions --
 mod:AddConfigChanged('enabled', function(v)
-    mod:SetEnabledState(v)
+    mod:Toggle(v)
 end)
 
 mod:AddConfigChanged('onlyontarget', function()

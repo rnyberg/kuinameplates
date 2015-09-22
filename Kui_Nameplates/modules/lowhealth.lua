@@ -44,7 +44,7 @@ end
 
 -- config changed hooks ########################################################
 mod:AddConfigChanged('enabled', function(v)
-    mod:SetEnabledState(v)
+    mod:Toggle(v)
 end)
 mod:AddConfigChanged('colour', function(v)
     LOW_HEALTH_COLOR = v

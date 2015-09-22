@@ -170,7 +170,7 @@ end
 
 ---------------------------------------------------- Post db change functions --
 mod:AddConfigChanged('warnings', function(v)
-    mod:SetEnabledState(v)
+    mod:Toggle(v)
 end)
 -------------------------------------------------------------------- Register --
 function mod:GetOptions()

@@ -251,8 +251,6 @@ function mod:configChangedListener()
     colour_friendly = self.db.profile.colours.friendly
 end
 function mod:OnInitialize()
-    self:SetEnabledState(true)
-
     self.db = addon.db:RegisterNamespace(self.moduleName, {
         profile = {
             enabled = true,

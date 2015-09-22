@@ -212,7 +212,7 @@ end
 
 -- post db change functions ####################################################
 mod:AddConfigChanged('enabled', function(v)
-    mod:SetEnabledState(v)
+    mod:Toggle(v)
 end)
 
 -- initialise ##################################################################

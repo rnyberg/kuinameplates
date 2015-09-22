@@ -180,7 +180,7 @@ function mod:HideComboPoints(msg, frame)
 end
 ---------------------------------------------------- Post db change functions --
 mod:AddConfigChanged('enabled', function(v)
-    mod:SetEnabledState(v)
+    mod:Toggle(v)
 end)
 mod:AddConfigChanged('scale',
     function(v)

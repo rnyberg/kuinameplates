@@ -579,11 +579,11 @@ mod.configChangedListener = function(self)
     end
 end
 
-mod:AddConfigChanged({'enabled'}, function(v)
-    mod:SetEnabledState(v)
+mod:AddConfigChanged('enabled', function(v)
+    mod:Toggle(v)
 end)
 
-mod:AddConfigChanged({'icons'}, UpdateSizes, UpdateAllButtons)
+mod:AddConfigChanged('icons', UpdateSizes, UpdateAllButtons)
 
 mod:AddGlobalConfigChanged('addon',
     {
