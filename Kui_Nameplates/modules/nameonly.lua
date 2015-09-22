@@ -7,6 +7,7 @@ local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('NameOnly', addon.Prototype, 'AceEvent-3.0')
 mod.uiName = "Name-only display"
 
+local _
 local len = string.len
 local utf8sub = LibStub('Kui-1.0').utf8sub
 local orig_SetName
@@ -141,7 +142,9 @@ function mod:PostCreate(msg,f)
     f.oldHealth:HookScript('OnValueChanged',UpdateNameOnly)
     f.nameonly_hooked = true
 
-    if self.db.profile.display.ondamaged then
+    if self.db.profile.display.ondamaged and
+       f.SetName ~= nameonly_SetName
+    then
         HookSetName(f)
     end
 end
@@ -162,26 +165,10 @@ local function UpdateDisplay(f)
     })
 end
 
-mod:AddConfigChanged('enabled',
-    function(v)
-        mod:SetEnabledState(v)
-    end,
-    function(f,v)
-        if v then
-            if not f.nameonly_hooked then
-                mod:PostCreate(nil,f)
-            end
+mod:AddConfigChanged('enabled', function(v)
+    mod:Toggle(v)
+end)
 
-            if mod.db.profile.display.ondamaged and f.SetName ~= nameonly_SetName then
-                HookSetName(f)
-            end
-
-            UpdateNameOnly(f)
-        else
-            SwitchOff(f)
-        end
-    end
-)
 mod:AddConfigChanged({'display','ondamaged'}, nil,
     function(f)
         if not mod.db.profile.enabled then return end
@@ -291,10 +278,24 @@ function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_PostShow','PostShow')
     self:RegisterMessage('KuiNameplates_PostTarget','PostTarget')
     self:RegisterMessage('KuiNameplates_PostCreate','PostCreate')
+
+    for _,frame in pairs(addon.frameList) do
+        if frame.kui then
+            if not frame.kui.nameonly_hooked then
+                self:PostCreate(nil,frame.kui)
+            end
+
+            UpdateNameOnly(frame.kui)
+        end
+    end
 end
 function mod:OnDisable()
     self:UnregisterMessage('KuiNameplates_PostHide','PostHide')
     self:UnregisterMessage('KuiNameplates_PostShow','PostShow')
     self:UnregisterMessage('KuiNameplates_PostTarget','PostTarget')
     self:UnregisterMessage('KuiNameplates_PostCreate','PostCreate')
+
+    for _,frame in pairs(addon.frameList) do
+        SwitchOff(frame.kui)
+    end
 end

@@ -730,11 +730,20 @@ do
         end
     end
 
+    local function ToggleModule(mod,v)
+        if v then
+            mod:Enable()
+        else
+            mod:Disable()
+        end
+    end
+
     -- module prototype
     addon.Prototype = {
         ConfigChanged = ConfigChangedSkeleton,
         AddConfigChanged = AddConfigChanged,
         AddGlobalConfigChanged = AddGlobalConfigChanged,
+        Toggle = ToggleModule,
     }
 
     -- create an options table for the given module
