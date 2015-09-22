@@ -30,6 +30,9 @@ function mod:GUIDStored(msg,f,unit)
         health_cache[tremove(cache_index, 1)] = nil
     end
 end
+function mod:GUIDAssumed(msg,f)
+    self:PostShow(nil,f)
+end
 function mod:PostHide(msg,f)
     f.health.health_max_snapshot = nil
 end
@@ -49,6 +52,7 @@ function mod:OnInitialize()
 end
 function mod:OnEnable()
     self:RegisterMessage('KuiNameplates_GUIDStored','GUIDStored')
+    self:RegisterMessage('KuiNameplates_GUIDAssumed','GUIDAssumed')
     self:RegisterMessage('KuiNameplates_PostHide','PostHide')
     self:RegisterMessage('KuiNameplates_PostShow','PostShow')
 end
