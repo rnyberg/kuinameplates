@@ -131,9 +131,11 @@ local defaults = {
 }
 ------------------------------------------ GUID/name storage functions --
 do
-    local loadedGUIDs, loadedNames = {}, {}
     local knownGUIDs = {} -- GUIDs that we can relate to names (i.e. players)
     local knownIndex = {}
+
+    -- loaded = visible frames that currently possess this key
+    local loadedGUIDs, loadedNames = {}, {}
 
     function addon:StoreNameWithGUID(name,guid)
         -- used to provide aggressive name -> guid matching
@@ -233,7 +235,7 @@ do
         return self:GetNameplate(UnitGUID(unit), GetUnitName(unit))
     end
 
-    -- store an assumed unique name with guid before it becomes visible
+    -- store an assumed unique name with its guid before it becomes visible
     local function StoreUnit(unit)
         if not unit then return end
         if not UnitIsPlayer(unit) then return end
@@ -243,9 +245,8 @@ do
         if loadedGUIDs[guid] then return end
 
         local name = GetUnitName(unit)
-        if name and not knownGUIDs[name] then
-            addon:StoreNameWithGUID(name,guid)
-        end
+        if not name or knownGUIDs[name] then return end
+        addon:StoreNameWithGUID(name,guid)
 
         -- also send GUIDStored if the frame currently exists
         local f = addon:GetNameplate(guid,name)
