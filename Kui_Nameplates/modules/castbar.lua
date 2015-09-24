@@ -46,7 +46,6 @@ local function OnDefaultCastbarShow(self)
     -- is cast uninterruptible?
     if f.shield:IsShown() then
         f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.shieldbarcolour))
-        f.castbar.shield:SetVertexColor(unpack(mod.db.profile.display.shieldbarcolour))
         f.castbar.shield:Show()
     else
         f.castbar.bar:SetStatusBarColor(unpack(mod.db.profile.display.barcolour))
@@ -161,6 +160,7 @@ function mod:CreateCastbar(frame)
     frame.castbar.shield = frame.castbar.bar:CreateTexture(nil, 'ARTWORK')
     frame.castbar.shield:SetTexture('Interface\\AddOns\\Kui_Nameplates\\media\\Shield')
     frame.castbar.shield:SetTexCoord(0, .84375, 0, 1)
+    frame.castbar.shield:SetVertexColor(.5,.5,.7)
 
     frame.castbar.shield:SetSize(sizes.shield * .84375, sizes.shield)
     frame.castbar.shield:SetPoint('LEFT', frame.castbar.bg, -7, 0)
