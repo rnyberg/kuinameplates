@@ -36,7 +36,7 @@ local function UpdateDisplay(f)
 
     local sheight = f.name:GetStringHeight() / 2
     f.name:SetPoint('CENTER', .5,
-        (sheight ~= floor(sheight)) and 0 or .5
+        (sheight - floor(sheight) > .01) and 0 or .5
     )
 end
 
