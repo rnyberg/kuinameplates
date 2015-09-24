@@ -35,16 +35,9 @@ local function UpdateDisplay(f)
     f.name:SetWidth(f.name:GetStringWidth())
 
     local sheight = f.name:GetStringHeight() / 2
-    local offset
-    if sheight ~= floor(sheight) then
-        offset = 0
-    else
-        offset = .5
-    end
-
-    print(offset)
-
-    f.name:SetPoint('CENTER',.5,offset)
+    f.name:SetPoint('CENTER', .5,
+        (sheight ~= floor(sheight)) and 0 or .5
+    )
 end
 
 -- toggle nameonly mode on
