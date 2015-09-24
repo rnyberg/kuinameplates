@@ -48,8 +48,12 @@ local function SwitchOn(f)
 
     f.icon:SetParent(f)
     f.icon:ClearAllPoints()
-
     PositionRaidIcon[addon.db.profile.general.raidicon_side](f)
+
+    if f.castWarning then
+        f.castWarning:SetParent(f)
+        f.incWarning:SetParent(f)
+    end
 
     -- same as create.lua, UpdateName
     -- prevents font string jitter for some reason
@@ -91,6 +95,11 @@ local function SwitchOff(f)
 
     -- reposition raid icon
     addon:UpdateRaidIcon(f)
+
+    if f.castWarning then
+        f.castWarning:SetParent(f.overlay)
+        f.incWarning:SetParent(f.overlay)
+    end
 
     -- reset name text
     f:SetName()
