@@ -208,6 +208,10 @@ function mod:CreateCastbar(frame)
     frame.oldCastbar:HookScript('OnShow', OnDefaultCastbarShow)
     frame.oldCastbar:HookScript('OnHide', OnDefaultCastbarHide)
     frame.oldCastbar:HookScript('OnUpdate', OnDefaultCastbarUpdate)
+
+    if frame.oldCastbar:IsVisible() then
+        OnDefaultCastbarShow(frame.oldCastbar)
+    end
 end
 ------------------------------------------------------------------------ Hide --
 function mod:HideCastbar(frame)
