@@ -227,30 +227,23 @@ do
             end
         end
     end
-    OnHealthValueChanged = function(oldBar, curr)
-        if oldBar.oldHealth then
-            -- allow calling this as a function of the frame
-            oldBar = oldBar.oldHealth
-            curr = oldBar:GetValue()
-        end
-
-        local frame = oldBar.kuiParent.kui
-        frame.health.percent = oldBar:GetValue() * 100
+    OnHealthValueChanged = function(frame)
+        frame.health.percent = frame.oldHealth:GetValue() * 100
 
         -- store values for external access
         if frame.health.health_max_snapshot then
             -- 6.2.2 workaround values
             frame.health.min = 0
             frame.health.max = frame.health.health_max_snapshot
-            frame.health.curr = floor(frame.health.health_max_snapshot * oldBar:GetValue())
+            frame.health.curr = floor(frame.health.health_max_snapshot * frame.oldHealth:GetValue())
         else
             -- fallback values
             frame.health.min, frame.health.max = 0,1
-            frame.health.curr = curr
+            frame.health.curr = frame.oldHealth:GetValue()
         end
 
         frame.health:SetMinMaxValues(0,1)
-        frame.health:SetValue(curr)
+        frame.health:SetValue(frame.oldHealth:GetValue())
 
         SetHealthText(frame)
     end
@@ -818,7 +811,9 @@ function addon:InitFrame(frame)
     frame:HookScript('OnUpdate', OnFrameUpdate)
 
     f.oldHealth.kuiParent = frame
-    f.oldHealth:HookScript('OnValueChanged', OnHealthValueChanged)
+    f.oldHealth:HookScript('OnValueChanged', function()
+        f:OnHealthValueChanged()
+    end)
     ------------------------------------------------------------ Finishing up --
     addon:SendMessage('KuiNameplates_PostCreate', f)
 

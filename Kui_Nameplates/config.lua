@@ -872,6 +872,11 @@ do
             f:OnHealthValueChanged()
         end
     end)
+    addon:AddConfigChanged({'hp','text','mouseover'}, nil, function(f,v)
+        if not v and f.health and f.health.p then
+            f.health.p:Show()
+        end
+    end)
 
     addon:AddConfigChanged({'general','bartexture'}, function(v)
         addon.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, v)
