@@ -385,6 +385,10 @@ local function OnFrameHide(self)
         f.castbar_ignore_frame = nil
     end
 
+    -- despite being a default element, this doesn't hide correctly if it was
+    -- shown when the frame is hidden
+    f.glow:Hide()
+
     -- unset stored health bar colours
     f.health.r, f.health.g, f.health.b, f.health.reset
         = nil, nil, nil, nil
