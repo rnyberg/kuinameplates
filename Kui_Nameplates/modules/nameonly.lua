@@ -191,6 +191,11 @@ mod:AddConfigChanged({{'display','fontsize'},{'display','fontsizetrivial'}},
         end
     end
 )
+mod:AddGlobalConfigChanged('addon', {'fonts','fontscale'}, nil, function(f)
+    if f.nameonly then
+        UpdateDisplay(f)
+    end
+end)
 -- initialise ##################################################################
 function mod:GetOptions()
     return {
