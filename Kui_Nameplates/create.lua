@@ -186,26 +186,22 @@ end
 function addon:CreateName(frame, f)
     f.name = f:CreateFontString(f.overlay, {
         font = self.font, size = 'name', outline = 'OUTLINE' })
-    f.name:SetJustifyV('BOTTOM')
-    f.name:SetJustifyH('CENTER')
     f.name:SetHeight(10)
 end
 function addon:UpdateName(f, trivial)
     f.name:ClearAllPoints()
-
-    -- silly hacky way of fixing horizontal jitter with center aligned texts
-    local swidth = f.name:GetStringWidth()
-    swidth = swidth - abs(swidth)
-    local offset = (swidth > .7 or swidth < .2) and .5 or 0
+    f.name:SetJustifyV('BOTTOM')
+    f.name:SetJustifyH('CENTER')
+    f.name:SetWidth(0)
 
     if trivial then
-        f.name:SetPoint('BOTTOM', f.health, 'TOP', offset, -self.db.profile.text.healthoffset)
+        f.name:SetPoint('BOTTOM', f.health, 'TOP', .5, -self.db.profile.text.healthoffset)
         f.name:SetWidth(addon.sizes.frame.twidth * 2)
         f.name:SetJustifyH('CENTER')
     else
         -- move to top center
         f.name:SetPoint('BOTTOM', f.health, 'TOP',
-                        offset, -self.db.profile.text.healthoffset)
+                        .5, -self.db.profile.text.healthoffset)
         f.name:SetWidth(addon.sizes.frame.width * 2)
         f.name:SetJustifyH('CENTER')
     end

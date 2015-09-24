@@ -23,6 +23,30 @@ local PositionRaidIcon = {
 }
 
 -- mod functions ###############################################################
+local function UpdateDisplay(f)
+    f:CreateFontString(f.name, {
+        reset = true,
+        size = f.trivial and 'nameonlytrivial' or 'nameonly',
+        shadow = true
+    })
+
+    f.name:ClearAllPoints()
+    f.name:SetWidth(0)
+    f.name:SetWidth(f.name:GetStringWidth())
+
+    local sheight = f.name:GetStringHeight() / 2
+    local offset
+    if sheight ~= floor(sheight) then
+        offset = 0
+    else
+        offset = .5
+    end
+
+    print(offset)
+
+    f.name:SetPoint('CENTER',.5,offset)
+end
+
 -- toggle nameonly mode on
 local function SwitchOn(f)
     if f.nameonly then return end
@@ -37,14 +61,11 @@ local function SwitchOn(f)
         addon.Castbar:IgnoreFrame(f)
     end
 
-    f:CreateFontString(f.name, {
-        reset = true,
-        size = f.trivial and 'nameonlytrivial' or 'nameonly',
-        shadow = true
-    })
     f.name:SetParent(f)
-    f.name:ClearAllPoints()
     f.name:SetJustifyH('CENTER')
+    f.name:SetJustifyV('CENTER')
+
+    UpdateDisplay(f)
 
     f.icon:SetParent(f)
     f.icon:ClearAllPoints()
@@ -54,14 +75,6 @@ local function SwitchOn(f)
         f.castWarning:SetParent(f)
         f.incWarning:SetParent(f)
     end
-
-    -- same as create.lua, UpdateName
-    -- prevents font string jitter for some reason
-    local swidth = f.name:GetStringWidth()
-    swidth = swidth - abs(swidth)
-    offset = (swidth > .7 or swidth < .2) and .5 or 0
-
-    f.name:SetPoint('CENTER',offset,.5)
 
     f.health:Hide()
     f.overlay:Hide()
@@ -84,7 +97,6 @@ local function SwitchOff(f)
         reset = true, size = 'name'
     })
     f.name:SetParent(f.overlay)
-    f.name:ClearAllPoints()
 
     f.health:Show()
     f.overlay:Show()
@@ -108,15 +120,17 @@ end
 local function nameonly_SetName(f)
     orig_SetName(f)
 
-    if not f.health.curr or not f.nameonly then return end
+    if not f.nameonly then return end
+    f.name:SetWidth(0)
+    f.name:SetWidth(f.name:GetStringWidth())
+
+    if not f.health.curr then return end
 
     local health_length = len(f.name.text) * (f.health.curr / f.health.max)
     f.name:SetText(
         utf8sub(f.name.text, 0, health_length)..
         '|cff666666'..utf8sub(f.name.text, health_length+1)
     )
-
-    f.name:SetWidth(f.name:GetStringWidth())
 end
 local function HookSetName(f)
     orig_SetName = f.SetName
@@ -165,14 +179,6 @@ local function UpdateFontSize()
     addon:RegisterFontSize('nameonly',tonumber(mod.db.profile.display.fontsize))
     addon:RegisterFontSize('nameonlytrivial',tonumber(mod.db.profile.display.fontsizetrivial))
 end
-local function UpdateDisplay(f)
-    if not f.nameonly then return end
-    f:CreateFontString(f.name, {
-        reset = true,
-        size = f.trivial and 'nameonlytrivial' or 'nameonly',
-        shadow = true
-    })
-end
 
 mod:AddConfigChanged('enabled', function(v)
     mod:Toggle(v)
@@ -186,7 +192,11 @@ mod:AddConfigChanged({'display','ondamaged'}, nil,
 )
 mod:AddConfigChanged({{'display','fontsize'},{'display','fontsizetrivial'}},
     UpdateFontSize,
-    UpdateDisplay
+    function(f)
+        if f.nameonly then
+            UpdateDisplay(f)
+        end
+    end
 )
 -- initialise ##################################################################
 function mod:GetOptions()
