@@ -8,4 +8,7 @@
 * add option to hide castbars on friendly nameplates
 * add option to hide castbars when in name-only display
 * add options to change size and shape of aura icons
+* add options to change size and position of the raid marker icon
+* fix cast bar behaves oddly when a frame is created while casting
+* fix threat brackets/tank mode sometimes flash on newly shown frames
 * remove leftie option (moved to Kui_Nameplates_Extras)
