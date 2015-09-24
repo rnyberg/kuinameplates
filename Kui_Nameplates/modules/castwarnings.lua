@@ -5,6 +5,7 @@
 ]]
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('CastWarnings', addon.Prototype, 'AceEvent-3.0')
+local kui = LibStub('Kui-1.0')
 
 mod.uiName = 'Cast warnings'
 
@@ -17,13 +18,40 @@ local warningEvents = {
     ['SPELL_PERIODIC_HEAL'] = true
 }
 
+-- wrapper for kui.framefade;
+-- reimplementing previous behaviour from animation groups
+local function FadeFrame(self,from,to,duration,end_delay,callback)
+    kui.frameFadeRemoveFrame(self)
+
+    self:Show()
+    self:SetAlpha(from)
+
+    kui.frameFade(self, {
+        mode = 'OUT',
+        startAlpha = from,
+        endAlpha = to,
+        timeToFade = duration,
+        fadeHoldTime = end_delay,
+        finishedFunc = function(self)
+            if to == 0 then
+                self:Hide()
+            else
+                self:SetAlpha(to)
+            end
+
+            if callback then
+                callback(self)
+            end
+        end
+    })
+end
+
 ------------------------------------------------------------- Frame functions --
 local function SetCastWarning(self, spellName, spellSchool)
-    self.castWarning.ag:Stop()
+    self.castWarning:Stop()
 
     if spellName == nil then
         -- hide the warning instantly
-        self.castWarning.ag:Stop()
         self.castWarning:SetText()
         self.castWarning:Hide()
     else
@@ -32,15 +60,13 @@ local function SetCastWarning(self, spellName, spellSchool)
 
         self.castWarning:SetText(spellName)
         self.castWarning:SetTextColor(col.r, col.g, col.b)
-        self.castWarning:SetAlpha(1)
-
-        self.castWarning.ag:Play()
+        self.castWarning:Fade()
     end
 end
 
 local function SetIncomingWarning(self, amount)
     if amount == 0 then return end
-    self.incWarning.ag:Stop()
+    self.incWarning:Stop()
 
     if amount > 0 then
         -- healing
@@ -52,11 +78,7 @@ local function SetIncomingWarning(self, amount)
     end
 
     self.incWarning:SetText(amount)
-
-    self.incWarning:SetAlpha(1)
-    self.incWarning.ag.fade:SetEndDelay(.5)
-
-    self.incWarning.ag:Play()
+    self.incWarning:Fade()
 end
 
 -------------------------------------------------------------- Event handlers --
@@ -110,19 +132,12 @@ function mod:CreateCastWarnings(msg, frame)
     frame.castWarning:Hide()
     frame.castWarning:SetPoint('BOTTOM', frame.name, 'TOP', 0, 1)
 
-    frame.castWarning.ag    = frame.castWarning:CreateAnimationGroup()
-    frame.castWarning.fade  = frame.castWarning.ag:CreateAnimation('Alpha')
-    frame.castWarning.fade:SetSmoothing('IN')
-    frame.castWarning.fade:SetDuration(3)
-    frame.castWarning.fade:SetChange(-1)
-
-    frame.castWarning.ag:SetScript('OnPlay', function(self)
-        self:GetParent():Show()
-    end)
-
-    frame.castWarning.ag:SetScript('OnFinished', function(self)
-        self:GetParent():Hide()
-    end)
+    frame.castWarning.Fade = function(self)
+        FadeFrame(self,1,0,3)
+    end
+    frame.castWarning.Stop = function(self)
+        kui.frameFadeRemoveFrame(self)
+    end
 
     -- incoming healing
     frame.incWarning = frame:CreateFontString(frame.overlay, {
@@ -130,26 +145,18 @@ function mod:CreateCastWarnings(msg, frame)
     frame.incWarning:Hide()
     frame.incWarning:SetPoint('TOP', frame.name, 'BOTTOM', 0, -3)
 
-    frame.incWarning.ag      = frame.incWarning:CreateAnimationGroup()
-    frame.incWarning.ag.fade = frame.incWarning.ag:CreateAnimation('Alpha')
-    frame.incWarning.ag.fade:SetSmoothing('IN')
-    frame.incWarning.ag.fade:SetDuration(.5)
-    frame.incWarning.ag.fade:SetChange(-.5)
-
-    frame.incWarning.ag:SetScript('OnPlay', function(self)
-        self:GetParent():Show()
-    end)
-
-    frame.incWarning.ag:SetScript('OnFinished', function(self)
-        if self.fade:GetEndDelay() > 0 then
-            -- fade out fully
-            self:GetParent():SetAlpha(.5)
-            self.fade:SetEndDelay(0)
-            self:Play()
+    frame.incWarning.Fade = function(self,full)
+        if full then
+            FadeFrame(self,.5,0,.5)
         else
-            self:GetParent():Hide()
+            FadeFrame(self,1,.5,.5,.5, function(self)
+                self:Fade(true)
+            end)
         end
-    end)
+    end
+    frame.incWarning.Stop = function(self)
+        kui.frameFadeRemoveFrame(self)
+    end
 
     -- handlers
     frame.SetCastWarning = SetCastWarning
@@ -158,11 +165,11 @@ end
 
 function mod:Hide(msg, frame)
     if frame.castWarning then
-        frame.castWarning.ag:Stop()
+        frame.castWarning:Stop()
         frame.castWarning:SetText()
         frame.castWarning:Hide()
 
-        frame.incWarning.ag:Stop()
+        frame.incWarning:Stop()
         frame.incWarning:SetText()
         frame.incWarning:Hide()
     end
