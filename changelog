@@ -10,4 +10,5 @@
 * add options to change size and position of the raid marker icon
 * fix cast bar behaves oddly when a frame is created while casting
 * fix threat brackets/tank mode sometimes flash on newly shown frames
+* fix arena id module with 6.2.2
 * remove leftie option (moved to Kui_Nameplates_Extras)

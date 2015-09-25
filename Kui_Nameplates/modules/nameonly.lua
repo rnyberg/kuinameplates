@@ -204,12 +204,13 @@ function mod:GetOptions()
             desc = 'Change the layout of friendly nameplates so as to only show their names.',
             type = 'toggle',
             width = 'full',
-            order = 0
+            order = 10
         },
         display = {
             name = 'Display',
             type = 'group',
             inline = true,
+            order = 20,
             disabled = function()
                 return not mod.db.profile.enabled
             end,
@@ -248,9 +249,10 @@ function mod:GetOptions()
             }
         },
         colours = {
-            name = 'Colours',
+            name = 'NPC name colours',
             type = 'group',
             inline = true,
+            order = 30,
             disabled = function()
                 return not mod.db.profile.enabled
             end,
