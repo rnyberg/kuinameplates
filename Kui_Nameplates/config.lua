@@ -669,6 +669,7 @@ do
                         name = 'Global font settings',
                         type = 'group',
                         inline = true,
+                        order = 10,
                         args = {
                             font = {
                                 name = 'Font',
@@ -712,8 +713,60 @@ do
                             },
                         }
                     },
+                    sizes = {
+                        name = 'Font sizes',
+                        type = 'group',
+                        inline = true,
+                        order = 20,
+                        disabled = function()
+                            return addon.db.profile.fonts.options.onesize
+                        end,
+                        args = {
+                            desc = {
+                                name = 'Description'
+                                type = 'description',
+                                order = 1
+                            },
+                            large = {
+                                name = 'Large',
+                                type = 'range',
+                                order = 10,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
+                            },
+                            name = {
+                                name = 'Name',
+                                type = 'range',
+                                order = 10,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
+                            },
+                            spellname = {
+                                name = 'Spell name',
+                                type = 'range',
+                                order = 10,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
+                            },
+                            small = {
+                                name = 'Small',
+                                type = 'range',
+                                order = 10,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
+                            },
+                        },
+                    }
                 }
-            },
+            }
         }
     }
 

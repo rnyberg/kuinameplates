@@ -120,11 +120,10 @@ local defaults = {
                 noalpha    = false
             },
             sizes = {
-                combopoints = 13,
-                large       = 10,
-                spellname   = 9,
-                name        = 9,
-                small       = 8
+                large       = 12,
+                spellname   = 11,
+                name        = 11,
+                small       = 9
             },
         }
     }
