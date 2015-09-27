@@ -722,11 +722,6 @@ do
                             return addon.db.profile.fonts.options.onesize
                         end,
                         args = {
-                            desc = {
-                                name = 'Description'
-                                type = 'description',
-                                order = 1
-                            },
                             large = {
                                 name = 'Large',
                                 type = 'range',
@@ -739,7 +734,7 @@ do
                             name = {
                                 name = 'Name',
                                 type = 'range',
-                                order = 10,
+                                order = 20,
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
@@ -748,7 +743,7 @@ do
                             spellname = {
                                 name = 'Spell name',
                                 type = 'range',
-                                order = 10,
+                                order = 30,
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
@@ -757,11 +752,17 @@ do
                             small = {
                                 name = 'Small',
                                 type = 'range',
-                                order = 10,
+                                order = 40,
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
                                 softMax = 30
+                            },
+                            desc = {
+                                name = 'This is a description.',
+                                type = 'description',
+                                fontSize = 'medium',
+                                order = -1
                             },
                         },
                     }
