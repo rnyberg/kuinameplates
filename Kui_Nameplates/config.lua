@@ -731,10 +731,19 @@ do
                                 softMin = 1,
                                 softMax = 30
                             },
+                            small = {
+                                name = 'Small',
+                                type = 'range',
+                                order = 20,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
+                            },
                             name = {
                                 name = 'Name',
                                 type = 'range',
-                                order = 20,
+                                order = 30,
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
@@ -743,15 +752,6 @@ do
                             spellname = {
                                 name = 'Spell name',
                                 type = 'range',
-                                order = 30,
-                                step = 1,
-                                min = 1,
-                                softMin = 1,
-                                softMax = 30
-                            },
-                            small = {
-                                name = 'Small',
-                                type = 'range',
                                 order = 40,
                                 step = 1,
                                 min = 1,
@@ -759,7 +759,7 @@ do
                                 softMax = 30
                             },
                             desc = {
-                                name = 'This is a description.',
+                                name = '\nThis is a description.',
                                 type = 'description',
                                 fontSize = 'medium',
                                 order = -1
@@ -895,8 +895,9 @@ do
 
     addon:AddConfigChanged(
         {
-            {'fonts','fontscale'},
-            {'fonts','onesize'}
+            {'fonts','options','fontscale'},
+            {'fonts','options','onesize'},
+            {'fonts','sizes'}
         },
         function()
             addon:ScaleFontSizes()

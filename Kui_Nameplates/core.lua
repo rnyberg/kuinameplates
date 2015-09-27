@@ -366,7 +366,16 @@ addon.CreateFontString = CreateFontString
 ----------------------------------------------------------- scaling functions --
 -- scale font sizes with the fontscale option
 function addon:ScaleFontSize(key)
-    local size = self.defaultFontSizes[key]
+    local size
+
+    if self.db.profile.fonts.sizes and
+       self.db.profile.fonts.sizes[key]
+    then
+        size = self.db.profile.fonts.sizes[key]
+    else
+        size = self.defaultFontSizes[key]
+    end
+
     self.sizes.font[key] = size * self.db.profile.fonts.options.fontscale
 end
 -- the same, for all registered sizes
@@ -380,6 +389,7 @@ end
 -- fontscale option
 -- keys must be unique
 function addon:RegisterFontSize(key, size)
+    -- TODO should add an option to the interface
     addon.defaultFontSizes[key] = size
     self:ScaleFontSize(key)
 end
