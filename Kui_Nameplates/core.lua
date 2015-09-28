@@ -524,18 +524,17 @@ function addon:OnEnable()
             end
         end)
     elseif self.db.profile.hp.animation.cutaway then
+        local select = select
         local SetValueCutaway = function(self,value)
-            local _,max = self:GetMinMaxValues()
-            local old_value = self:GetValue()
-
-            if value < old_value then
-                local old_val_point = old_value / max
-                local right_point = old_val_point * self:GetWidth()
-
+            if value < self:GetValue() then
                 if not kui.frameIsFading(self.KuiFader) then
-                    self.KuiFader:SetPoint('RIGHT', self, 'LEFT', right_point, 0)
+                    self.KuiFader:SetPoint(
+                        'RIGHT', self, 'LEFT',
+                        (self:GetValue() / select(2,self:GetMinMaxValues())) * self:GetWidth(), 0
+                    )
+
                     -- store original rightmost value
-                    self.KuiFader.right = old_value
+                    self.KuiFader.right = self:GetValue()
                 end
 
                 kui.frameFade(self.KuiFader, {
