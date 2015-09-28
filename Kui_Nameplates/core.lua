@@ -552,11 +552,15 @@ function addon:OnEnable()
 
             self:orig_SetValue(value)
         end
+        local SetColour = function(self,...)
+            self:orig_SetStatusBarColor(...)
+            self.KuiFader:SetVertexColor(...)
+        end
 
         function self.CutawayBar(bar)
             bar.KuiFader = bar:CreateTexture(nil,'ARTWORK')
             bar.KuiFader:SetTexture(kui.m.t.solid)
-            bar.KuiFader:SetVertexColor(1,1,1,1)
+            bar.KuiFader:SetVertexColor(bar:GetStatusBarColor())
             bar.KuiFader:SetAlpha(0)
 
             bar.KuiFader:SetPoint('TOP')
@@ -565,6 +569,9 @@ function addon:OnEnable()
 
             bar.orig_SetValue = bar.SetValue
             bar.SetValue = SetValueCutaway
+
+            bar.orig_SetStatusBarColor = bar.SetStatusBarColor
+            bar.SetStatusBarColor = SetColour
         end
     end
 
