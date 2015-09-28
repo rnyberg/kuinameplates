@@ -651,13 +651,24 @@ do
                             }
                         }
                     },
-                    smooth = {
-                        name = 'Smooth health bar',
-                        desc = 'Smoothly animate health bar value updates',
-                        type = 'toggle',
-                        width = 'full',
-                        order = 30
-                    },
+                    animation = {
+                        name = 'Health bar animation style',
+                        type = 'group',
+                        inline = true,
+                        order = 30,
+                        args = {
+                            smooth = {
+                                name = 'Smooth',
+                                type = 'toggle',
+                                order = 1
+                            },
+                            cutaway = {
+                                name = 'Cutaway',
+                                type = 'toggle',
+                                order = 2
+                            }
+                        }
+                    }
                 }
             },
             fonts = {
@@ -747,7 +758,8 @@ do
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
-                                softMax = 30
+                                softMax = 30,
+                                disabled = false
                             },
                             spellname = {
                                 name = 'Spell name',
@@ -876,18 +888,18 @@ do
 
     -- post db change hooks ####################################################
     -- n.b. this is better
-    addon:AddConfigChanged({'fonts','font'}, function(v)
+    addon:AddConfigChanged({'fonts','options','font'}, function(v)
         addon.font = LSM:Fetch(LSM.MediaType.FONT, v)
         addon:UpdateAllFonts()
     end)
 
-    addon:AddConfigChanged({'fonts','outline'}, nil, function(f,v)
+    addon:AddConfigChanged({'fonts','options','outline'}, nil, function(f,v)
         for _, fontObject in pairs(f.fontObjects) do
             kui.ModifyFontFlags(fontObject, v, 'OUTLINE')
         end
     end)
 
-    addon:AddConfigChanged({'fonts','monochrome'}, nil, function(f,v)
+    addon:AddConfigChanged({'fonts','options','monochrome'}, nil, function(f,v)
         for _, fontObject in pairs(f.fontObjects) do
             kui.ModifyFontFlags(fontObject, v, 'MONOCHROME')
         end

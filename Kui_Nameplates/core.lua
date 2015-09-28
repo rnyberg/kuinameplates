@@ -108,7 +108,10 @@ local defaults = {
                 hp_hostile_max = 5,
                 hp_hostile_low = 3
             },
-            smooth = true
+            animation = {
+                smooth = true,
+                cutaway = false
+            }
         },
         fonts = {
             options = {
@@ -483,7 +486,7 @@ function addon:OnEnable()
     self:ScaleFontSizes()
 
     -------------------------------------- Health bar smooth update functions --
-    if self.db.profile.hp.smooth then
+    if self.db.profile.hp.animation.smooth then
         local f, smoothing, GetFramerate, min, max, abs
             = CreateFrame('Frame'), {}, GetFramerate, math.min, math.max, math.abs
 
@@ -520,6 +523,49 @@ function addon:OnEnable()
                 end
             end
         end)
+    elseif self.db.profile.hp.animation.cutaway then
+        local SetValueCutaway = function(self,value)
+            local _,max = self:GetMinMaxValues()
+            local old_value = self:GetValue()
+
+            if value < old_value then
+                local old_val_point = old_value / max
+                local right_point = old_val_point * self:GetWidth()
+
+                if not kui.frameIsFading(self.KuiFader) then
+                    self.KuiFader:SetPoint('RIGHT', self, 'LEFT', right_point, 0)
+                    -- store original rightmost value
+                    self.KuiFader.right = old_value
+                end
+
+                kui.frameFade(self.KuiFader, {
+                    mode = 'OUT',
+                    timeToFade = .3
+                })
+            end
+
+            if self.KuiFader.right and value > self.KuiFader.right then
+                -- stop animation if new value overlaps old end point
+                kui.frameFadeRemoveFrame(self.KuiFader)
+                self.KuiFader:SetAlpha(0)
+            end
+
+            self:orig_SetValue(value)
+        end
+
+        function self.CutawayBar(bar)
+            bar.KuiFader = bar:CreateTexture(nil,'ARTWORK')
+            bar.KuiFader:SetTexture(kui.m.t.solid)
+            bar.KuiFader:SetVertexColor(1,1,1,1)
+            bar.KuiFader:SetAlpha(0)
+
+            bar.KuiFader:SetPoint('TOP')
+            bar.KuiFader:SetPoint('BOTTOM')
+            bar.KuiFader:SetPoint('LEFT',bar:GetStatusBarTexture(),'RIGHT')
+
+            bar.orig_SetValue = bar.SetValue
+            bar.SetValue = SetValueCutaway
+        end
     end
 
     self:configChangedListener()
