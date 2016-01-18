@@ -100,6 +100,9 @@ local defaults = {
                 tappedcol   = { .5, .5, .5 },
                 playercol   = { .2, .5, .9 }
             },
+            bar = {
+                animation = 2
+            },
             text = {
                 hp_text_disabled = false,
                 mouseover = false,
@@ -108,10 +111,6 @@ local defaults = {
                 hp_hostile_max = 5,
                 hp_hostile_low = 3
             },
-            animation = {
-                smooth = true,
-                cutaway = false
-            }
         },
         fonts = {
             options = {
@@ -486,7 +485,7 @@ function addon:OnEnable()
     self:ScaleFontSizes()
 
     -------------------------------------- Health bar smooth update functions --
-    if self.db.profile.hp.animation.smooth then
+    if self.db.profile.hp.bar.animation == 2 then
         local f, smoothing, GetFramerate, min, max, abs
             = CreateFrame('Frame'), {}, GetFramerate, math.min, math.max, math.abs
 
@@ -523,7 +522,7 @@ function addon:OnEnable()
                 end
             end
         end)
-    elseif self.db.profile.hp.animation.cutaway then
+    elseif self.db.profile.hp.bar.animation == 3 then
         local select = select
         local SetValueCutaway = function(self,value)
             if value < self:GetValue() then

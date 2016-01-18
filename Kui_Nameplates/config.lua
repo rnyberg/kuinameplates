@@ -31,6 +31,12 @@ do
         'Blank |cff888888(  )'
     }
 
+    local HealthAnimationSelectList = {
+        'None',
+        'Smooth',
+        'Cutaway'
+    }
+
     local globalConfigChangedListeners = {}
 
     local handlers = {}
@@ -594,11 +600,26 @@ do
                             }
                         }
                     },
+                    bar = {
+                        name = 'Health bar',
+                        type = 'group',
+                        inline = true,
+                        order = 20,
+                        args = {
+                            animation = {
+                                name = 'Animation',
+                                desc = 'Health bar animation style.'..RELOAD_HINT,
+                                type = 'select',
+                                values = HealthAnimationSelectList,
+                                order = 0
+                            }
+                        }
+                    },
                     text = {
                         name = 'Health text',
                         type = 'group',
                         inline = true,
-                        order = 10,
+                        order = 30,
                         disabled = function(info)
                             return addon.db.profile.hp.text.hp_text_disabled
                         end,
@@ -648,24 +669,6 @@ do
                                 type = 'description',
                                 fontSize = 'medium',
                                 order = 60
-                            }
-                        }
-                    },
-                    animation = {
-                        name = 'Health bar animation style',
-                        type = 'group',
-                        inline = true,
-                        order = 30,
-                        args = {
-                            smooth = {
-                                name = 'Smooth',
-                                type = 'toggle',
-                                order = 1
-                            },
-                            cutaway = {
-                                name = 'Cutaway',
-                                type = 'toggle',
-                                order = 2
                             }
                         }
                     }
