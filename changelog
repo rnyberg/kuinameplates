@@ -1,2 +1,5 @@
 * add options to change individual font sizes
 * add "cutaway" health bar animation style
+* add legacy of the emperor and ring of peace incapacitate to monk whitelist
+* cast warnings now use the "spell name" font size, which might be a bit different, maybe
+* fix font options (face, monochrome, outline) don't update instantly
