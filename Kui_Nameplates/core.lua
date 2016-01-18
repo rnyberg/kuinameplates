@@ -467,6 +467,9 @@ function addon:OnInitialize()
 end
 ---------------------------------------------------------------------- enable --
 function addon:OnEnable()
+    -- force enable threat on nameplates - this is a hidden CVar
+    SetCVar('threatWarning',3)
+
     -- get font and status bar texture from LSM
     self.font = LSM:Fetch(LSM.MediaType.FONT, self.db.profile.fonts.options.font)
     self.bartexture = LSM:Fetch(LSM.MediaType.STATUSBAR, self.db.profile.general.bartexture)
