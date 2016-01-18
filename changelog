@@ -1,14 +1,2 @@
-* add nameonly module: hides the healthbar of friendly nameplates (enabled by default)
-* the "fix aliasing" option no longer makes frames appear "loose"
-* change the castbar shield icon
-* increase softmax of the castbar height option (you can still type bigger numbers)
-* store information (like class colours) about players in your group
-* spell names are now shown on trivial units
-* make threat brackets show when not in tank mode
-* add option to hide castbars on friendly nameplates
-* add options to change size and shape of aura icons
-* add options to change size and position of the raid marker icon
-* fix cast bar behaves oddly when a frame is created while casting
-* fix threat brackets/tank mode sometimes flash on newly shown frames
-* fix arena id module with 6.2.2
-* remove leftie option (moved to Kui_Nameplates_Extras)
+* add options to change individual font sizes
+* add "cutaway" health bar animation style

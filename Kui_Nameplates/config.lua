@@ -733,28 +733,16 @@ do
                             return addon.db.profile.fonts.options.onesize
                         end,
                         args = {
-                            large = {
-                                name = 'Large',
-                                type = 'range',
-                                order = 10,
-                                step = 1,
-                                min = 1,
-                                softMin = 1,
-                                softMax = 30
-                            },
-                            small = {
-                                name = 'Small',
-                                type = 'range',
-                                order = 20,
-                                step = 1,
-                                min = 1,
-                                softMin = 1,
-                                softMax = 30
+                            desc = {
+                                name = 'These are the default font sizes used by various modules. Their names may or may not match what they actually change.',
+                                type = 'description',
+                                fontSize = 'medium',
+                                order = 1
                             },
                             name = {
                                 name = 'Name',
                                 type = 'range',
-                                order = 30,
+                                order = 10,
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
@@ -764,17 +752,29 @@ do
                             spellname = {
                                 name = 'Spell name',
                                 type = 'range',
-                                order = 40,
+                                order = 20,
                                 step = 1,
                                 min = 1,
                                 softMin = 1,
                                 softMax = 30
                             },
-                            desc = {
-                                name = '\nThis is a description.',
-                                type = 'description',
-                                fontSize = 'medium',
-                                order = -1
+                            large = {
+                                name = 'Large',
+                                type = 'range',
+                                order = 30,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
+                            },
+                            small = {
+                                name = 'Small',
+                                type = 'range',
+                                order = 40,
+                                step = 1,
+                                min = 1,
+                                softMin = 1,
+                                softMax = 30
                             },
                         },
                     }
