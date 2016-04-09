@@ -7,7 +7,12 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('KuiNameplates')
 local mod = addon:NewModule('LowHealthColours', addon.Prototype, 'AceEvent-3.0')
 
-mod.uiName = 'Low health colour'
+mod.uiName = 'Low health'
+
+-- specs with odd low health values
+local low_health_specs = {
+    [254] = 35, -- marksmanship
+}
 
 local LOW_HEALTH_COLOR, PRIORITY, OVER_CLASSCOLOUR
 
@@ -76,6 +81,21 @@ function mod:GetOptions()
             desc = 'Show on enemy players - i.e. override class colours',
             type = 'toggle',
             order = 30
+        },
+        lowhealthval = {
+            name = 'Low health value',
+            desc = 'Low health value used by some modules, such as frame fading. This option is also under General display.',
+            type = 'range',
+            min = 1,
+            max = 100,
+            bigStep = 1,
+            order = 35,
+            get = function()
+                return addon.db.profile.general.lowhealthval
+            end,
+            set = function(_,val)
+                addon.db.profile.general.lowhealthval = val
+            end
         },
         colour = {
             name = 'Low health colour',
