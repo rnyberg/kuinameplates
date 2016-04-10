@@ -9,11 +9,6 @@ local mod = addon:NewModule('LowHealthColours', addon.Prototype, 'AceEvent-3.0')
 
 mod.uiName = 'Low health'
 
--- specs with odd low health values
-local low_health_specs = {
-    [254] = 35, -- marksmanship
-}
-
 local LOW_HEALTH_COLOR, PRIORITY, OVER_CLASSCOLOUR
 
 local function OnHealthValueChanged(oldHealth,current)
