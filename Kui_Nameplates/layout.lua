@@ -12,7 +12,7 @@ local _
 
 local profile
 -- profile keys used often
-local profile_fade, profile_fade_rules, profile_lowhealthval, profile_hp
+local profile_fade, profile_fade_rules, profile_lowhealthval, profile_hp, profile_highhealthval
 
 --@debug@
 --KuiNameplatesDebug=true
@@ -144,7 +144,8 @@ local function GetDesiredAlpha(frame)
     then
         if ((frame.friend    and profile_fade_rules.avoidfriendhp) or
            (not frame.friend and profile_fade_rules.avoidhostilehp)) and
-           frame.health.percent and frame.health.percent <= profile_lowhealthval
+           ((frame.health.percent and frame.health.percent <= profile_lowhealthval) and
+           (frame.health.percent and frame.health.percent >= profile_highhealthval))
         then
             -- avoid fading low health frames
             return 1
@@ -854,4 +855,5 @@ function addon:configChangedListener()
     profile_fade = profile.fade
     profile_fade_rules = profile_fade.rules
     profile_lowhealthval = profile.general.lowhealthval
+    profile_highhealthval = profile.general.highhealthval
 end

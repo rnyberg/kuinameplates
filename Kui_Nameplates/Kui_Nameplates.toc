@@ -20,6 +20,7 @@ modules\combopoints.lua
 modules\tankmode.lua
 modules\targetarrows.lua
 modules\lowhealth.lua
+modules\highhealth.lua
 modules\nemesis.lua
 modules\healthpatch.lua
 modules\nameonly.lua

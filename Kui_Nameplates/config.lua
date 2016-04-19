@@ -458,6 +458,15 @@ do
                         bigStep = 1,
                         order = 170
                     },
+                    highhealthval = {
+                        name = 'High health value',
+                        desc = 'High health value used by some modules, such as high health module.',
+                        type = 'range',
+                        min = 1,
+                        max = 100,
+                        bigStep = 1,
+                        order = 171
+                    },
                 }
             },
             fade = {

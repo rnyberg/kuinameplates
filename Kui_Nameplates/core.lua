@@ -72,6 +72,7 @@ local defaults = {
             glowshadow  = true,
             strata      = 'BACKGROUND',
             lowhealthval = 20,
+            highhealthval = 80,
             raidicon_size = 30,
             raidicon_side = 3,
         },
